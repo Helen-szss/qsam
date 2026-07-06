@@ -1,0 +1,1360 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鐧昏瀹為獙浣?- 鐮旂┒澶勮瀵熷憳</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #0099ff;
+            --danger-color: #ff6b6b;
+            --success-color: #6bffb8;
+            --warning-color: #ffd93d;
+            --text-primary: #e0f7ff;
+            --text-secondary: #a3d5ff;
+            --bg-primary: rgba(10, 36, 99, 0.9);
+            --bg-secondary: rgba(0, 30, 80, 0.7);
+            --border-color: rgba(0, 150, 255, 0.3);
+        }
+        
+        body {
+            /* Override global layout from style.css which sets body to flex+overflow:hidden
+               for pages that need full-window centered layouts. For this register page
+               we need normal document flow and scrollability. */
+            display: block;
+            overflow: auto;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            color: var(--text-primary);
+            font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 150, 255, 0.2);
+        }
+        
+        .header h1 {
+            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: var(--danger-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .card {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0, 150, 255, 0.1);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+        }
+        
+        .card-title i {
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--secondary-color), #00ccff);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 150, 255, 0.4);
+        }
+        
+        .btn-danger {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: rgba(255, 217, 61, 0.2);
+            border: 1px solid rgba(255, 217, 61, 0.5);
+            color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background: rgba(255, 217, 61, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .code-preview {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+        
+        .code-segment {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .segment-0 { background: rgba(255, 107, 107, 0.2); color: var(--danger-color); }
+        .segment-1 { background: rgba(255, 217, 61, 0.2); color: var(--warning-color); }
+        .segment-2 { background: rgba(107, 255, 184, 0.2); color: var(--success-color); }
+        .segment-3 { background: rgba(79, 195, 255, 0.2); color: var(--secondary-color); }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: rgba(0, 60, 120, 0.5);
+            padding: 15px;
+            text-align: left;
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        tr:hover {
+            background: rgba(0, 150, 255, 0.05);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .status-active { background: rgba(107, 255, 184, 0.2); color: var(--success-color); }
+        .status-inactive { background: rgba(255, 217, 61, 0.2); color: var(--warning-color); }
+        .status-destroyed { background: rgba(255, 107, 107, 0.2); color: var(--danger-color); }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-edit { background: rgba(79, 195, 255, 0.2); color: var(--secondary-color); }
+        .action-delete { background: rgba(255, 107, 107, 0.2); color: var(--danger-color); }
+        .action-view { background: rgba(107, 255, 184, 0.2); color: var(--success-color); }
+        
+        .action-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(79, 195, 255, 0.3);
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: var(--text-primary);
+            margin-top: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 150, 255, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-header h2 {
+            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--danger-color);
+            transform: rotate(90deg);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-success {
+            background: rgba(107, 255, 184, 0.2);
+            border: 1px solid rgba(107, 255, 184, 0.5);
+            color: var(--success-color);
+        }
+        
+        .alert-error {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: var(--danger-color);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 217, 61, 0.2);
+            border: 1px solid rgba(255, 217, 61, 0.5);
+            color: var(--warning-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .user-info {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 鍔犺浇鍔ㄧ敾 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">姝ｅ湪鍔犺浇...</div>
+        </div>
+    </div>
+    
+    <!-- 鏌ョ湅璇︽儏妯℃€佹 -->
+    <div class="modal" id="viewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>瀹為獙浣撹鎯?/h2>
+                <button class="close-btn" onclick="closeModal('viewModal')">&times;</button>
+            </div>
+            <div id="viewContent"></div>
+        </div>
+    </div>
+    
+    <!-- 缂栬緫妯℃€佹 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>缂栬緫瀹為獙浣?/h2>
+                <button class="close-btn" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <div class="form-row">
+                <div class="form-group">
+                        <label for="editCode">瀹為獙浣撶紪鍙?* <small style="color: var(--text-secondary);">(鍓嶇紑 <strong>CF-</strong> 鍥哄畾)</small></label>
+                        <input type="text" id="editCode" class="form-control" required maxlength="4" pattern="[0-9]{4}">
+                        <small style="color: var(--text-secondary);">璇疯緭鍏?浣嶆暟瀛楃紪鍙?/small>
+                    </div>
+                    <div class="form-group">
+                        <label for="editName">瀹為獙浣撳悕绉?*</label>
+                        <input type="text" id="editName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">鎻忚堪</label>
+                    <textarea id="editDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editStatus">鐘舵€?/label>
+                        <select id="editStatus" class="form-control">
+                            <option value="active">娲昏穬</option>
+                            <option value="inactive">浼戠湢</option>
+                            <option value="destroyed">宸查攢姣?/option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDangerLevel">鍗遍櫓绛夌骇</label>
+                        <select id="editDangerLevel" class="form-control">
+                            <option value="safe">宸叉敹瀹?/option>
+                            <option value="euclid">璀︽垝</option>
+                            <option value="keter">涓ラ噸璀︽垝</option>
+                            <option value="neutralized">宸叉竻鍓?/option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editLocation">褰撳墠浣嶇疆</label>
+                    <input type="text" id="editLocation" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="editAppearance">澶栬矊鐗瑰緛</label>
+                    <textarea id="editAppearance" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editAbilities">鑳藉姏鎻忚堪</label>
+                    <textarea id="editAbilities" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editWeaknesses">寮辩偣</label>
+                    <textarea id="editWeaknesses" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editContainment">鏀跺鎺柦</label>
+                    <textarea id="editContainment" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editNotes">澶囨敞</label>
+                    <textarea id="editNotes" class="form-control" rows="2"></textarea>
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-save"></i> 淇濆瓨鏇存敼
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal('editModal')" style="flex: 1;">
+                        <i class="fas fa-times"></i> 鍙栨秷
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 澶撮儴 -->
+        <div class="header">
+            <h1><i class="fas fa-flask"></i> 瀹為獙浣撶櫥璁扮郴缁?- 鐮旂┒澶?/h1>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <div style="color: var(--success-color);" id="userDisplayName">瑙傚療鍛?/div>
+                    <div style="font-size: 0.9rem; color: var(--text-secondary);">鐮旂┒澶勮瀵熷憳</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> 閫€鍑?
+                </button>
+            </div>
+        </div>
+        
+        <!-- 娑堟伅鎻愮ず -->
+        <div class="alert" id="messageAlert"></div>
+        
+        <!-- 涓昏鍐呭 -->
+        <div class="main-content">
+            <!-- 宸︿晶锛氱櫥璁拌〃鍗?-->
+            <div>
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>鐧昏鏂板疄楠屼綋</span>
+                    </div>
+                    
+                    <form id="subjectForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subjectCode">瀹為獙浣撶紪鍙?* <small style="color: var(--text-secondary);">(鍓嶇紑 <strong>CF-</strong> 鍥哄畾)</small></label>
+                                <div style="position: relative; display: flex; align-items: center;">
+                                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-weight: bold;">CF-</span>
+                                    <input type="text" id="subjectCode" class="form-control" 
+                                           required maxlength="4" pattern="[0-9]{4}"
+                                           placeholder="杈撳叆4浣嶆暟瀛楃紪鍙? 
+                                           oninput="parseSubjectCode(this.value)"
+                                           style="padding-left: 52px;">
+                                </div>
+                                <small style="color: var(--text-secondary);">鏍煎紡锛欳F-XXXX锛堜粎杈撳叆鍙充晶4浣嶆暟瀛楋級</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectName">瀹為獙浣撳悕绉?*</label>
+                                <input type="text" id="subjectName" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <!-- 缂栧彿瑙ｆ瀽棰勮 -->
+                        <div id="codePreview" style="display: none;">
+                            <div style="margin-bottom: 10px; color: var(--text-secondary);">
+                                <i class="fas fa-info-circle"></i> 缂栧彿瑙ｆ瀽锛?
+                            </div>
+                            <div class="code-preview">
+                                <span class="code-segment segment-0" id="segmentGen">绗?浠?/span>
+                                <span class="code-segment segment-1" id="segmentBasis">鍩虹</span>
+                                <span class="code-segment segment-2" id="segmentMeme">妯″洜</span>
+                                <span class="code-segment segment-3" id="segmentAttr">灞炴€?/span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subjectDescription">鎻忚堪</label>
+                            <textarea id="subjectDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dangerLevel">鍗遍櫓绛夌骇</label>
+                                <select id="dangerLevel" class="form-control">
+                                            <option value="safe">宸叉敹瀹?/option>
+                                            <option value="euclid">璀︽垝</option>
+                                            <option value="keter">涓ラ噸璀︽垝</option>
+                                            <option value="neutralized">宸叉竻鍓?/option>
+                                        </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="location">褰撳墠浣嶇疆</label>
+                                <input type="text" id="location" class="form-control" placeholder="濡傦細Site-17锛孉鍖烘敹瀹瑰">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appearance">澶栬矊鐗瑰緛</label>
+                            <textarea id="appearance" class="form-control" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="abilities">鑳藉姏鎻忚堪</label>
+                            <textarea id="abilities" class="form-control" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="weaknesses">寮辩偣</label>
+                            <textarea id="weaknesses" class="form-control" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="containment">鏀跺鎺柦</label>
+                            <textarea id="containment" class="form-control" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">澶囨敞</label>
+                            <textarea id="notes" class="form-control" rows="2"></textarea>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; margin-top: 25px;">
+                            <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                <i class="fas fa-save"></i> 淇濆瓨鍒颁簯绔?
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="clearForm()" style="flex: 1;">
+                                <i class="fas fa-redo"></i> 娓呯┖琛ㄥ崟
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 鍙充晶锛氬疄楠屼綋鍒楄〃 -->
+            <div>
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-list"></i>
+                        <span>瀹為獙浣撳垪琛?/span>
+                        <div style="margin-left: auto;">
+                            <button class="btn btn-primary" onclick="loadSubjects()">
+                                <i class="fas fa-sync-alt"></i> 鍒锋柊
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>缂栧彿</th>
+                                    <th>鍚嶇О</th>
+                                    <th>浠ｆ</th>
+                                    <th>鐘舵€?/th>
+                                    <th>鎿嶄綔</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subjectTableBody">
+                                <!-- 鏁版嵁灏嗛€氳繃JS鍔ㄦ€佸姞杞?-->
+                            </tbody>
+                        </table>
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i class="fas fa-flask"></i>
+                            <h3>鏆傛棤瀹為獙浣撴暟鎹?/h3>
+                            <p>璇风櫥璁扮涓€涓疄楠屼綋</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 缂栧彿瑙勫垯璇存槑 -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-book"></i>
+                        <span>瀹為獙浣撶紪鍙疯鍒?/span>
+                    </div>
+                    <div style="color: var(--text-secondary); line-height: 1.6;">
+                        <p><strong>绗竴浣嶏細绗嚑浠ｅ疄楠屼綋</strong><br>
+                        0: 绗竴浠ｏ紝1: 绗簩浠ｏ紝2: 绗笁浠ｏ紝浠ユ绫绘帹</p>
+                        
+                        <p><strong>绗簩浣嶏細鍒涢€犱緷鎹?/strong><br>
+                        0: 鍘熸湰鐗╃涓嶅彉锛?: 瑁傞殭鎬墿锛?: 鐜板疄涓瓨鍦ㄧ殑鍔ㄧ墿<br>
+                        3: 鐜板疄涓瓨鍦ㄧ殑妞嶇墿锛?: 鐜板疄涓瓨鍦ㄧ殑鏄嗚櫕<br>
+                        5: 涓滄柟骞绘兂鐢熺墿锛?: 瑗挎柟骞绘兂鐢熺墿<br>
+                        7: 鏃犵敓鍛藉疄浣擄紝8: 鏃犲疄浣撶敓鐗?/p>
+                        
+                        <p><strong>绗笁浣嶏細鎰熸煋鐨勬ā鍥?/strong><br>
+                        0: 鏃舵暎锛?: 铏氱晫锛?: 鐏靛櫖锛?: 閽㈤瓊<br>
+                        4: 鏈簮锛?: 褰辩嫨锛?: 鐢熼摼锛?: 姊扮伒锛?: 骞诲</p>
+                        
+                        <p><strong>绗洓浣嶏細灞炴€?/strong><br>
+                        0: 鐏紝1: 鍐帮紝2: 闆凤紝3: 宀╋紝4: 椋?br>
+                        5: 鍏夛紝6: 鐢熷懡锛?: 閲嶅姏锛?: 铻嶅悎锛?: 鐗╃悊</p>
+                        
+                        <p><strong>绀轰緥锛?/strong><br>
+                        4366: 绗簲浠ｅ疄楠屼綋(4+1)锛屾鐗?3)锛岀敓閾炬ā鍥?6)锛岀墿鐞嗗睘鎬?6)<br>
+                        5123: 绗叚浠ｅ疄楠屼綋(5+1)锛屼笢鏂瑰够鎯崇敓鐗?1)锛屽奖鐙╂ā鍥?2)锛屽博灞炴€?3)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase閰嶇疆 - 璇锋浛鎹负鎮ㄧ殑瀹為檯閰嶇疆
+        const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
+        
+        // Avoid redeclaring `supabase` if it was created elsewhere (e.g. global client).
+        var supabase = (typeof window !== 'undefined' && window.supabase && typeof window.supabase.from === 'function') ? window.supabase : (typeof window !== 'undefined' ? window.supabase : null);
+        let currentUser = null;
+        
+        // 瀹為獙浣撶紪鍙锋槧灏勮〃
+        const generationMap = {
+            '0': '绗竴浠?, '1': '绗簩浠?, '2': '绗笁浠?, '3': '绗洓浠?,
+            '4': '绗簲浠?, '5': '绗叚浠?, '6': '绗竷浠?, '7': '绗叓浠?,
+            '8': '绗節浠?, '9': '绗崄浠?
+        };
+        
+        const basisMap = {
+            '0': '鍘熸湰鐗╃涓嶅彉',
+            '1': '瑁傞殭鎬墿',
+            '2': '鐜板疄涓瓨鍦ㄧ殑鍔ㄧ墿',
+            '3': '鐜板疄涓瓨鍦ㄧ殑妞嶇墿',
+            '4': '鐜板疄涓瓨鍦ㄧ殑鏄嗚櫕',
+            '5': '涓滄柟骞绘兂鐢熺墿',
+            '6': '瑗挎柟骞绘兂鐢熺墿',
+            '7': '鏃犵敓鍛藉疄浣?,
+            '8': '鏃犲疄浣撶敓鐗?
+        };
+        
+        const memeMap = {
+            '0': '鏃舵暎',
+            '1': '铏氱晫',
+            '2': '鐏靛櫖',
+            '3': '閽㈤瓊',
+            '4': '鏈簮',
+            '5': '褰辩嫨',
+            '6': '鐢熼摼',
+            '7': '姊扮伒',
+            '8': '骞诲'
+        };
+        
+        const attributeMap = {
+            '0': '鐏?,
+            '1': '鍐?,
+            '2': '闆?,
+            '3': '宀?,
+            '4': '椋?,
+            '5': '鍏?,
+            '6': '鐢熷懡',
+            '7': '閲嶅姏',
+            '8': '铻嶅悎',
+            '9': '鐗╃悊'
+        };
+        
+        // 鍒濆鍖?
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
+        
+        // 鍒濆鍖栧簲鐢?
+        async function initApp() {
+            showLoading('鍒濆鍖栫郴缁?..');
+            
+            // 妫€鏌ョ櫥褰曠姸鎬?
+            const role = localStorage.getItem('auth_role');
+            currentUser = localStorage.getItem('auth_user');
+            
+            if (role !== 'viewer') {
+                alert('璇峰厛浠ヨ瀵熷憳韬唤鐧诲綍锛?);
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // 鏄剧ず鐢ㄦ埛淇℃伅
+            document.getElementById('userDisplayName').textContent = currentUser || '瑙傚療鍛?;
+            
+            // 鍒濆鍖朣upabase
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase瀹㈡埛绔凡鍒濆鍖?);
+            } catch (e) {
+                showError('Supabase鍒濆鍖栧け璐ワ紝璇锋鏌ラ厤缃?);
+                console.error('Supabase鍒濆鍖栧け璐?', e);
+                hideLoading();
+                return;
+            }
+            
+            // 鍔犺浇瀹為獙浣撴暟鎹?
+            await loadSubjects();
+            
+            hideLoading();
+            
+            // 璁剧疆琛ㄥ崟鎻愪氦浜嬩欢
+            document.getElementById('subjectForm').addEventListener('submit', handleSubmit);
+            document.getElementById('editForm').addEventListener('submit', handleEditSubmit);
+        }
+        
+        // 瑙ｆ瀽瀹為獙浣撶紪鍙?
+        function parseSubjectCode(code) {
+            const preview = document.getElementById('codePreview');
+            
+            if (code.length === 4 && /^\d{4}$/.test(code)) {
+                const gen = code[0];
+                const basis = code[1];
+                const meme = code[2];
+                const attr = code[3];
+                
+                // 鏇存柊棰勮
+                document.getElementById('segmentGen').textContent = generationMap[gen] || '鏈煡浠ｆ';
+                document.getElementById('segmentBasis').textContent = basisMap[basis] || '鏈煡渚濇嵁';
+                document.getElementById('segmentMeme').textContent = memeMap[meme] || '鏈煡妯″洜';
+                document.getElementById('segmentAttr').textContent = attributeMap[attr] || '鏈煡灞炴€?;
+                
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // 鍔犺浇瀹為獙浣撴暟鎹?
+        async function loadSubjects() {
+            showLoading('鍔犺浇瀹為獙浣撴暟鎹?..');
+            
+            try {
+                const { data: subjects, error } = await supabase
+                    .from('subjects')
+                    .select(`
+                        *,
+                        subject_details (*)
+                    `)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                renderSubjectsTable(subjects || []);
+                hideLoading();
+                
+            } catch (error) {
+                console.error('鍔犺浇瀹為獙浣撴暟鎹け璐?', error);
+                showError('鍔犺浇鏁版嵁澶辫触: ' + error.message);
+                hideLoading();
+            }
+        }
+        
+        // 娓叉煋瀹為獙浣撹〃鏍?
+        function renderSubjectsTable(subjects) {
+            const tbody = document.getElementById('subjectTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (subjects.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            let html = '';
+            subjects.forEach(subject => {
+                const details = subject.subject_details?.[0] || {};
+                
+                // 瑙ｆ瀽缂栧彿
+                const code = subject.subject_code;
+                const gen = generationMap[code?.[0]] || '鏈煡';
+                const basis = basisMap[code?.[1]] || '鏈煡';
+                
+                // 鐘舵€佹爣绛?
+                const statusClass = `status-${subject.status}`;
+                const statusText = subject.status === 'active' ? '娲昏穬' :
+                                  subject.status === 'inactive' ? '浼戠湢' : '宸查攢姣?;
+                
+                html += `
+                <tr>
+                    <td><strong>CF-${subject.subject_code}</strong></td>
+                    <td>${subject.subject_name}</td>
+                    <td>${gen}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td class="actions">
+                        <button class="action-btn action-view" onclick="viewSubject('${subject.id}')" title="鏌ョ湅璇︽儏">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn action-edit" onclick="editSubject('${subject.id}')" title="缂栬緫">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn action-delete" onclick="deleteSubject('${subject.id}')" title="鍒犻櫎">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        // 鎻愪氦鏂板疄楠屼綋
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const code = document.getElementById('subjectCode').value.trim();
+            const name = document.getElementById('subjectName').value.trim();
+            
+            if (code.length !== 4 || !/^\d{4}$/.test(code)) {
+                showError('璇疯緭鍏ユ湁鏁堢殑4浣嶆暟瀛楃紪鍙?);
+                return;
+            }
+            
+            if (!name) {
+                showError('璇疯緭鍏ュ疄楠屼綋鍚嶇О');
+                return;
+            }
+            
+            showLoading('姝ｅ湪淇濆瓨鍒颁簯绔?..');
+            
+            try {
+                // 妫€鏌ョ紪鍙锋槸鍚﹀凡瀛樺湪
+                const { data: existing } = await supabase
+                    .from('subjects')
+                    .select('id')
+                    .eq('subject_code', code)
+                    .single();
+                
+                if (existing) {
+                    throw new Error('璇ュ疄楠屼綋缂栧彿宸插瓨鍦?);
+                }
+                
+                // 瑙ｆ瀽缂栧彿
+                const gen = parseInt(code[0]);
+                const basis = code[1];
+                const meme = code[2];
+                const attr = code[3];
+                
+                // 淇濆瓨瀹為獙浣?
+                const { data: subject, error: subjectError } = await supabase
+                    .from('subjects')
+                    .insert([{
+                        subject_code: code,
+                        subject_name: name,
+                        generation: gen,
+                        creation_basis: basisMap[basis] || '鏈煡',
+                        meme_type: memeMap[meme] || '鏈煡',
+                        attribute: attributeMap[attr] || '鏈煡',
+                        description: document.getElementById('subjectDescription').value,
+                        status: 'active',
+                        created_by: currentUser
+                    }])
+                    .select()
+                    .single();
+                
+                if (subjectError) throw subjectError;
+                
+                // 淇濆瓨璇︾粏淇℃伅
+                const details = {
+                    subject_id: subject.id,
+                    appearance: document.getElementById('appearance').value,
+                    abilities: document.getElementById('abilities').value,
+                    weaknesses: document.getElementById('weaknesses').value,
+                    containment_procedures: document.getElementById('containment').value,
+                    notes: document.getElementById('notes').value,
+                    location: document.getElementById('location').value,
+                    danger_level: document.getElementById('dangerLevel').value
+                };
+                
+                const { error: detailsError } = await supabase
+                    .from('subject_details')
+                    .insert([details]);
+                
+                if (detailsError) throw detailsError;
+                
+                showSuccess('瀹為獙浣撳凡鎴愬姛淇濆瓨鍒颁簯绔?);
+                clearForm();
+                await loadSubjects();
+                
+            } catch (error) {
+                console.error('淇濆瓨澶辫触:', error);
+                showError('淇濆瓨澶辫触: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 鏌ョ湅瀹為獙浣撹鎯?
+        async function viewSubject(subjectId) {
+            showLoading('鍔犺浇璇︽儏...');
+            
+            try {
+                const { data: subject, error } = await supabase
+                    .from('subjects')
+                    .select(`
+                        *,
+                        subject_details (*)
+                    `)
+                    .eq('id', subjectId)
+                    .single();
+                
+                if (error) throw error;
+                
+                const details = subject.subject_details?.[0] || {};
+                
+                // 瑙ｆ瀽缂栧彿
+                const code = subject.subject_code;
+                const gen = generationMap[code?.[0]] || '鏈煡';
+                const basis = basisMap[code?.[1]] || '鏈煡';
+                const meme = memeMap[code?.[2]] || '鏈煡';
+                const attr = attributeMap[code?.[3]] || '鏈煡';
+                
+                // 鍗遍櫓绛夌骇鏄犲皠锛堜粎浣跨敤鍥涚灞曠ず鏂囨湰锛屼笌涓嬫媺閫夐」涓€鑷达級
+                const dangerMap = {
+                    'safe': '宸叉敹瀹?,
+                    'euclid': '璀︽垝',
+                    'keter': '涓ラ噸璀︽垝',
+                    'neutralized': '宸叉竻鍓?
+                };
+
+                const dangerKey = details.danger_level || 'safe';
+                const dangerText = dangerMap[dangerKey] || dangerKey;
+
+                // 鏋勫缓璇︽儏HTML
+                let html = `
+                    <div style="line-height: 1.6;">
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 1.2rem; color: var(--secondary-color); margin-bottom: 10px;">
+                                CF-${subject.subject_code} - ${subject.subject_name}
+                            </div>
+                            <div style="color: var(--text-secondary);">
+                                鍒涘缓鑰? ${subject.created_by} | 鍒涘缓鏃堕棿: ${new Date(subject.created_at).toLocaleString()}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>鍗遍櫓绛夌骇</label>
+                            <select class="form-control" disabled>
+                                <option value="safe" ${dangerKey === 'safe' ? 'selected' : ''}>宸叉敹瀹?/option>
+                                <option value="euclid" ${dangerKey === 'euclid' ? 'selected' : ''}>璀︽垝</option>
+                                <option value="keter" ${dangerKey === 'keter' ? 'selected' : ''}>涓ラ噸璀︽垝</option>
+                                <option value="neutralized" ${dangerKey === 'neutralized' ? 'selected' : ''}>宸叉竻鍓?/option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>妯″洜绫诲瀷</label>
+                                <div class="form-control" style="background: transparent; border: none; padding: 0;">${meme}</div>
+                            </div>
+                            <div class="form-group">
+                                <label>灞炴€?/label>
+                                <div class="form-control" style="background: transparent; border: none; padding: 0;">${attr}</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>鎻忚堪</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${subject.description || '鏆傛棤鎻忚堪'}</div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>鐘舵€?/label>
+                                <div class="status-badge status-${subject.status}" style="display: inline-block;">
+                                    ${subject.status === 'active' ? '娲昏穬' : subject.status === 'inactive' ? '浼戠湢' : '宸查攢姣?}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>褰撳墠浣嶇疆</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0;">${details.location || '鏈褰?}</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>澶栬矊鐗瑰緛</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.appearance || '鏈褰?}</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>鑳藉姏鎻忚堪</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.abilities || '鏈褰?}</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>寮辩偣</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.weaknesses || '鏈褰?}</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>鏀跺鎺柦</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.containment_procedures || '鏈褰?}</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>澶囨敞</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.notes || '鏃?}</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('viewContent').innerHTML = html;
+                openModal('viewModal');
+                
+            } catch (error) {
+                console.error('鍔犺浇璇︽儏澶辫触:', error);
+                showError('鍔犺浇璇︽儏澶辫触: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 缂栬緫瀹為獙浣?
+        async function editSubject(subjectId) {
+            showLoading('鍔犺浇缂栬緫鏁版嵁...');
+            
+            try {
+                const { data: subject, error } = await supabase
+                    .from('subjects')
+                    .select(`
+                        *,
+                        subject_details (*)
+                    `)
+                    .eq('id', subjectId)
+                    .single();
+                
+                if (error) throw error;
+                
+                const details = subject.subject_details?.[0] || {};
+                
+                // 濉厖琛ㄥ崟
+                document.getElementById('editId').value = subjectId;
+                document.getElementById('editCode').value = subject.subject_code;
+                document.getElementById('editName').value = subject.subject_name;
+                document.getElementById('editDescription').value = subject.description || '';
+                document.getElementById('editStatus').value = subject.status;
+                document.getElementById('editDangerLevel').value = details.danger_level || 'safe';
+                document.getElementById('editLocation').value = details.location || '';
+                document.getElementById('editAppearance').value = details.appearance || '';
+                document.getElementById('editAbilities').value = details.abilities || '';
+                document.getElementById('editWeaknesses').value = details.weaknesses || '';
+                document.getElementById('editContainment').value = details.containment_procedures || '';
+                document.getElementById('editNotes').value = details.notes || '';
+                
+                // 瑙ｆ瀽骞舵樉绀虹紪鍙烽瑙?
+                parseSubjectCode(subject.subject_code);
+                
+                openModal('editModal');
+                
+            } catch (error) {
+                console.error('鍔犺浇缂栬緫鏁版嵁澶辫触:', error);
+                showError('鍔犺浇缂栬緫鏁版嵁澶辫触: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 鎻愪氦缂栬緫
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            
+            const subjectId = document.getElementById('editId').value;
+            const code = document.getElementById('editCode').value.trim();
+            const name = document.getElementById('editName').value.trim();
+            
+            if (!code || !name) {
+                showError('璇峰～鍐欏繀濉瓧娈?);
+                return;
+            }
+            
+            showLoading('姝ｅ湪鏇存柊...');
+            
+            try {
+                // 瑙ｆ瀽缂栧彿
+                const gen = parseInt(code[0]);
+                const basis = code[1];
+                const meme = code[2];
+                const attr = code[3];
+                
+                // 鏇存柊瀹為獙浣?
+                const { error: subjectError } = await supabase
+                    .from('subjects')
+                    .update({
+                        subject_code: code,
+                        subject_name: name,
+                        generation: gen,
+                        creation_basis: basisMap[basis] || '鏈煡',
+                        meme_type: memeMap[meme] || '鏈煡',
+                        attribute: attributeMap[attr] || '鏈煡',
+                        description: document.getElementById('editDescription').value,
+                        status: document.getElementById('editStatus').value
+                    })
+                    .eq('id', subjectId);
+                
+                if (subjectError) throw subjectError;
+                
+                // 妫€鏌ユ槸鍚﹀瓨鍦ㄨ缁嗕俊鎭?
+                const { data: existingDetails } = await supabase
+                    .from('subject_details')
+                    .select('id')
+                    .eq('subject_id', subjectId)
+                    .single();
+                
+                const detailsData = {
+                    subject_id: subjectId,
+                    appearance: document.getElementById('editAppearance').value,
+                    abilities: document.getElementById('editAbilities').value,
+                    weaknesses: document.getElementById('editWeaknesses').value,
+                    containment_procedures: document.getElementById('editContainment').value,
+                    notes: document.getElementById('editNotes').value,
+                    location: document.getElementById('editLocation').value,
+                    danger_level: document.getElementById('editDangerLevel').value
+                };
+                
+                if (existingDetails) {
+                    // 鏇存柊鐜版湁璁板綍
+                    const { error: detailsError } = await supabase
+                        .from('subject_details')
+                        .update(detailsData)
+                        .eq('subject_id', subjectId);
+                    
+                    if (detailsError) throw detailsError;
+                } else {
+                    // 鎻掑叆鏂拌褰?
+                    const { error: detailsError } = await supabase
+                        .from('subject_details')
+                        .insert([detailsData]);
+                    
+                    if (detailsError) throw detailsError;
+                }
+                
+                showSuccess('瀹為獙浣撳凡鎴愬姛鏇存柊');
+                closeModal('editModal');
+                await loadSubjects();
+                
+            } catch (error) {
+                console.error('鏇存柊澶辫触:', error);
+                showError('鏇存柊澶辫触: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 鍒犻櫎瀹為獙浣?
+        async function deleteSubject(subjectId) {
+            if (!confirm('纭畾瑕佸垹闄よ繖涓疄楠屼綋鍚楋紵姝ゆ搷浣滀笉鍙仮澶嶃€?)) {
+                return;
+            }
+            
+            showLoading('姝ｅ湪鍒犻櫎...');
+            
+            try {
+                const { error } = await supabase
+                    .from('subjects')
+                    .delete()
+                    .eq('id', subjectId);
+                
+                if (error) throw error;
+                
+                showSuccess('瀹為獙浣撳凡鎴愬姛鍒犻櫎');
+                await loadSubjects();
+                
+            } catch (error) {
+                console.error('鍒犻櫎澶辫触:', error);
+                showError('鍒犻櫎澶辫触: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 娓呯┖琛ㄥ崟
+        function clearForm() {
+            document.getElementById('subjectForm').reset();
+            document.getElementById('codePreview').style.display = 'none';
+            showMessage('琛ㄥ崟宸叉竻绌?, 'warning');
+        }
+        
+        // 鏄剧ず娑堟伅
+        function showMessage(message, type = 'success') {
+            const alert = document.getElementById('messageAlert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+        
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+        
+        function showWarning(message) {
+            showMessage(message, 'warning');
+        }
+        
+        // 鎵撳紑妯℃€佹
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        // 鍏抽棴妯℃€佹
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // 鏄剧ず鍔犺浇鍔ㄧ敾
+        function showLoading(message = '姝ｅ湪澶勭悊...') {
+            document.getElementById('loadingText').textContent = message;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+        
+        // 闅愯棌鍔犺浇鍔ㄧ敾
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        // 閫€鍑虹櫥褰?
+        function logout() {
+            if (confirm('纭畾瑕侀€€鍑虹櫥褰曞悧锛?)) {
+                localStorage.removeItem('auth_user');
+                localStorage.removeItem('auth_role');
+                localStorage.removeItem('auth_time');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // 椤甸潰鍗歌浇鏃舵彁绀?
+        window.addEventListener('beforeunload', function(e) {
+            // 鍙互娣诲姞淇濆瓨鑽夌鐨勯€昏緫
+        });
+    </script>
+</body>
+</html>

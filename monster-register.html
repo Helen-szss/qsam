@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>裂隙怪物登记 - 研究处</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            --research-bg: radial-gradient(circle at center, #0a2463, #000000);
+            --panel-bg: rgba(6, 22, 60, 0.95);
+            --panel-border: rgba(0, 150, 255, 0.3);
+            --accent-danger: #ff6b6b;
+            --accent-warning: #ffa93d;
+            --accent-info: #4fc3ff;
+            --accent-success: #6bffb8;
+            --text-primary: #e0f7ff;
+            --muted-color: #a3d5ff;
+        }
+        
+        body {
+            min-height: 100vh;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--research-bg);
+            color: var(--text-primary);
+            font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        /* 顶部状态栏，采用与其他页面一致的命名和样式 */
+        .status-bar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            background: rgba(10, 36, 99, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+            z-index: 9999;
+            height: 72px;
+            box-sizing: border-box;
+        }
+        
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .system-logo {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 8px rgba(0, 150, 255, 0.7));
+        }
+        
+        .system-name {
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, #4fc3ff, #a3d5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+        }
+
+        .system-subtitle {
+            font-size: 0.85rem;
+            color: var(--muted-color);
+            letter-spacing: 1px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.95rem;
+        }
+        
+        .back-btn, .logout-btn {
+            background: rgba(0, 60, 120, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            color: var(--muted-color);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .back-btn:hover, .logout-btn:hover {
+            background: rgba(0, 100, 200, 0.85);
+            transform: translateY(-1px);
+        }
+        
+        /* 主要内容区域 */
+        .main-content {
+            flex: 1 1 auto;
+            width: 100%;
+            padding: 30px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .page-title h2 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #ffa93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-title p {
+            color: var(--muted-color);
+            font-size: 1.1rem;
+            max-width: 700px;
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.5);
+        }
+        
+        /* 怪物列表 */
+        .monster-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        
+        .monster-card {
+            background: var(--panel-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--panel-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .monster-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.6);
+            box-shadow: 0 15px 30px rgba(0, 150, 255, 0.2);
+        }
+        
+        .monster-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .monster-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffa93d;
+            margin-bottom: 5px;
+        }
+        
+        .monster-level {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .level-low { background: rgba(107, 255, 184, 0.2); color: #6bffb8; border: 1px solid rgba(107, 255, 184, 0.5); }
+        .level-medium { background: rgba(255, 217, 61, 0.2); color: #ffd93d; border: 1px solid rgba(255, 217, 61, 0.5); }
+        .level-high { background: rgba(255, 167, 61, 0.2); color: #ffa73d; border: 1px solid rgba(255, 167, 61, 0.5); }
+        .level-very-high { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.5); }
+        .level-disaster { background: rgba(153, 0, 153, 0.2); color: #ff66ff; border: 1px solid rgba(153, 0, 153, 0.5); }
+        
+        .monster-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .info-label {
+            width: 80px;
+            color: var(--muted-color);
+            flex-shrink: 0;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--text-primary);
+        }
+        
+        .attribute-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .attribute-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+        
+        .weakness-tag { background: rgba(255, 107, 107, 0.15); color: #ff8e8e; border: 1px solid rgba(255, 107, 107, 0.3); }
+        .resistance-tag { background: rgba(79, 195, 255, 0.15); color: #8ed1ff; border: 1px solid rgba(79, 195, 255, 0.3); }
+        
+        .monster-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-edit {
+            background: rgba(79, 195, 255, 0.2);
+            border: 1px solid rgba(79, 195, 255, 0.4);
+            color: #4fc3ff;
+        }
+        
+        .btn-edit:hover {
+            background: rgba(79, 195, 255, 0.3);
+        }
+        
+        .btn-delete {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            color: #ff6b6b;
+        }
+        
+        .btn-delete:hover {
+            background: rgba(255, 107, 107, 0.3);
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(10, 36, 99, 0.5);
+            border-radius: 15px;
+            border: 2px dashed rgba(0, 150, 255, 0.3);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(0, 150, 255, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--muted-color);
+        }
+        
+        .empty-state p {
+            color: var(--muted-color);
+            max-width: 600px;
+            margin: 0 auto 25px;
+            font-size: 1.1rem;
+        }
+        
+        /* 表单模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* place the modal above the top status-bar (status-bar z-index: 9999) */
+            z-index: 10010;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 25px 50px rgba(0, 150, 255, 0.2);
+            max-width: 800px;
+            width: 90%;
+            /* ensure modal content doesn't extend beneath the status-bar on tall screens */
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            position: relative;
+            z-index: 10011;
+        }
+        
+        .modal-header {
+            margin-bottom: 30px;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.8rem;
+            color: #ffa93d;
+            margin-bottom: 10px;
+        }
+        
+        .modal-header p {
+            color: var(--muted-color);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            color: #ff6b6b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--muted-color);
+            font-size: 1rem;
+        }
+        
+        .form-label span {
+            color: #ff6b6b;
+            margin-left: 5px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 30, 80, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(0, 150, 255, 0.6);
+            box-shadow: 0 0 0 3px rgba(0, 150, 255, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 30, 80, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        .attribute-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .attribute-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(0, 30, 80, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .attribute-option:hover {
+            background: rgba(0, 60, 120, 0.7);
+        }
+        
+        .attribute-option.selected {
+            background: rgba(79, 195, 255, 0.2);
+            border-color: rgba(79, 195, 255, 0.6);
+        }
+        
+        .attribute-option.conflict {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: rgba(255, 107, 107, 0.6);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .attribute-option input[type="checkbox"] {
+            display: none;
+        }
+        
+        .attribute-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        .btn-submit {
+            flex: 1;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa93d);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn-cancel {
+            flex: 1;
+            padding: 16px;
+            background: rgba(0, 60, 120, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 10px;
+            color: var(--muted-color);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancel:hover {
+            background: rgba(0, 100, 200, 0.8);
+        }
+        
+        /* 属性图标颜色 */
+        .fire { color: #ff6b6b; }
+        .thunder { color: #ffd93d; }
+        .ice { color: #4fc3ff; }
+        .wind { color: #6bffb8; }
+        .rock { color: #c8a951; }
+        .light { color: #ffffa0; }
+        .gravity { color: #b366ff; }
+        .life { color: #6bff6b; }
+        .fusion { color: #ff66cc; }
+        .physical { color: #cccccc; }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .research-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .header-left, .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .monster-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 25px 20px;
+                width: 95%;
+            }
+            
+            .attribute-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+        
+        /* 统计面板 */
+        .stats-panel {
+            background: var(--panel-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--panel-border);
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 30, 80, 0.5);
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: var(--muted-color);
+            font-size: 0.9rem;
+        }
+        
+        .level-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            gap: 5px;
+        }
+        
+        .level-stat {
+            flex: 1;
+            text-align: center;
+            padding: 8px 5px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="status-bar">
+        <div class="system-info">
+            <img src="qsamlogo.png" alt="研究处标志" class="system-logo">
+            <div>
+                <div class="system-name">研究处 - 裂隙怪物登记系统</div>
+                <div class="system-subtitle">记录、分析与管理裂隙怪物资料</div>
+            </div>
+        </div>
+
+        <div class="user-info">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div>
+                <div id="userDisplayName" style="font-weight: bold;">观察员</div>
+                <div id="userRoleText" style="font-size: 0.8rem; color: #a3d5ff;">研究处权限</div>
+            </div>
+            <a href="viewer.html" class="back-btn" title="返回">
+                <i class="fas fa-arrow-left"></i>
+                &nbsp;返回
+            </a>
+        </div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-title">
+                <h2>裂隙怪物数据库</h2>
+                <p>记录所有已发现的裂隙怪物，包括其属性、弱点、出现区域及威胁等级</p>
+            </div>
+            <button class="btn-add" id="btnAddMonster">
+                <i class="fas fa-plus"></i> 登记新怪物
+            </button>
+        </div>
+        
+        <!-- 统计面板 -->
+        <div class="stats-panel" id="statsPanel">
+            <!-- 统计数据会通过JavaScript动态生成 -->
+        </div>
+        
+        <!-- 怪物列表 -->
+        <div class="monster-list" id="monsterList">
+            <!-- 怪物卡片会通过JavaScript动态生成 -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">
+                    <i class="fas fa-dragon"></i>
+                </div>
+                <h3>暂无怪物记录</h3>
+                <p>点击"登记新怪物"按钮开始添加第一个裂隙怪物资料</p>
+                <button class="btn-add" id="btnAddFirstMonster">
+                    <i class="fas fa-plus"></i> 添加第一个怪物
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 添加/编辑怪物表单模态框 -->
+    <div class="modal-overlay" id="monsterModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-header">
+                <h2 id="modalTitle">登记新裂隙怪物</h2>
+                <p id="modalSubtitle">请填写怪物详细信息，注意弱点和抗性不能重合</p>
+            </div>
+            
+            <form id="monsterForm">
+                <input type="hidden" id="monsterId" value="">
+                
+                <div class="form-group">
+                    <label class="form-label" for="monsterName">怪物名称 <span>*</span></label>
+                    <input type="text" id="monsterName" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="monsterRegion">出没地区 <span>*</span></label>
+                    <input type="text" id="monsterRegion" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="monsterFrequency">出现频次 <span>*</span></label>
+                    <select id="monsterFrequency" class="form-select" required>
+                        <option value="">请选择出现频次</option>
+                        <option value="罕见">罕见（每月1-2次）</option>
+                        <option value="较少">较少（每周1-2次）</option>
+                        <option value="常见">常见（每周3-5次）</option>
+                        <option value="频繁">频繁（几乎每天）</option>
+                        <option value="持续">持续（持续存在）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="monsterLevel">难度等级 <span>*</span></label>
+                    <select id="monsterLevel" class="form-select" required>
+                        <option value="">请选择难度等级</option>
+                        <option value="低危">低危（可单人处理）</option>
+                        <option value="中危">中危（1-2人处理）</option>
+                        <option value="高危">高危（需要组队处理）</option>
+                        <option value="极高危">极高危（需要战术配合与重武器）</option>
+                        <option value="灾难">灾难（可能引发区域危机）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">弱点属性 <span>*</span> <small>（可多选）</small></label>
+                    <div class="attribute-grid" id="weaknessGrid">
+                        <!-- 弱点选项会通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">抗性属性 <span>*</span> <small>（可多选）</small></label>
+                    <div class="attribute-grid" id="resistanceGrid">
+                        <!-- 抗性选项会通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="monsterNotes">备注/特征描述</label>
+                    <textarea id="monsterNotes" class="form-input form-textarea" placeholder="描述怪物的特殊能力、行为模式、外观特征等"></textarea>
+                </div>
+                
+                <!-- 图片字段已移除 -->
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="btnCancel">取消</button>
+                    <button type="submit" class="btn-submit" id="btnSubmit">保存怪物资料</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 检查登录状态
+        const role = localStorage.getItem('auth_role');
+        const username = localStorage.getItem('auth_user');
+        
+        if (role !== 'viewer') {
+            alert('请先以观察员身份登录！');
+            window.location.href = 'index.html';
+        }
+        
+        // 显示用户名（并更新时间）
+        if (username && document.getElementById('userDisplayName')) {
+            document.getElementById('userDisplayName').textContent = username;
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const el = document.getElementById('currentTime');
+            if (el) el.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // 怪物数据（从本地存储加载）
+        let monsters = [];
+        const STORAGE_KEY = 'rift_monsters_data';
+        
+        // 属性配置
+        const attributes = [
+            { id: 'fire', name: '火', icon: 'fa-fire', colorClass: 'fire' },
+            { id: 'thunder', name: '雷', icon: 'fa-bolt', colorClass: 'thunder' },
+            { id: 'ice', name: '冰', icon: 'fa-snowflake', colorClass: 'ice' },
+            { id: 'wind', name: '风', icon: 'fa-wind', colorClass: 'wind' },
+            { id: 'rock', name: '岩', icon: 'fa-mountain', colorClass: 'rock' },
+            { id: 'light', name: '光', icon: 'fa-sun', colorClass: 'light' },
+            { id: 'gravity', name: '重力', icon: 'fa-weight-hanging', colorClass: 'gravity' },
+            { id: 'life', name: '生命', icon: 'fa-heart', colorClass: 'life' },
+            { id: 'fusion', name: '融合', icon: 'fa-atom', colorClass: 'fusion' },
+            { id: 'physical', name: '物理', icon: 'fa-fist-raised', colorClass: 'physical' }
+        ];
+        
+        // 难度等级配置
+        const levels = [
+            { id: '低危', name: '低危', colorClass: 'level-low' },
+            { id: '中危', name: '中危', colorClass: 'level-medium' },
+            { id: '高危', name: '高危', colorClass: 'level-high' },
+            { id: '极高危', name: '极高危', colorClass: 'level-very-high' },
+            { id: '灾难', name: '灾难', colorClass: 'level-disaster' }
+        ];
+        
+        // 频次配置
+        const frequencies = [
+            { id: '罕见', name: '罕见（每月1-2次）' },
+            { id: '较少', name: '较少（每周1-2次）' },
+            { id: '常见', name: '常见（每周3-5次）' },
+            { id: '频繁', name: '频繁（几乎每天）' },
+            { id: '持续', name: '持续（持续存在）' }
+        ];
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMonsters();
+            renderMonsterList();
+            renderAttributeOptions();
+            renderStatsPanel();
+
+            // 尝试从云端加载（若可用），云端数据优先
+            if (typeof window !== 'undefined' && window.supabase) {
+                loadMonstersFromSupabase().catch(err => console.warn('云端加载怪物失败：', err));
+            } else {
+                console.warn('Supabase 未初始化，跳过云端加载怪物');
+            }
+
+            // 事件监听（带空值检查以防止 null.addEventListener 错误）
+            const btnAddMonster = document.getElementById('btnAddMonster');
+            if (btnAddMonster) btnAddMonster.addEventListener('click', openAddModal);
+
+            const btnAddFirstMonster = document.getElementById('btnAddFirstMonster');
+            if (btnAddFirstMonster) btnAddFirstMonster.addEventListener('click', openAddModal);
+
+            const closeModalBtn = document.getElementById('closeModal');
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+
+            const btnCancel = document.getElementById('btnCancel');
+            if (btnCancel) btnCancel.addEventListener('click', closeModal);
+
+            const monsterFormEl = document.getElementById('monsterForm');
+            if (monsterFormEl) monsterFormEl.addEventListener('submit', saveMonster);
+
+            // 点击模态框外部关闭（有条件绑定）
+            const monsterModalEl = document.getElementById('monsterModal');
+            if (monsterModalEl) {
+                monsterModalEl.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+            }
+
+            // 弱点/抗性选择冲突检测（如果有选项则绑定）
+            document.querySelectorAll('#weaknessGrid .attribute-option').forEach(option => {
+                if (option) option.addEventListener('click', updateAttributeConflicts);
+            });
+
+            document.querySelectorAll('#resistanceGrid .attribute-option').forEach(option => {
+                if (option) option.addEventListener('click', updateAttributeConflicts);
+            });
+
+            console.log('裂隙怪物登记系统已加载');
+        });
+        
+        // 加载怪物数据
+        function loadMonsters() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    monsters = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error('加载怪物数据失败:', e);
+                monsters = [];
+            }
+        }
+        
+        // 保存怪物数据
+        function saveMonsters() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(monsters));
+                return true;
+            } catch (e) {
+                console.error('保存怪物数据失败:', e);
+                return false;
+            }
+        }
+
+        // ============ Supabase 同步（最小实现：加载云端并在保存时写入） ============
+        // 从 Supabase 加载怪物数据（优先云端）
+        async function loadMonstersFromSupabase() {
+            try {
+                const client = (typeof window !== 'undefined' && window.supabase) ? window.supabase : null;
+                if (!client) {
+                    console.warn('Supabase 未初始化，跳过云端加载怪物');
+                    return false;
+                }
+
+                const { data, error } = await client.from('rift_monsters').select('*').order('created_at', { ascending: true });
+                if (error) {
+                    console.warn('从 Supabase 加载怪物失败：', error);
+                    return false;
+                }
+
+                if (!data || data.length === 0) {
+                    console.log('云端没有怪物数据');
+                    return false;
+                }
+
+                // 将云端数据映射为本地格式
+                monsters = data.map(row => ({
+                    // 保持本地 id（使用云端 id 作为 local id 可选），优先使用 local_id 字段，否则使用 cloud id
+                    id: row.local_id || (row.id ? 'cloud_' + row.id : 'monster_' + Date.now() + '_' + Math.random().toString(36).substr(2,9)),
+                    name: row.name || row.title || '',
+                    region: row.region || '',
+                    frequency: row.frequency || '',
+                    level: row.level || '',
+                    weaknesses: Array.isArray(row.weaknesses) ? row.weaknesses : (row.weaknesses ? JSON.parse(row.weaknesses) : []),
+                    resistances: Array.isArray(row.resistances) ? row.resistances : (row.resistances ? JSON.parse(row.resistances) : []),
+                    notes: row.notes || '',
+                    createdAt: row.created_at || row.createdAt || new Date().toISOString(),
+                    updatedAt: row.updated_at || row.updatedAt || new Date().toISOString(),
+                    cloud_id: row.id || null
+                }));
+
+                // 覆盖本地缓存并重新渲染
+                saveMonsters();
+                renderMonsterList();
+                renderStatsPanel();
+
+                console.log(`从 Supabase 加载了 ${monsters.length} 条怪物记录并更新本地缓存`);
+                return true;
+            } catch (e) {
+                console.error('加载云端怪物时发生错误：', e);
+                return false;
+            }
+        }
+
+        // 将单个怪物写入 Supabase（插入或更新）
+        async function saveMonsterToSupabase(monster) {
+            try {
+                const client = (typeof window !== 'undefined' && window.supabase) ? window.supabase : null;
+                if (!client) {
+                    console.warn('saveMonsterToSupabase: Supabase 客户端未初始化');
+                    return false;
+                }
+
+                // 构造要写入的对象，弱点/抗性序列化为数组或 JSON
+                const payload = {
+                    local_id: monster.id,
+                    name: monster.name,
+                    region: monster.region,
+                    frequency: monster.frequency,
+                    level: monster.level,
+                    weaknesses: monster.weaknesses,
+                    resistances: monster.resistances,
+                    notes: monster.notes,
+                    created_at: monster.createdAt || new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+
+                // 使用 upsert 确保更新已存在记录（需要在 Supabase 表中将 local_id 设置为唯一键以生效），否则尝试插入
+                const { data, error } = await client.from('rift_monsters').upsert(payload, { onConflict: 'local_id' });
+                if (error) {
+                    console.warn('将怪物写入 Supabase 失败：', error);
+                    return false;
+                }
+
+                // 将 cloud id 记录回本地对象（若云端返回 id）
+                if (data && data[0] && data[0].id) {
+                    monster.cloud_id = data[0].id;
+                }
+
+                console.log('已将怪物保存到 Supabase: ', monster.name);
+                return true;
+            } catch (e) {
+                console.error('保存怪物到 Supabase 出错：', e);
+                return false;
+            }
+        }
+        
+        // 渲染怪物列表
+        function renderMonsterList() {
+            const monsterList = document.getElementById('monsterList');
+            const emptyState = document.getElementById('emptyState');
+            
+            // 清空列表
+            monsterList.innerHTML = '';
+            
+            // 如果没有怪物，显示空状态
+            if (monsters.length === 0) {
+                if (emptyState) {
+                    emptyState.style.display = 'block';
+                }
+                return;
+            }
+            
+            // 隐藏空状态
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+            
+            // 渲染每个怪物卡片
+            monsters.forEach(monster => {
+                const card = document.createElement('div');
+                card.className = 'monster-card';
+                card.dataset.id = monster.id;
+                
+                // 获取难度等级样式
+                const levelClass = levels.find(l => l.id === monster.level)?.colorClass || 'level-medium';
+                
+                card.innerHTML = `
+                    <div class="monster-header">
+                        <div>
+                            <div class="monster-name">${monster.name}</div>
+                            <div class="monster-level ${levelClass}">${monster.level}</div>
+                        </div>
+                        <!-- 图片已移除：不再显示怪物图片 -->
+                    </div>
+                    
+                    <div class="monster-info">
+                        <div class="info-item">
+                            <div class="info-label">出没地区:</div>
+                            <div class="info-value">${monster.region}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">出现频次:</div>
+                            <div class="info-value">${monster.frequency}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">弱点:</div>
+                            <div class="info-value">
+                                <div class="attribute-list">
+                                    ${monster.weaknesses.map(weakness => {
+                                        const attr = attributes.find(a => a.id === weakness);
+                                        return `<span class="attribute-tag weakness-tag"><i class="fas ${attr?.icon} ${attr?.colorClass}"></i> ${attr?.name || weakness}</span>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">抗性:</div>
+                            <div class="info-value">
+                                <div class="attribute-list">
+                                    ${monster.resistances.map(resistance => {
+                                        const attr = attributes.find(a => a.id === resistance);
+                                        return `<span class="attribute-tag resistance-tag"><i class="fas ${attr?.icon} ${attr?.colorClass}"></i> ${attr?.name || resistance}</span>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        ${monster.notes ? `
+                        <div class="info-item">
+                            <div class="info-label">备注:</div>
+                            <div class="info-value">${monster.notes}</div>
+                        </div>` : ''}
+                    </div>
+                    
+                    <div class="monster-actions">
+                        <button class="btn-action btn-edit" onclick="editMonster('${monster.id}')">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                        <button class="btn-action btn-delete" onclick="deleteMonster('${monster.id}')">
+                            <i class="fas fa-trash"></i> 删除
+                        </button>
+                    </div>
+                `;
+                
+                monsterList.appendChild(card);
+            });
+        }
+        
+        // 渲染统计面板
+        function renderStatsPanel() {
+            const statsPanel = document.getElementById('statsPanel');
+            
+            // 计算统计信息
+            const totalMonsters = monsters.length;
+            const levelCounts = {};
+            levels.forEach(level => {
+                levelCounts[level.id] = monsters.filter(m => m.level === level.id).length;
+            });
+            
+            // 最常见的弱点
+            const weaknessCounts = {};
+            monsters.forEach(monster => {
+                monster.weaknesses.forEach(weakness => {
+                    weaknessCounts[weakness] = (weaknessCounts[weakness] || 0) + 1;
+                });
+            });
+            
+            const mostCommonWeakness = Object.keys(weaknessCounts).reduce((a, b) => 
+                weaknessCounts[a] > weaknessCounts[b] ? a : b, '无');
+            
+            // 最常见的抗性
+            const resistanceCounts = {};
+            monsters.forEach(monster => {
+                monster.resistances.forEach(resistance => {
+                    resistanceCounts[resistance] = (resistanceCounts[resistance] || 0) + 1;
+                });
+            });
+            
+            const mostCommonResistance = Object.keys(resistanceCounts).reduce((a, b) => 
+                resistanceCounts[a] > resistanceCounts[b] ? a : b, '无');
+            
+            statsPanel.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${totalMonsters}</div>
+                    <div class="stat-label">总怪物数量</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #ff6b6b;">${mostCommonWeakness ? attributes.find(a => a.id === mostCommonWeakness)?.name || mostCommonWeakness : '无'}</div>
+                    <div class="stat-label">最常见弱点</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #4fc3ff;">${mostCommonResistance ? attributes.find(a => a.id === mostCommonResistance)?.name || mostCommonResistance : '无'}</div>
+                    <div class="stat-label">最常见抗性</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value">${levels.map(level => levelCounts[level.id]).reduce((a, b) => a + b, 0)}</div>
+                    <div class="stat-label">威胁等级分布</div>
+                    <div class="level-stats">
+                        ${levels.map(level => `
+                            <div class="level-stat ${level.colorClass}" title="${level.name}: ${levelCounts[level.id]}">
+                                ${levelCounts[level.id]}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 渲染属性选项
+        function renderAttributeOptions() {
+            const weaknessGrid = document.getElementById('weaknessGrid');
+            const resistanceGrid = document.getElementById('resistanceGrid');
+            
+            // 渲染弱点选项
+            weaknessGrid.innerHTML = attributes.map(attr => `
+                <div class="attribute-option" data-attribute="${attr.id}">
+                    <div class="attribute-icon">
+                        <i class="fas ${attr.icon} ${attr.colorClass}"></i>
+                    </div>
+                    <div>${attr.name}</div>
+                    <input type="checkbox" name="weakness" value="${attr.id}">
+                </div>
+            `).join('');
+            
+            // 渲染抗性选项
+            resistanceGrid.innerHTML = attributes.map(attr => `
+                <div class="attribute-option" data-attribute="${attr.id}">
+                    <div class="attribute-icon">
+                        <i class="fas ${attr.icon} ${attr.colorClass}"></i>
+                    </div>
+                    <div>${attr.name}</div>
+                    <input type="checkbox" name="resistance" value="${attr.id}">
+                </div>
+            `).join('');
+        }
+        
+        // 打开添加怪物模态框
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '登记新裂隙怪物';
+            document.getElementById('modalSubtitle').textContent = '请填写怪物详细信息，注意弱点和抗性不能重合';
+            document.getElementById('monsterId').value = '';
+            document.getElementById('monsterForm').reset();
+            
+            // 重置所有属性选择
+            document.querySelectorAll('.attribute-option').forEach(option => {
+                option.classList.remove('selected', 'conflict');
+                const checkbox = option.querySelector('input[type="checkbox"]');
+                if (checkbox) checkbox.checked = false;
+            });
+            
+            // 打开模态框
+            document.getElementById('monsterModal').classList.add('active');
+        }
+        
+        // 编辑怪物
+        function editMonster(id) {
+            const monster = monsters.find(m => m.id === id);
+            if (!monster) return;
+            
+            document.getElementById('modalTitle').textContent = '编辑裂隙怪物';
+            document.getElementById('modalSubtitle').textContent = '修改怪物信息，注意弱点和抗性不能重合';
+            document.getElementById('monsterId').value = monster.id;
+            document.getElementById('monsterName').value = monster.name;
+            document.getElementById('monsterRegion').value = monster.region;
+            document.getElementById('monsterFrequency').value = monster.frequency;
+            document.getElementById('monsterLevel').value = monster.level;
+            document.getElementById('monsterNotes').value = monster.notes || '';
+            // 图片字段已移除
+            
+            // 重置所有属性选择
+            document.querySelectorAll('.attribute-option').forEach(option => {
+                option.classList.remove('selected', 'conflict');
+                const checkbox = option.querySelector('input[type="checkbox"]');
+                if (checkbox) checkbox.checked = false;
+            });
+            
+            // 设置弱点选择
+            monster.weaknesses.forEach(weakness => {
+                const option = document.querySelector(`#weaknessGrid .attribute-option[data-attribute="${weakness}"]`);
+                if (option) {
+                    option.classList.add('selected');
+                    const checkbox = option.querySelector('input[type="checkbox"]');
+                    if (checkbox) checkbox.checked = true;
+                }
+            });
+            
+            // 设置抗性选择
+            monster.resistances.forEach(resistance => {
+                const option = document.querySelector(`#resistanceGrid .attribute-option[data-attribute="${resistance}"]`);
+                if (option) {
+                    option.classList.add('selected');
+                    const checkbox = option.querySelector('input[type="checkbox"]');
+                    if (checkbox) checkbox.checked = true;
+                }
+            });
+            
+            // 更新冲突检测
+            updateAttributeConflicts();
+            
+            // 打开模态框
+            document.getElementById('monsterModal').classList.add('active');
+        }
+        
+        // 删除怪物
+        function deleteMonster(id) {
+            if (!confirm('确定要删除这个怪物记录吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            monsters = monsters.filter(m => m.id !== id);
+            saveMonsters();
+            renderMonsterList();
+            renderStatsPanel();
+            
+            // 显示成功消息
+            showNotification('怪物记录已删除', 'success');
+        }
+        
+        // 保存怪物（添加或更新）
+        function saveMonster(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const id = document.getElementById('monsterId').value;
+            const name = document.getElementById('monsterName').value.trim();
+            const region = document.getElementById('monsterRegion').value.trim();
+            const frequency = document.getElementById('monsterFrequency').value;
+            const level = document.getElementById('monsterLevel').value;
+            const notes = document.getElementById('monsterNotes').value.trim();
+            
+            // 获取选择的弱点
+            const weaknesses = [];
+            document.querySelectorAll('#weaknessGrid .attribute-option.selected').forEach(option => {
+                weaknesses.push(option.dataset.attribute);
+            });
+            
+            // 获取选择的抗性
+            const resistances = [];
+            document.querySelectorAll('#resistanceGrid .attribute-option.selected').forEach(option => {
+                resistances.push(option.dataset.attribute);
+            });
+            
+            // 验证表单
+            if (!name || !region || !frequency || !level || weaknesses.length === 0 || resistances.length === 0) {
+                showNotification('请填写所有必填字段', 'error');
+                return;
+            }
+            
+            // 检查弱点和抗性是否有冲突
+            const conflict = weaknesses.find(w => resistances.includes(w));
+            if (conflict) {
+                const conflictAttr = attributes.find(a => a.id === conflict);
+                showNotification(`弱点和抗性不能包含相同属性：${conflictAttr?.name || conflict}`, 'error');
+                return;
+            }
+            
+            // 创建怪物对象
+            const monster = {
+                id: id || 'monster_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                name,
+                region,
+                frequency,
+                level,
+                weaknesses,
+                resistances,
+                notes,
+                // image field removed
+                createdAt: id ? undefined : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            // 添加或更新怪物
+            if (id) {
+                // 更新现有怪物
+                const index = monsters.findIndex(m => m.id === id);
+                if (index !== -1) {
+                    monster.createdAt = monsters[index].createdAt;
+                    monsters[index] = monster;
+                }
+            } else {
+                // 添加新怪物
+                monsters.push(monster);
+            }
+            
+            // 保存到本地存储
+            if (saveMonsters()) {
+                // 重新渲染列表和统计
+                renderMonsterList();
+                renderStatsPanel();
+                
+                // 关闭模态框
+                closeModal();
+                
+                // 显示成功消息
+                showNotification(id ? '怪物资料已更新' : '新怪物已登记', 'success');
+                // 同步到 Supabase（后台执行，不阻塞界面）
+                if (typeof window !== 'undefined' && window.supabase) {
+                    // find the saved monster object (latest by id)
+                    const saved = monsters.find(m => m.id === (monster.id || id));
+                        if (saved) {
+                            // If supabase client is not available, inform the user
+                            if (!(typeof window !== 'undefined' && window.supabase)) {
+                                console.warn('尝试同步到云端，但 Supabase 未初始化');
+                                showNotification('未连接到云端，已仅保存到本地', 'warning');
+                            } else {
+                                // show a visible notification on cloud sync result
+                                saveMonsterToSupabase(saved)
+                                    .then(success => {
+                                        if (success) {
+                                            showNotification('已同步到云端', 'success');
+                                        } else {
+                                            showNotification('同步到云端失败（请检查网络或权限）', 'error');
+                                        }
+                                    })
+                                    .catch(e => {
+                                        console.warn('同步怪物到云端失败：', e);
+                                        showNotification('同步到云端出错', 'error');
+                                    });
+                            }
+                        }
+                }
+            } else {
+                showNotification('保存失败，请重试', 'error');
+            }
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('monsterModal').classList.remove('active');
+        }
+        
+        // 更新属性冲突检测
+        function updateAttributeConflicts() {
+            // 获取当前选择的弱点
+            const selectedWeaknesses = [];
+            document.querySelectorAll('#weaknessGrid .attribute-option.selected').forEach(option => {
+                selectedWeaknesses.push(option.dataset.attribute);
+            });
+            
+            // 获取当前选择的抗性
+            const selectedResistances = [];
+            document.querySelectorAll('#resistanceGrid .attribute-option.selected').forEach(option => {
+                selectedResistances.push(option.dataset.attribute);
+            });
+            
+            // 更新弱点选项的冲突状态
+            document.querySelectorAll('#weaknessGrid .attribute-option').forEach(option => {
+                const attribute = option.dataset.attribute;
+                
+                if (selectedResistances.includes(attribute)) {
+                    option.classList.add('conflict');
+                } else {
+                    option.classList.remove('conflict');
+                }
+            });
+            
+            // 更新抗性选项的冲突状态
+            document.querySelectorAll('#resistanceGrid .attribute-option').forEach(option => {
+                const attribute = option.dataset.attribute;
+                
+                if (selectedWeaknesses.includes(attribute)) {
+                    option.classList.add('conflict');
+                } else {
+                    option.classList.remove('conflict');
+                }
+            });
+            
+            // 处理选项点击事件
+            document.querySelectorAll('.attribute-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (this.classList.contains('conflict')) {
+                        return; // 冲突选项不可选择
+                    }
+                    
+                    this.classList.toggle('selected');
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    
+                    // 更新冲突检测
+                    updateAttributeConflicts();
+                });
+            });
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            // 移除现有通知
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // 创建新通知
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'rgba(107, 255, 184, 0.9)' : type === 'error' ? 'rgba(255, 107, 107, 0.9)' : 'rgba(79, 195, 255, 0.9)'};
+                color: white;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                z-index: 2000;
+                animation: slideIn 0.5s ease;
+                backdrop-filter: blur(10px);
+                border: 1px solid ${type === 'success' ? 'rgba(107, 255, 184, 0.5)' : type === 'error' ? 'rgba(255, 107, 107, 0.5)' : 'rgba(79, 195, 255, 0.5)'};
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 5秒后移除通知
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.5s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        }
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 初始不加载示例数据，页面将以空状态开始
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

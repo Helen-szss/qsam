@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研究处 - 管理局资料库</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            color: #e0f7ff;
+            display: block; /* override global centering to allow normal flow */
+            overflow-x: hidden;
+            overflow-y: auto; /* allow vertical scrolling */
+            padding-top: 72px; /* leave space for fixed status-bar */
+        }
+        
+        /* 顶部状态栏（与其它页面一致） */
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(10, 36, 99, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: nowrap;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* 返回按钮样式 */
+        .back-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            color: #4fc3ff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            margin-right: 15px;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 150, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+        }
+
+        .back-btn i {
+            font-size: 0.8rem;
+        }
+
+        .system-logo {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.7));
+        }
+
+        .system-name {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        /* 主要内容 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .department-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(10, 36, 99, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 150, 255, 0.1);
+        }
+        
+        .department-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #4fc3ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .department-title {
+            font-size: 3rem;
+            color: #e0f7ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
+        }
+        
+        .department-subtitle {
+            font-size: 1.5rem;
+            color: #a3d5ff;
+            margin-bottom: 10px;
+        }
+        
+        .department-motto {
+            font-size: 1.2rem;
+            color: #6b9ccc;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        
+        /* 内容卡片 */
+        .content-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+        }
+        
+        .section-icon {
+            font-size: 2rem;
+            color: #4fc3ff;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #e0f7ff;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .content-card {
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 150, 255, 0.2);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: #4fc3ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-content {
+            line-height: 1.8;
+            color: #a3d5ff;
+            font-size: 1.1rem;
+        }
+        
+        /* 时间线样式 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #0066cc, #0099ff);
+            border-radius: 3px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 20px;
+        }
+        
+        .timeline-year {
+            position: absolute;
+            left: -45px;
+            top: 0;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .timeline-content {
+            background: rgba(0, 30, 80, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 3px solid #0099ff;
+        }
+        
+        .timeline-title {
+            font-size: 1.3rem;
+            color: #4fc3ff;
+            margin-bottom: 10px;
+        }
+        
+        /* 职能列表 */
+        .function-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .function-item {
+            background: rgba(0, 30, 80, 0.6);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .function-item:hover {
+            border-color: rgba(0, 150, 255, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        .function-icon {
+            font-size: 2rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .function-title {
+            font-size: 1.3rem;
+            color: #e0f7ff;
+            margin-bottom: 10px;
+        }
+        
+        .function-desc {
+            color: #a3d5ff;
+            line-height: 1.6;
+        }
+        
+        /* 办公地点卡片 */
+        .location-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .location-card {
+            background: rgba(0, 30, 80, 0.6);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .location-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 150, 255, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 150, 255, 0.2);
+        }
+        
+        .location-image {
+            height: 200px;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .location-content {
+            padding: 25px;
+        }
+        
+        .location-title {
+            font-size: 1.5rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .location-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #a3d5ff;
+        }
+        
+        .info-item i {
+            color: #4fc3ff;
+            width: 20px;
+        }
+        
+        /* 研究数据展示 */
+        .research-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-item {
+            background: rgba(0, 30, 80, 0.6);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            color: #4fc3ff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(79, 195, 255, 0.5);
+        }
+        
+        .stat-label {
+            color: #a3d5ff;
+            font-size: 1rem;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            background: rgba(10, 36, 99, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            color: #4fc3ff;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-link:hover {
+            background: rgba(0, 150, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .status-bar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .system-info, .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .department-title {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .location-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .function-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .research-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .back-btn {
+                font-size: 0.9rem;
+                padding: 7px 12px;
+                margin-right: 6px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .research-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏（统一样式，返回按钮位于此处） -->
+    <div class="status-bar">
+        <div class="system-info">
+            <!-- 返回按钮 -->
+            <button class="back-btn" onclick="goBack()" title="返回">
+                <i class="fas fa-chevron-left"></i>
+                <span>返回</span>
+            </button>
+
+            <img src="qsamlogo.png" alt="管理局标志" class="system-logo">
+            <div class="system-name">管理局资料库 - 研究处</div>
+        </div>
+
+        <div class="user-info">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div>
+                <div id="usernameDisplay">观察员</div>
+                <div style="font-size: 0.8rem; color: #a3d5ff;">观察员</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </div>
+    
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 部门头部 -->
+        <div class="department-header">
+            <div class="department-icon">
+                <i class="fas fa-microscope"></i>
+            </div>
+            <h1 class="department-title">研究处</h1>
+            <div class="department-subtitle">跨象限异常现象研究核心部门</div>
+            <div class="department-motto">"探索未知，揭示真相，引领变革"</div>
+        </div>
+        
+        <!-- 发展历史 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-history section-icon"></i>
+                <h2 class="section-title">发展历史</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-book"></i>
+                    部门沿革
+                </div>
+                <div class="card-content">
+                    研究处是管理局成立最早的核心部门之一，其前身可追溯到终末元年随卡西亚女士一同来到公海上的初期团队。随着裂隙现象的增多和实验体数量的激增，研究处逐渐发展成为管理局的技术和理论核心。目前拥有超过500名研究人员，涵盖了物理学、异常生物学、量子力学、时空理论等多个前沿领域，是管理局理解和管理裂隙现象的关键力量。
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-timeline"></i>
+                    历史时间线
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末元年</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">研究处前身成立</div>
+                            <div class="timeline-desc">"希望者项目小组"成立，由包含卡西亚女士在内5名的成员组成，开始系统记录和研究时空裂隙和实验体。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C23</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">正式成立研究处</div>
+                            <div class="timeline-desc">随着管理局正式成立，研究小组扩展为研究处，编制扩大至50人，设立三个研究分部。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C37</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">量子锚点技术突破</div>
+                            <div class="timeline-desc">研究处成功研发量子锚点技术，实现了对裂隙能量的初步稳定和控制，为后续跨象限研究奠定基础。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C79</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">成立异常生物学分部</div>
+                            <div class="timeline-desc">随着裂隙生物的出现，研究处成立专门的异常生物学分部，系统研究裂隙怪物的特性和行为模式，以及收集时铸厂各期实验体的详细数据。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C92</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">时空理论重大突破</div>
+                            <div class="timeline-desc">研究处在时空理论方面取得重大突破，首次提出了"多时空连续体"理论框架，彻底改变了管理局对裂隙现象的理解。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C116</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">建立全象限研究网络</div>
+                            <div class="timeline-desc">研究处成功建立了覆盖莫比乌斯之庭、赫尔卡西亚等多个象限的研究网络，实现了跨象限实时数据共享。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 部门职能 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-tasks section-icon"></i>
+                <h2 class="section-title">部门职能</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-cogs"></i>
+                    主要职责
+                </div>
+                <div class="card-content">
+                    研究处是管理局的"大脑"，负责所有裂隙现象的科学研究、理论建模、技术开发和数据分析工作。我们不仅探索裂隙现象的本质，还开发应对技术，为管理局的决策和行动提供科学依据。
+                </div>
+                
+                <div class="function-list">
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-atom"></i>
+                        </div>
+                        <div class="function-title">基础理论研究</div>
+                        <div class="function-desc">
+                            研究裂隙现象的物理基础、量子特性和时空影响，建立和完善裂隙现象的理论模型，预测其发展规律。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-dna"></i>
+                        </div>
+                        <div class="function-title">异常生物学研究</div>
+                        <div class="function-desc">
+                            研究裂隙怪物的分类、生理结构、行为模式和生态影响，评估其对各象限生态系统的潜在威胁。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-vial"></i>
+                        </div>
+                        <div class="function-title">实验体研究</div>
+                        <div class="function-desc">
+                            研究人为制造的实验体及受裂隙影响的失控时痕者，分析其变异机制、能力特性和潜在风险，寻找控制和逆转的方法。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="function-title">技术开发</div>
+                        <div class="function-desc">
+                            基于研究成果开发检测、防护、控制和利用裂隙能量的技术装备，提升管理局对裂隙现象的管理能力。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="function-title">数据分析</div>
+                        <div class="function-desc">
+                            收集和分析各象限的裂隙现象数据，建立预测模型，为管理局的决策和行动提供数据支持。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="function-title">知识传承</div>
+                        <div class="function-desc">
+                            整理研究资料，编写技术手册，培训新进研究人员，确保裂隙研究知识的系统传承和持续发展。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-sitemap"></i>
+                    组织架构
+                </div>
+                <div class="card-content">
+                    <p>研究处下设六个专业分部：</p>
+                    <ul style="margin-top: 15px; padding-left: 20px; color: #a3d5ff;">
+                        <li style="margin-bottom: 10px;"><strong>基础理论分部</strong> - 负责裂隙现象的物理学、量子力学和时空理论研究</li>
+                        <li style="margin-bottom: 10px;"><strong>异常生物学分部</strong> - 负责裂隙怪物的分类、生理和行为研究</li>
+                        <li style="margin-bottom: 10px;"><strong>实验体研究分部</strong> - 负责失控时痕者及实验体的研究和分析</li>
+                        <li style="margin-bottom: 10px;"><strong>技术开发分部</strong> - 负责检测、防护和控制技术的研发</li>
+                        <li style="margin-bottom: 10px;"><strong>数据分析分部</strong> - 负责裂隙数据的收集、分析和建模</li>
+                        <li style="margin-bottom: 10px;"><strong>档案与培训分部</strong> - 负责研究资料的整理、归档和人员培训</li>
+                    </ul>
+                    
+                    <!-- 研究统计数据 -->
+                    <div class="research-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">500+</div>
+                            <div class="stat-label">研究人员</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">首席研究员</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">47</div>
+                            <div class="stat-label">研究项目</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">336</div>
+                            <div class="stat-label">研究论文</div>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 20px;">目前研究处共有员工521人，其中首席科学家12人，高级研究员89人，研究人员420人。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 办公地点 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-map-marked-alt section-icon"></i>
+                <h2 class="section-title">办公地点</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-building"></i>
+                    总部研究设施
+                </div>
+                <div class="card-content">
+                    <p>研究处全部工作集中在跨象限异常管理局总部基地，这里是全境除时铸厂外最大、最先进的裂隙现象研究设施。</p>
+                    
+                    <div class="location-cards">
+                        <div class="location-card">
+                            <div class="location-image">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div class="location-content">
+                                <div class="location-title">中央研究大楼</div>
+                                <div class="location-info">
+                                    <div class="info-item">
+                                        <i class="fas fa-map-pin"></i>
+                                        <span>总部基地-地上工作区6至15层</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>233-1500-3000</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>全天候开放</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                        <span>占地面积：25,000平方米</span>
+                                    </div>
+                                </div>
+                                <div class="function-desc">
+                                    研究处核心工作区，包含理论研究室、数据分析中心、档案室和行政办公室。设有全球最大的裂隙现象数据库和计算中心。
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="location-card">
+                            <div class="location-image">
+                                <i class="fas fa-vial"></i>
+                            </div>
+                            <div class="location-content">
+                                <div class="location-title">地下实验中心</div>
+                                <div class="location-info">
+                                    <div class="info-item">
+                                        <i class="fas fa-map-pin"></i>
+                                        <span>总部基地-地下3至7层</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>233-1500-3100</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>受控访问</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                        <span>占地面积：18,000平方米</span>
+                                    </div>
+                                </div>
+                                <div class="function-desc">
+                                    高度安全的实验设施，包含生物安全四级实验室、量子物理实验室、材料分析实验室和受控环境测试场。
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="location-card">
+                            <div class="location-image">
+                                <i class="fas fa-network-wired"></i>
+                            </div>
+                            <div class="location-content">
+                                <div class="location-title">跨象限观测站</div>
+                                <div class="location-info">
+                                    <div class="info-item">
+                                        <i class="fas fa-map-pin"></i>
+                                        <span>总部基地-顶层及附属设施</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>233-1500-3200</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>24小时运行</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                        <span>设备覆盖半径：1000公里</span>
+                                    </div>
+                                </div>
+                                <div class="function-desc">
+                                    当前最先进的裂隙现象观测设施，配备量子雷达、时空扭曲探测器和跨象限通讯阵列，实时监控多个象限的裂隙活动。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航（已移除） -->
+    </div>
+    
+    <script>
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const role = localStorage.getItem('auth_role');
+            const username = localStorage.getItem('auth_user');
+            
+            if (role !== 'viewer') {
+                alert('请先以观察员身份登录！');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // 显示用户名
+            if (username) {
+                document.getElementById('usernameDisplay').textContent = username;
+            }
+            
+            // 添加动画效果
+            animateElements();
+            // 更新时间显示（顶部状态栏）
+            function updateTime() {
+                const el = document.getElementById('currentTime');
+                if (el) el.textContent = new Date().toLocaleTimeString();
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+        
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 返回控制台
+        function goToDashboard() {
+            window.location.href = 'viewer.html';
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除登录状态
+                localStorage.removeItem('auth_user');
+                localStorage.removeItem('auth_role');
+                localStorage.removeItem('auth_time');
+                
+                // 跳转到登录页
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // 打印页面
+        function printPage() {
+            window.print();
+        }
+        
+        // 元素动画效果
+        function animateElements() {
+            // 为卡片添加渐入动画
+            const cards = document.querySelectorAll('.content-card, .function-item, .location-card, .stat-item');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + index * 50);
+            });
+            
+            // 为时间线项目添加动画
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 300 + index * 100);
+            });
+            
+            // 为统计数据添加计数动画
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach((stat, index) => {
+                const originalText = stat.textContent;
+                const numericMatch = originalText.match(/\d+/);
+                if (numericMatch) {
+                    const targetNumber = parseInt(numericMatch[0]);
+                    stat.textContent = '0';
+                    
+                    setTimeout(() => {
+                        let current = 0;
+                        const increment = targetNumber / 30;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= targetNumber) {
+                                current = targetNumber;
+                                clearInterval(timer);
+                            }
+                            stat.textContent = Math.floor(current) + (originalText.includes('+') ? '+' : '');
+                        }, 50);
+                    }, 800 + index * 200);
+                }
+            });
+        }
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(event) {
+            // Esc键返回控制台
+            if (event.key === 'Escape') {
+                goToDashboard();
+            }
+            // Ctrl+P打印
+            if (event.ctrlKey && event.key === 'p') {
+                event.preventDefault();
+                printPage();
+            }
+            // 按B键返回上一页
+            if (event.key === 'b' && !event.ctrlKey) {
+                goBack();
+            }
+        });
+        
+        // 鼠标悬停效果增强
+        document.querySelectorAll('.content-card, .function-item, .location-card, .stat-item').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+    </script>
+</body>
+</html>

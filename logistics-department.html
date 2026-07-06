@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后勤部 - 管理局资料库</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            color: #e0f7ff;
+            display: block; /* override global centering to allow normal flow */
+            overflow-x: hidden;
+            overflow-y: auto; /* allow vertical scrolling */
+            padding-top: 72px; /* leave space for fixed status-bar */
+        }
+        
+        /* 顶部状态栏（与其它页面一致） */
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(10, 36, 99, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: nowrap;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* 返回按钮（置于顶部导航栏内的样式） */
+        /* 返回按钮样式 */
+        .back-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            color: #4fc3ff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            margin-right: 15px;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 150, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+        }
+
+        .back-btn i {
+            font-size: 0.8rem;
+        }
+
+        .system-logo {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.7));
+        }
+
+        .system-name {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        /* 主要内容 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .department-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(10, 36, 99, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 150, 255, 0.1);
+        }
+        
+        .department-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #4fc3ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .department-title {
+            font-size: 3rem;
+            color: #e0f7ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
+        }
+        
+        .department-subtitle {
+            font-size: 1.5rem;
+            color: #a3d5ff;
+            margin-bottom: 10px;
+        }
+        
+        .department-motto {
+            font-size: 1.2rem;
+            color: #6b9ccc;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        
+        /* 内容卡片 */
+        .content-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+        }
+        
+        .section-icon {
+            font-size: 2rem;
+            color: #4fc3ff;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #e0f7ff;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .content-card {
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 150, 255, 0.2);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: #4fc3ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-content {
+            line-height: 1.8;
+            color: #a3d5ff;
+            font-size: 1.1rem;
+        }
+        
+        /* 时间线样式 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #0066cc, #0099ff);
+            border-radius: 3px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 20px;
+        }
+        
+        .timeline-year {
+            position: absolute;
+            left: -45px;
+            top: 0;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .timeline-content {
+            background: rgba(0, 30, 80, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 3px solid #0099ff;
+        }
+        
+        .timeline-title {
+            font-size: 1.3rem;
+            color: #4fc3ff;
+            margin-bottom: 10px;
+        }
+        
+        /* 职能列表 */
+        .function-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .function-item {
+            background: rgba(0, 30, 80, 0.6);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .function-item:hover {
+            border-color: rgba(0, 150, 255, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        .function-icon {
+            font-size: 2rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .function-title {
+            font-size: 1.3rem;
+            color: #e0f7ff;
+            margin-bottom: 10px;
+        }
+        
+        .function-desc {
+            color: #a3d5ff;
+            line-height: 1.6;
+        }
+        
+        /* 办公地点卡片 */
+        .location-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .location-card {
+            background: rgba(0, 30, 80, 0.6);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .location-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 150, 255, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 150, 255, 0.2);
+        }
+        
+        .location-image {
+            height: 200px;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .location-content {
+            padding: 25px;
+        }
+        
+        .location-title {
+            font-size: 1.5rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .location-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #a3d5ff;
+        }
+        
+        .info-item i {
+            color: #4fc3ff;
+            width: 20px;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            background: rgba(10, 36, 99, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            color: #4fc3ff;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-link:hover {
+            background: rgba(0, 150, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-left, .nav-right {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .department-title {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .location-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .function-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-btn {
+                font-size: 0.9rem;
+                padding: 7px 12px;
+                margin-right: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏（统一样式，返回按钮位于此处） -->
+    <div class="status-bar">
+        <div class="system-info">
+            <!-- 返回按钮 -->
+            <button class="back-btn" onclick="goBack()" title="返回">
+                <i class="fas fa-chevron-left"></i>
+                <span>返回</span>
+            </button>
+
+            <img src="qsamlogo.png" alt="管理局标志" class="system-logo">
+            <div class="system-name">管理局资料库 - 后勤部</div>
+        </div>
+
+        <div class="user-info">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div>
+                <div id="usernameDisplay">观察员</div>
+                <div style="font-size: 0.8rem; color: #a3d5ff;">观察员</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </div>
+    
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 部门头部 -->
+        <div class="department-header">
+            <div class="department-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <h1 class="department-title">后勤部</h1>
+            <div class="department-subtitle">物资保障与运营支持部门</div>
+            <div class="department-motto">"保障有力，支撑无限，服务全局"</div>
+        </div>
+        
+        <!-- 发展历史 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-history section-icon"></i>
+                <h2 class="section-title">发展历史</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-book"></i>
+                    部门沿革
+                </div>
+                <div class="card-content">
+                    后勤部成立于终末C23（管理局初期发展阶段），最初只是一个小型物资调配小组。随着管理局规模的扩大和裂隙现象研究的深入，后勤部逐渐发展成为管理局最重要的支持部门之一。从最初的5人小组发展到如今超过300人的大型部门，后勤部见证了管理局的每一次重大突破和转型。
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-timeline"></i>
+                    历史时间线
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C23</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">后勤部成立</div>
+                            <div class="timeline-desc">管理局成立初期，设立物资调配小组，负责基础物资保障工作。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C30</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">扩大编制</div>
+                            <div class="timeline-desc">随着管理局规模扩大，后勤部功能逐渐完善，编制扩大至50人，增设设备维护和基地建设职能。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C65</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">设立彼岸市据点，与当地居民初步达成合作关系，为外勤人员提供坚实后备保障。</div>
+                            <div class="timeline-desc"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C103</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">莫比乌斯之庭全境覆盖</div>
+                            <div class="timeline-desc">后勤部体系完整，莫比乌斯之庭全境覆盖，并可通过锚点对赫尔卡西亚外勤人员提供远程物资支持。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C129</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">部门重组</div>
+                            <div class="timeline-desc">完成部门重组，设立五个专业分部，形成更加高效灵活的保障体系。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 部门职能 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-tasks section-icon"></i>
+                <h2 class="section-title">部门职能</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-cogs"></i>
+                    主要职责
+                </div>
+                <div class="card-content">
+                    后勤部是管理局的"地基"，负责全局的物资保障、设施维护、运输调配乃至日常生活支持工作。我们确保每一位研究人员和战斗人员都能在最佳环境下开展工作，为各项任务提供坚实的后勤保障。
+                </div>
+                
+                <div class="function-list">
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="function-title">物资管理</div>
+                        <div class="function-desc">
+                            负责全局物资的采购、储存、调配和管理，包括实验设备、防护装备、生活物资等，确保物资供应充足、管理有序。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="function-title">设备维护</div>
+                        <div class="function-desc">
+                            负责所有实验设备、安全设施和基地基础设施的日常维护、检修和升级，确保设备正常运行。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <div class="function-title">运输调配</div>
+                        <div class="function-desc">
+                            管理全局运输资源，负责人员、物资和设备的运输调配，建立快速响应运输网络，支持紧急任务。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="function-title">基地运营</div>
+                        <div class="function-desc">
+                            负责管理局各基地的日常运营管理，包括能源供应、环境控制、安全监控和生活保障。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-first-aid"></i>
+                        </div>
+                        <div class="function-title">医疗保障</div>
+                        <div class="function-desc">
+                            管理医疗物资和设备，协调医疗救援，为受伤人员提供及时有效的医疗支持。
+                        </div>
+                    </div>
+                    
+                    <div class="function-item">
+                        <div class="function-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="function-title">质量控制</div>
+                        <div class="function-desc">
+                            建立后勤服务质量标准，定期评估和改进后勤服务流程，确保服务质量持续提升。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-sitemap"></i>
+                    组织架构
+                </div>
+                <div class="card-content">
+                    <p>后勤部下设五个专业分部：</p>
+                    <ul style="margin-top: 15px; padding-left: 20px; color: #a3d5ff;">
+                        <li style="margin-bottom: 10px;"><strong>物资管理分部</strong> - 负责全局物资采购、储存和调配</li>
+                        <li style="margin-bottom: 10px;"><strong>设备维护分部</strong> - 负责设备检修、维护和技术支持</li>
+                        <li style="margin-bottom: 10px;"><strong>运输调配分部</strong> - 负责运输资源管理和紧急运输支持</li>
+                        <li style="margin-bottom: 10px;"><strong>基地运营分部</strong> - 负责基地日常运营和设施管理</li>
+                        <li style="margin-bottom: 10px;"><strong>医疗保障分部</strong> - 负责医疗物资和救援协调</li>
+                    </ul>
+                    <p style="margin-top: 20px;">目前后勤部共有员工312人，其中管理人员25人，专业技术人员287人。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 办公地点 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-map-marked-alt section-icon"></i>
+                <h2 class="section-title">办公地点</h2>
+            </div>
+            
+            <div class="location-cards">
+                <div class="location-card">
+                    <div class="location-image">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="location-content">
+                        <div class="location-title">中央后勤基地</div>
+                        <div class="location-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>总部基地-地上工作区1至5层</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>233-1500-2400</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>24小时运营</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>占地面积：15,000平方米</span>
+                            </div>
+                        </div>
+                        <div class="function-desc">
+                            后勤部总部所在地，设有中央物资仓库、设备维修中心、运输调度中心和后勤指挥中心。这里是全局后勤保障的核心枢纽。
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="location-card">
+                    <div class="location-image">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <div class="location-content">
+                        <div class="location-title">彼岸市分据点</div>
+                        <div class="location-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>莫比乌斯之庭彼岸市东北部</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>065-0800-2200</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>08:00-22:00</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>占地面积：8,000平方米</span>
+                            </div>
+                        </div>
+                        <div class="function-desc">
+                            主要负责彼岸市及其周边地区后勤支持，确保外勤战斗署人员有充足物资及医疗保障。
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="location-card">
+                    <div class="location-image">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <div class="location-content">
+                        <div class="location-title">虚数沙漠分据点</div>
+                        <div class="location-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>莫比乌斯之庭虚数沙漠东南部</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>103-1290-6500</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>应急响应：24小时</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>占地面积：6,500平方米</span>
+                            </div>
+                        </div>
+                        <div class="function-desc">
+                            专门负责虚数沙漠一带及观测站Π的物资供应，确保极端环境下的后勤保障和应急响应能力。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航（已移除） -->
+    </div>
+    
+    <script>
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const role = localStorage.getItem('auth_role');
+            const username = localStorage.getItem('auth_user');
+            
+            if (role !== 'viewer') {
+                alert('请先以观察员身份登录！');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // 显示用户名
+            if (username) {
+                document.getElementById('usernameDisplay').textContent = username;
+            }
+            
+            // 添加动画效果
+            animateElements();
+            // 更新时间显示（顶部状态栏）
+            function updateTime() {
+                const el = document.getElementById('currentTime');
+                if (el) el.textContent = new Date().toLocaleTimeString();
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+        
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 返回控制台
+        function goToDashboard() {
+            window.location.href = 'viewer.html';
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除登录状态
+                localStorage.removeItem('auth_user');
+                localStorage.removeItem('auth_role');
+                localStorage.removeItem('auth_time');
+                
+                // 跳转到登录页
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // 打印页面
+        function printPage() {
+            window.print();
+        }
+        
+        // 元素动画效果
+        function animateElements() {
+            // 为卡片添加渐入动画
+            const cards = document.querySelectorAll('.content-card, .function-item, .location-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + index * 50);
+            });
+            
+            // 为时间线项目添加动画
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 300 + index * 100);
+            });
+        }
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(event) {
+            // Esc键返回控制台
+            if (event.key === 'Escape') {
+                goToDashboard();
+            }
+            // Ctrl+P打印
+            if (event.ctrlKey && event.key === 'p') {
+                event.preventDefault();
+                printPage();
+            }
+            // 按B键返回上一页
+            if (event.key === 'b' && !event.ctrlKey) {
+                goBack();
+            }
+        });
+        
+        // 鼠标悬停效果增强
+        document.querySelectorAll('.content-card, .function-item, .location-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+    </script>
+</body>
+</html>

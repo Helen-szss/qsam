@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基建概况 - 后勤部</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            color: #e0f7ff;
+            display: block;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-top: 72px;
+        }
+        
+        /* 顶部状态栏 */
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(10, 36, 99, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: nowrap;
+        }
+        
+        .back-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            color: #4fc3ff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            margin-right: 15px;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 150, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+        }
+
+        .system-logo {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.7));
+        }
+
+        .system-name {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* 主要内容 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(10, 36, 99, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 150, 255, 0.1);
+        }
+        
+        .page-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #4fc3ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            color: #e0f7ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
+        }
+        
+        .page-subtitle {
+            font-size: 1.5rem;
+            color: #a3d5ff;
+            margin-bottom: 10px;
+        }
+        
+        .page-motto {
+            font-size: 1.2rem;
+            color: #6b9ccc;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        
+        /* 内容卡片 */
+        .content-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+        }
+        
+        .section-icon {
+            font-size: 2rem;
+            color: #4fc3ff;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #e0f7ff;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* 基建卡片网格 */
+        .base-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .base-card {
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .base-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 150, 255, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 150, 255, 0.2);
+        }
+        
+        .base-header {
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .base-title {
+            font-size: 1.8rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .base-status {
+            background: rgba(255, 255, 255, 0.9);
+            color: #0066cc;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .base-content {
+            padding: 25px;
+        }
+        
+        .base-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #a3d5ff;
+        }
+        
+        .info-item i {
+            color: #4fc3ff;
+            width: 20px;
+        }
+        
+        /* 区域网格 */
+        .area-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .area-card {
+            background: rgba(0, 30, 80, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .area-card:hover {
+            border-color: rgba(0, 150, 255, 0.5);
+            transform: translateY(-5px);
+        }
+        
+        .area-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .area-title {
+            font-size: 1.3rem;
+            color: #4fc3ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .area-size {
+            font-size: 0.9rem;
+            color: #a3d5ff;
+            background: rgba(0, 60, 120, 0.5);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .area-features {
+            list-style-type: none;
+        }
+        
+        .area-features li {
+            color: #a3d5ff;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95rem;
+        }
+        
+        .area-features li:before {
+            content: "•";
+            color: #4fc3ff;
+            position: absolute;
+            left: 0;
+        }
+        
+        /* 基建统计 */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 30, 80, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #a3d5ff;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .status-bar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .system-info, .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .page-title {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .base-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .area-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-btn {
+                font-size: 0.9rem;
+                padding: 7px 12px;
+                margin-right: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="system-info">
+            <!-- 返回按钮 -->
+            <button class="back-btn" onclick="goBack()" title="返回">
+                <i class="fas fa-chevron-left"></i>
+                <span>返回</span>
+            </button>
+
+            <img src="qsamlogo.png" alt="管理局标志" class="system-logo">
+            <div class="system-name">后勤部 - 基建概况</div>
+        </div>
+
+        <div class="user-info">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div>
+                <div id="usernameDisplay">观察员</div>
+                <div style="font-size: 0.8rem; color: #a3d5ff;">观察员</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </div>
+    
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <div class="page-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <h1 class="page-title">基建概况</h1>
+            <div class="page-subtitle">管理局后勤部基建体系</div>
+            <div class="page-motto">"坚实保障，高效运营，服务全局"</div>
+        </div>
+        
+        <!-- 基建统计 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-chart-bar section-icon"></i>
+                <h2 class="section-title">基建总览</h2>
+            </div>
+            
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">运营据点</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-ruler-combined"></i>
+                    </div>
+                    <div class="stat-value">29,500</div>
+                    <div class="stat-label">总面积(m²)</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-value">312</div>
+                    <div class="stat-label">后勤人员</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">设备完好率</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 中央后勤基地 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-warehouse section-icon"></i>
+                <h2 class="section-title">中央后勤基地</h2>
+            </div>
+            
+            <div class="base-cards">
+                <div class="base-card">
+                    <div class="base-header">
+                        <div class="base-title">
+                            <i class="fas fa-home"></i>
+                            总部基地
+                        </div>
+                        <div class="base-status">运营中</div>
+                    </div>
+                    
+                    <div class="base-content">
+                        <div class="base-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>总部基地-地上工作区1至5层</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>总面积：15,000平方米</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <span>常驻人员：150人</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>启用时间：终末C23</span>
+                            </div>
+                        </div>
+                        
+                        <div class="area-grid">
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-dumbbell"></i>
+                                        训练区
+                                    </div>
+                                    <div class="area-size">2,500m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>多功能体能训练场</li>
+                                    <li>战术模拟训练室</li>
+                                    <li>装备适应性训练区</li>
+                                    <li>虚拟现实训练系统</li>
+                                    <li>急救与生存训练室</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-laptop-code"></i>
+                                        工作区
+                                    </div>
+                                    <div class="area-size">6,000m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>中央指挥调度中心</li>
+                                    <li>物资管理办公室</li>
+                                    <li>设备维护工坊</li>
+                                    <li>数据分析实验室</li>
+                                    <li>档案与资料室</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-gamepad"></i>
+                                        休闲区
+                                    </div>
+                                    <div class="area-size">2,000m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>员工休息室（含咖啡吧）</li>
+                                    <li>娱乐活动室</li>
+                                    <li>小型图书馆</li>
+                                    <li>室内健身区</li>
+                                    <li>多功能影音室</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-bed"></i>
+                                        生活区
+                                    </div>
+                                    <div class="area-size">4,500m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>员工宿舍（单人间/双人间）</li>
+                                    <li>中央食堂（可容纳200人）</li>
+                                    <li>医疗保健中心</li>
+                                    <li>洗衣与清洁服务区</li>
+                                    <li>小型超市与生活服务</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分据点基建 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-sitemap section-icon"></i>
+                <h2 class="section-title">分据点基建</h2>
+            </div>
+            
+            <div class="base-cards">
+                <!-- 彼岸市分据点 -->
+                <div class="base-card">
+                    <div class="base-header">
+                        <div class="base-title">
+                            <i class="fas fa-mountain"></i>
+                            彼岸市分据点
+                        </div>
+                        <div class="base-status">运营中</div>
+                    </div>
+                    
+                    <div class="base-content">
+                        <div class="base-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>莫比乌斯之庭彼岸市东北部</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>总面积：8,000平方米</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <span>常驻人员：80人</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>启用时间：终末C65</span>
+                            </div>
+                        </div>
+                        
+                        <div class="area-grid">
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-dumbbell"></i>
+                                        训练区
+                                    </div>
+                                    <div class="area-size">1,200m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>基础体能训练场</li>
+                                    <li>战术训练室</li>
+                                    <li>武器熟悉区</li>
+                                    <li>应急反应训练室</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-laptop-code"></i>
+                                        工作区
+                                    </div>
+                                    <div class="area-size">3,500m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>前线指挥中心</li>
+                                    <li>物资调配中心</li>
+                                    <li>设备维护站</li>
+                                    <li>通讯联络室</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-gamepad"></i>
+                                        休闲区
+                                    </div>
+                                    <div class="area-size">800m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>休息室与茶水间</li>
+                                    <li>小型娱乐区</li>
+                                    <li>户外休息区</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-bed"></i>
+                                        生活区
+                                    </div>
+                                    <div class="area-size">2,500m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>集体宿舍（4-6人间）</li>
+                                    <li>食堂（可容纳100人）</li>
+                                    <li>医疗站</li>
+                                    <li>淋浴与卫生设施</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 虚数沙漠分据点 -->
+                <div class="base-card">
+                    <div class="base-header">
+                        <div class="base-title">
+                            <i class="fas fa-water"></i>
+                            虚数沙漠分据点
+                        </div>
+                        <div class="base-status">运营中</div>
+                    </div>
+                    
+                    <div class="base-content">
+                        <div class="base-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>莫比乌斯之庭虚数沙漠东南部</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>总面积：6,500平方米</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <span>常驻人员：50人</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>启用时间：终末C103</span>
+                            </div>
+                        </div>
+                        
+                        <div class="area-grid">
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-dumbbell"></i>
+                                        训练区
+                                    </div>
+                                    <div class="area-size">1,000m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>极端环境适应性训练场</li>
+                                    <li>沙漠作战训练区</li>
+                                    <li>生存技能训练室</li>
+                                    <li>应急医疗训练区</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-laptop-code"></i>
+                                        工作区
+                                    </div>
+                                    <div class="area-size">3,000m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>环境监测中心</li>
+                                    <li>物资储备仓库</li>
+                                    <li>设备检修车间</li>
+                                    <li>应急指挥室</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-gamepad"></i>
+                                        休闲区
+                                    </div>
+                                    <div class="area-size">500m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>防沙休息室</li>
+                                    <li>小型娱乐设施</li>
+                                    <li>观景平台</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-bed"></i>
+                                        生活区
+                                    </div>
+                                    <div class="area-size">2,000m²</div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>防沙隔热宿舍</li>
+                                    <li>食堂（可容纳60人）</li>
+                                    <li>应急医疗室</li>
+                                    <li>水循环处理系统</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 基建特点 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-star section-icon"></i>
+                <h2 class="section-title">基建特点</h2>
+            </div>
+            
+            <div class="base-cards">
+                <div class="base-card">
+                    <div class="base-content">
+                        <div class="area-grid">
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-shield-alt"></i>
+                                        安全防护
+                                    </div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>多层防护系统（物理/能量/生物）</li>
+                                    <li>应急隔离与疏散通道</li>
+                                    <li>全天候监控与警报系统</li>
+                                    <li>防入侵与反侦察措施</li>
+                                    <li>抗震与抗极端天气设计</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-bolt"></i>
+                                        能源系统
+                                    </div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>主能源：虚数能量核心</li>
+                                    <li>备用能源：太阳能+柴油发电机</li>
+                                    <li>能源冗余设计（72小时续航）</li>
+                                    <li>智能能源分配管理系统</li>
+                                    <li>节能环保设计</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-wifi"></i>
+                                        通讯网络
+                                    </div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>量子加密通讯系统</li>
+                                    <li>远程锚点信号中继</li>
+                                    <li>应急无线电通讯网络</li>
+                                    <li>内部局域网与数据共享</li>
+                                    <li>多频段信号屏蔽/增强</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="area-card">
+                                <div class="area-header">
+                                    <div class="area-title">
+                                        <i class="fas fa-tools"></i>
+                                        维护保障
+                                    </div>
+                                </div>
+                                <ul class="area-features">
+                                    <li>定期巡检与预防性维护</li>
+                                    <li>快速响应维修团队</li>
+                                    <li>备件库存与供应链管理</li>
+                                    <li>自动化维护系统</li>
+                                    <li>设备寿命追踪与管理</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const role = localStorage.getItem('auth_role');
+            const username = localStorage.getItem('auth_user');
+            
+            if (role !== 'viewer') {
+                alert('请先以观察员身份登录！');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // 显示用户名
+            if (username) {
+                document.getElementById('usernameDisplay').textContent = username;
+            }
+            
+            // 添加动画效果
+            animateElements();
+            
+            // 更新时间显示
+            function updateTime() {
+                const el = document.getElementById('currentTime');
+                if (el) el.textContent = new Date().toLocaleTimeString();
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+        
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 返回控制台
+        function goToDashboard() {
+            window.location.href = 'viewer.html';
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除登录状态
+                localStorage.removeItem('auth_user');
+                localStorage.removeItem('auth_role');
+                localStorage.removeItem('auth_time');
+                
+                // 跳转到登录页
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // 元素动画效果
+        function animateElements() {
+            // 为卡片添加渐入动画
+            const cards = document.querySelectorAll('.base-card, .stat-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + index * 50);
+            });
+            
+            // 为区域卡片添加动画
+            const areaCards = document.querySelectorAll('.area-card');
+            areaCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                }, 300 + index * 30);
+            });
+        }
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(event) {
+            // Esc键返回控制台
+            if (event.key === 'Escape') {
+                goToDashboard();
+            }
+            // 按B键返回上一页
+            if (event.key === 'b' && !event.ctrlKey) {
+                goBack();
+            }
+        });
+        
+        // 鼠标悬停效果增强
+        document.querySelectorAll('.base-card, .area-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+    </script>
+</body>
+</html>

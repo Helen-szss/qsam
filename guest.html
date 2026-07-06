@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游客访问 - 管理局资料库</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 重置所有边距和填充 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        /* 全屏桌面样式 */
+        .desktop {
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 顶部状态栏 - 紧凑版 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            background: rgba(10, 36, 99, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            flex-shrink: 0;
+            height: 60px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .system-logo {
+            width: 35px;
+            height: 35px;
+            filter: drop-shadow(0 0 8px rgba(0, 150, 255, 0.7));
+        }
+        
+        .system-name {
+            font-size: 1.3rem;
+            background: linear-gradient(90deg, #4fc3ff, #a3d5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6b9ccc, #a3d5ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+        
+        .time-display {
+            color: #a3d5ff;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-right: 10px;
+        }
+        
+        /* 主要内容区域 - 使用flex填满剩余空间 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 10px;
+            justify-content: flex-start; /* 改为从顶部开始 */
+            align-items: center; /* 保持居中 */
+        }
+        
+        /* 桌面图标网格 - 居中对齐，使用更大的图标 */
+        .desktop-grid {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        /* 桌面图标样式 - 更大尺寸 */
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            height: 200px;
+            padding: 30px;
+            background: rgba(10, 36, 99, 0.8);
+            border-radius: 30px;
+            border: 2px solid rgba(0, 150, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .desktop-icon:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: rgba(0, 150, 255, 0.8);
+            box-shadow: 
+                0 20px 50px rgba(0, 150, 255, 0.4),
+                inset 0 0 50px rgba(0, 150, 255, 0.15);
+        }
+        
+        .icon-container {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .icon-base {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #4fc3ff, #6b9ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(79, 195, 255, 0.7));
+        }
+        
+        .icon-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85px;
+            height: 85px;
+            background: radial-gradient(circle, rgba(79, 195, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .icon-label {
+            color: #e0f7ff;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 150, 255, 0.7);
+            line-height: 1.4;
+            font-weight: bold;
+        }
+        
+        /* 不同图标颜色 */
+        .icon-info .icon-base {
+            background: linear-gradient(135deg, #4fc3ff, #6b9ccc);
+            filter: drop-shadow(0 0 15px rgba(79, 195, 255, 0.7));
+        }
+        
+        .icon-info .icon-glow {
+            background: radial-gradient(circle, rgba(79, 195, 255, 0.3) 0%, transparent 70%);
+        }
+        
+        .icon-map .icon-base {
+            background: linear-gradient(135deg, #6bffb8, #4fc3ff);
+            filter: drop-shadow(0 0 15px rgba(107, 255, 184, 0.7));
+        }
+        
+        .icon-map .icon-glow {
+            background: radial-gradient(circle, rgba(107, 255, 184, 0.3) 0%, transparent 70%);
+        }
+        
+        .icon-task .icon-base {
+            background: linear-gradient(135deg, #ffd93d, #ffa93d);
+            filter: drop-shadow(0 0 15px rgba(255, 217, 61, 0.7));
+        }
+        
+        .icon-task .icon-glow {
+            background: radial-gradient(circle, rgba(255, 217, 61, 0.3) 0%, transparent 70%);
+        }
+        
+        /* 欢迎提示 */
+        .welcome-toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 20px 30px;
+            background: rgba(10, 36, 99, 0.95);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            border-radius: 15px;
+            color: #e0f7ff;
+            box-shadow: 0 10px 30px rgba(0, 150, 255, 0.4);
+            z-index: 1000;
+            animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+            backdrop-filter: blur(10px);
+        }
+        
+        .welcome-title {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #4fc3ff;
+        }
+        
+        .welcome-message {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #4fc3ff, #a3d5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(79, 195, 255, 0.3);
+            border-top: 5px solid #4fc3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: #e0f7ff;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        /* 功能面板 - 固定在底部 */
+        .function-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background: rgba(10, 36, 99, 0.9);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            display: flex;
+            gap: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        
+        .panel-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(0, 60, 120, 0.8);
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            color: #a3d5ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.3rem;
+        }
+        
+        .panel-btn:hover {
+            background: rgba(0, 150, 255, 0.4);
+            transform: scale(1.15);
+            box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+        }
+        
+        /* 退出按钮样式 */
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.25);
+            border: 1px solid rgba(255, 107, 107, 0.6);
+            color: #ff6b6b;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.35);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* 提示信息 */
+        .info-box {
+            max-width: 800px;
+            margin: 15px auto 25px;
+            padding: 20px;
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            text-align: center;
+            color: #a3d5ff;
+            backdrop-filter: blur(5px);
+        }
+        
+        .info-title {
+            color: #4fc3ff;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* 动画 */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式设计 - 针对小屏幕调整 */
+        @media (max-width: 1200px) {
+            .desktop-grid {
+                gap: 40px;
+            }
+            
+            .desktop-icon {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .icon-container {
+                width: 85px;
+                height: 85px;
+            }
+            
+            .icon-base {
+                font-size: 3.5rem;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .desktop-grid {
+                flex-direction: column;
+                gap: 30px;
+                justify-content: flex-start;
+                padding-top: 40px;
+            }
+            
+            .desktop-icon {
+                width: 300px;
+                height: 120px;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 20px 30px;
+                gap: 20px;
+            }
+            
+            .icon-container {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+            
+            .icon-base {
+                font-size: 2.8rem;
+            }
+            
+            .icon-label {
+                font-size: 1.3rem;
+                text-align: left;
+            }
+            
+            .function-panel {
+                padding: 12px 25px;
+                gap: 20px;
+            }
+            
+            .panel-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .status-bar {
+                padding: 5px 10px;
+                height: 50px;
+            }
+            
+            .system-name {
+                font-size: 1.1rem;
+            }
+            
+            .desktop-icon {
+                width: 90%;
+                height: 100px;
+                padding: 15px 20px;
+            }
+            
+            .icon-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .icon-base {
+                font-size: 2.5rem;
+            }
+            
+            .icon-label {
+                font-size: 1.2rem;
+            }
+            
+            .function-panel {
+                padding: 10px 20px;
+                gap: 15px;
+                bottom: 15px;
+            }
+            
+            .panel-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+            
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .desktop-icon {
+                height: 90px;
+            }
+            
+            .icon-container {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .icon-base {
+                font-size: 2rem;
+            }
+            
+            .icon-label {
+                font-size: 1.1rem;
+            }
+            
+            .function-panel {
+                padding: 8px 15px;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 欢迎提示 -->
+    <div class="welcome-toast" id="welcomeToast">
+        <div class="welcome-title" id="timeGreeting"></div>
+        <div class="welcome-message">有什么需要帮助的吗？</div>
+    </div>
+    
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">正在加载...</div>
+        </div>
+    </div>
+    
+    <!-- 桌面界面 -->
+    <div class="desktop">
+        <!-- 顶部状态栏 -->
+        <div class="status-bar">
+            <div class="system-info">
+                <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+                <div class="system-name">管理局 - 游客访问模式</div>
+            </div>
+            
+            <div class="user-info">
+                <div class="time-display" id="currentTime">00:00:00</div>
+                <div class="user-avatar">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+                <div>
+                    <div style="color: #a3d5ff;">访客</div>
+                    <div style="font-size: 0.8rem; color: #6b9ccc;">游客访问权限</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </button>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="main-content">
+            <!-- 信息提示框 -->
+            <div class="info-box">
+                <div class="info-title">
+                    <i class="fas fa-info-circle"></i> 游客访问说明
+                </div>
+                <p>您正在以游客身份访问管理局公开资料库。您可以查看公开信息、了解Q-S.A.M概况、浏览地区划分，并向管理局提交任务申请。</p>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #ffd93d;">
+                    <i class="fas fa-exclamation-triangle"></i> 部分机密资料仅对授权成员开放
+                </p>
+            </div>
+            
+            <!-- 桌面图标网格 -->
+            <div class="desktop-grid">
+                <!-- Q-S.A.M概况 -->
+                <a href="guest_qsam.html" class="desktop-icon" data-page-name="Q-S.A.M概况">
+                    <div class="icon-container icon-info">
+                        <i class="fas fa-info-circle icon-base"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="icon-label">Q-S.A.M<br>概况</div>
+                </a>
+                
+                <!-- 地区划分 -->
+                <a href="guest_areas.html" class="desktop-icon" data-page-name="地区划分">
+                    <div class="icon-container icon-map">
+                        <i class="fas fa-map-marked-alt icon-base"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="icon-label">地区<br>划分</div>
+                </a>
+                
+                <!-- 发布任务 -->
+                <a href="guest_tasks.html" class="desktop-icon" data-page-name="发布任务">
+                    <div class="icon-container icon-task">
+                        <i class="fas fa-tasks icon-base"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="icon-label">发布<br>任务</div>
+                </a>
+
+                <!-- 投递简历（同级图标） -->
+                <a href="submit-resume.html" class="desktop-icon" data-page-name="投递简历">
+                    <div class="icon-container icon-info">
+                        <i class="fas fa-paper-plane icon-base"></i>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="icon-label">投递<br>简历</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 底部功能面板 -->
+        <div class="function-panel">
+            <div class="panel-btn" title="帮助中心" onclick="openHelp()">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <div class="panel-btn" title="关于我们" onclick="openAbout()">
+                <i class="fas fa-address-card"></i>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 页面链接配置
+        const pageConfig = {
+            'qsam': {
+                url: 'guest_qsam.html',
+                name: 'Q-S.A.M概况',
+                description: '跨象限异常管理局'
+            },
+            'areas': {
+                url: 'guest_areas.html',
+                name: '地区划分',
+                description: '管理局已收录的地区划分和部分势力介绍'
+            },
+            'tasks': {
+                url: 'guest_tasks.html',
+                name: '发布任务',
+                description: '向管理局提交任务申请或报告异常事件'
+            }
+            ,
+            'resume': {
+                url: 'submit-resume.html',
+                name: '投递简历',
+                description: '提交求职简历或联系信息给管理局人事（仅演示）'
+            }
+        };
+        
+        // 检查登录状态
+        const role = localStorage.getItem('auth_role');
+        if (role !== 'guest') {
+            // 如果不是游客，尝试重定向到登录页
+            window.location.href = 'index.html';
+        }
+        
+        // 获取时间并显示问候语
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            // 更新时间显示
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // 问候语
+            let greeting = '';
+            if (hours >= 5 && hours < 12) {
+                greeting = '早上好';
+            } else if (hours >= 12 && hours < 18) {
+                greeting = '下午好';
+            } else if (hours >= 18 && hours < 22) {
+                greeting = '晚上好';
+            } else {
+                greeting = '夜深了';
+            }
+            
+            document.getElementById('timeGreeting').textContent = `${greeting}，很高兴为您服务。`;
+        }
+        
+        // 显示加载动画
+        function showLoading(message = '正在加载...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = document.getElementById('loadingText');
+            text.textContent = message;
+            overlay.style.display = 'flex';
+        }
+        
+        // 隐藏加载动画
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        // 页面跳转函数
+        function navigateTo(pageKey) {
+            const page = pageConfig[pageKey];
+            if (!page) {
+                alert('页面不存在！');
+                return;
+            }
+            
+            showLoading(`正在跳转到${page.name}...`);
+            
+            // 模拟网络延迟
+            setTimeout(() => {
+                window.location.href = page.url;
+            }, 1000);
+        }
+        
+        // 为图标链接添加点击处理
+        document.addEventListener('DOMContentLoaded', function() {
+            const icons = document.querySelectorAll('.desktop-icon[data-page-name]');
+            
+            icons.forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    const pageName = this.getAttribute('data-page-name');
+                    
+                    // 显示加载动画
+                    showLoading(`正在打开${pageName}...`);
+                    
+                    // 页面存在性检查
+                    setTimeout(() => {
+                        // 检查目标页面是否存在
+                        const link = this.getAttribute('href');
+                        if (!link || link === '#') {
+                            hideLoading();
+                            e.preventDefault();
+                            
+                            // 如果页面不存在，显示模拟内容
+                            const pageKey = Object.keys(pageConfig).find(key => 
+                                pageConfig[key].name === pageName
+                            );
+                            
+                            if (pageKey) {
+                                showFunctionModal(pageKey);
+                            }
+                        }
+                    }, 500);
+                });
+            });
+        });
+        
+        // 显示功能模态框（如果页面不存在）
+        function showFunctionModal(functionName) {
+            const page = pageConfig[functionName];
+            if (!page) return;
+            
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+                backdrop-filter: blur(10px);
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: radial-gradient(circle at center, #0a2463, #000000);
+                    padding: 40px;
+                    border-radius: 20px;
+                    border: 2px solid rgba(0, 150, 255, 0.6);
+                    max-width: 600px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    box-shadow: 0 0 60px rgba(0, 150, 255, 0.5);
+                ">
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 30px;
+                    ">
+                        <h2 style="
+                            background: linear-gradient(90deg, #4fc3ff, #ffffff);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            margin: 0;
+                            font-size: 1.8rem;
+                        ">${page.name}</h2>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                            background: rgba(255, 107, 107, 0.25);
+                            border: 1px solid rgba(255, 107, 107, 0.6);
+                            color: #ff6b6b;
+                            padding: 10px 20px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.background='rgba(255, 107, 107, 0.35)'" 
+                         onmouseout="this.style.background='rgba(255, 107, 107, 0.25)'">
+                            <i class="fas fa-times"></i> 关闭
+                        </button>
+                    </div>
+                    
+                    <div style="color: #e0f7ff; line-height: 1.6; font-size: 1.1rem;">
+                        <p>${page.description}</p>
+                        <p style="color: #ffd93d; margin: 20px 0;">此页面正在开发中，将在后续版本中完善。</p>
+                        <div style="
+                            margin-top: 30px;
+                            padding: 25px;
+                            background: rgba(0, 30, 80, 0.6);
+                            border-radius: 12px;
+                            border: 1px solid rgba(0, 150, 255, 0.4);
+                        ">
+                            <h4 style="color: #4fc3ff; margin-bottom: 15px; font-size: 1.3rem;">功能预览：</h4>
+                            <ul style="list-style-type: none; padding-left: 0;">
+                                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
+                                    <i class="fas fa-check-circle" style="color: #6bffb8; position: absolute; left: 0; font-size: 1.1rem;"></i>
+                                    信息浏览与检索
+                                </li>
+                                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
+                                    <i class="fas fa-check-circle" style="color: #6bffb8; position: absolute; left: 0; font-size: 1.1rem;"></i>
+                                    公开资料查看
+                                </li>
+                                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
+                                    <i class="fas fa-check-circle" style="color: #6bffb8; position: absolute; left: 0; font-size: 1.1rem;"></i>
+                                    在线提交申请
+                                </li>
+                                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
+                                    <i class="fas fa-clock" style="color: #ffd93d; position: absolute; left: 0; font-size: 1.1rem;"></i>
+                                    实时状态查询（开发中）
+                                </li>
+                                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
+                                    <i class="fas fa-clock" style="color: #ffd93d; position: absolute; left: 0; font-size: 1.1rem;"></i>
+                                    在线客服（开发中）
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 1px solid rgba(0, 150, 255, 0.4);
+                        text-align: center;
+                        color: #6b9ccc;
+                        font-size: 0.95rem;
+                    ">
+                        <i class="fas fa-user-clock"></i> 游客访问权限 - 公开资料
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 点击模态框外部关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        // 页面加载时显示欢迎信息
+        window.onload = function() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // 5秒后隐藏欢迎提示
+            setTimeout(() => {
+                document.getElementById('welcomeToast').style.display = 'none';
+            }, 5000);
+        };
+        
+        // 打开帮助中心
+        function openHelp() {
+            const helpContent = `
+                <h3 style="color: #4fc3ff; margin-bottom: 15px; font-size: 1.4rem;">游客访问帮助中心</h3>
+                <div style="margin-bottom: 15px; font-size: 1.05rem;">
+                    <strong style="color: #ffd93d;">Q-S.A.M概况：</strong> 查看管理局的基本信息、历史和组织结构。
+                </div>
+                <div style="margin-bottom: 15px; font-size: 1.05rem;">
+                    <strong style="color: #ffd93d;">地区划分：</strong> 管理局已收录的地区划分和部分势力介绍。
+                </div>
+                <div style="margin-bottom: 15px; font-size: 1.05rem;">
+                    <strong style="color: #ffd93d;">发布任务：</strong> 向管理局提交任务申请或报告异常事件。
+                </div>
+                <div style="color: #ffd93d; margin-top: 25px; font-size: 0.95rem; padding: 15px; background: rgba(255, 217, 61, 0.1); border-radius: 8px;">
+                    <i class="fas fa-exclamation-circle"></i> 如需更高级权限，请联系管理局申请正式成员身份。
+                </div>
+            `;
+            
+            alertWithHTML('帮助中心', helpContent);
+        }
+        
+        // 打开关于我们
+        function openAbout() {
+            const aboutContent = `
+                <h3 style="color: #4fc3ff; margin-bottom: 15px; font-size: 1.4rem;">关于管理局资料库</h3>
+                <div style="margin-bottom: 12px; font-size: 1.05rem;">
+                    <strong style="color: #a3d5ff;">版本：</strong> 游客访问模式 v1.0
+                </div>
+                <div style="margin-bottom: 12px; font-size: 1.05rem;">
+                    <strong style="color: #a3d5ff;">功能：</strong> 提供公开资料查询和基础服务申请功能。
+                </div>
+                <div style="margin-bottom: 12px; font-size: 1.05rem;">
+                    <strong style="color: #a3d5ff;">访问权限：</strong> 受限的游客访问权限，仅可查看公开资料。
+                </div>
+                <div style="color: #6b9ccc; margin-top: 25px; font-size: 0.9rem; padding-top: 15px; border-top: 1px solid rgba(107, 156, 204, 0.3);">
+                    © 管理局资料库 - 部分公开资料
+                </div>
+            `;
+            
+            alertWithHTML('关于我们', aboutContent);
+        }
+        
+        // 自定义HTML弹窗
+        function alertWithHTML(title, content) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+                backdrop-filter: blur(10px);
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: radial-gradient(circle at center, #0a2463, #000000);
+                    padding: 35px;
+                    border-radius: 20px;
+                    border: 2px solid rgba(0, 150, 255, 0.6);
+                    max-width: 500px;
+                    width: 90%;
+                    box-shadow: 0 0 40px rgba(0, 150, 255, 0.5);
+                ">
+                    <h3 style="
+                        background: linear-gradient(90deg, #4fc3ff, #ffffff);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        margin: 0 0 25px 0;
+                        text-align: center;
+                        font-size: 1.6rem;
+                    ">${title}</h3>
+                    <div style="color: #e0f7ff; line-height: 1.6;">
+                        ${content}
+                    </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                            background: rgba(79, 195, 255, 0.25);
+                            border: 1px solid rgba(79, 195, 255, 0.6);
+                            color: #4fc3ff;
+                            padding: 12px 35px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            font-size: 1.05rem;
+                            font-weight: bold;
+                        " onmouseover="this.style.background='rgba(79, 195, 255, 0.35)'" 
+                         onmouseout="this.style.background='rgba(79, 195, 255, 0.25)'">
+                            确定
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 点击模态框外部关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出游客访问吗？')) {
+                localStorage.clear();
+                showLoading('正在退出系统...');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

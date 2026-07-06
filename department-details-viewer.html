@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理局管理层 - 观察员控制台</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            color: #e0f7ff;
+            display: block;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-top: 72px;
+        }
+        
+        /* 顶部状态栏 */
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(10, 36, 99, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: nowrap;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* 返回按钮样式 */
+        .back-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            color: #4fc3ff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            margin-right: 15px;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 150, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+        }
+
+        .back-btn i {
+            font-size: 0.8rem;
+        }
+
+        .system-logo {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.7));
+        }
+
+        .system-name {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        /* 主要内容 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .department-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(10, 36, 99, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 150, 255, 0.1);
+        }
+        
+        .department-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #4fc3ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .department-title {
+            font-size: 3rem;
+            color: #e0f7ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.5);
+        }
+        
+        .department-subtitle {
+            font-size: 1.5rem;
+            color: #a3d5ff;
+            margin-bottom: 10px;
+        }
+        
+        .department-motto {
+            font-size: 1.2rem;
+            color: #6b9ccc;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        
+        .special-notice {
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(79, 195, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #4fc3ff;
+            color: #a3d5ff;
+            font-size: 1.1rem;
+        }
+        
+        /* 内容卡片 */
+        .content-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+        }
+        
+        .section-icon {
+            font-size: 2rem;
+            color: #4fc3ff;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #e0f7ff;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .content-card {
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 150, 255, 0.2);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: #4fc3ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-content {
+            line-height: 1.8;
+            color: #a3d5ff;
+            font-size: 1.1rem;
+        }
+        
+        /* 时间线样式 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #0066cc, #0099ff);
+            border-radius: 3px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 20px;
+        }
+        
+        .timeline-year {
+            position: absolute;
+            left: -45px;
+            top: 0;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .timeline-content {
+            background: rgba(0, 30, 80, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 3px solid #0099ff;
+        }
+        
+        .timeline-title {
+            font-size: 1.3rem;
+            color: #4fc3ff;
+            margin-bottom: 10px;
+        }
+        
+        /* 职能列表 */
+        .function-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .function-item {
+            background: rgba(0, 30, 80, 0.6);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .function-item:hover {
+            border-color: rgba(0, 150, 255, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        .function-icon {
+            font-size: 2rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .function-title {
+            font-size: 1.3rem;
+            color: #e0f7ff;
+            margin-bottom: 10px;
+        }
+        
+        .function-desc {
+            color: #a3d5ff;
+            line-height: 1.6;
+        }
+        
+        /* 管理层晋升路径展示 */
+        .promotion-path {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(0, 30, 80, 0.6);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+        }
+        
+        .path-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(10, 36, 99, 0.4);
+            border-radius: 10px;
+            border-left: 4px solid #4fc3ff;
+        }
+        
+        .path-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .path-icon {
+            font-size: 1.5rem;
+            color: #4fc3ff;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .path-content {
+            flex: 1;
+        }
+        
+        .path-title {
+            font-size: 1.2rem;
+            color: #e0f7ff;
+            margin-bottom: 5px;
+        }
+        
+        .path-desc {
+            color: #a3d5ff;
+            font-size: 0.95rem;
+        }
+        
+        /* 办公地点卡片 */
+        .location-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .location-card {
+            background: rgba(0, 30, 80, 0.6);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .location-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 150, 255, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 150, 255, 0.2);
+        }
+        
+        .location-image {
+            height: 200px;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .location-content {
+            padding: 25px;
+        }
+        
+        .location-title {
+            font-size: 1.5rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .location-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #a3d5ff;
+        }
+        
+        .info-item i {
+            color: #4fc3ff;
+            width: 20px;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            background: rgba(10, 36, 99, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            color: #4fc3ff;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-link:hover {
+            background: rgba(0, 150, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .status-bar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .system-info, .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .department-title {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .location-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .function-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-btn {
+                font-size: 0.9rem;
+                padding: 7px 12px;
+                margin-right: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="system-info">
+            <!-- 返回按钮 -->
+            <button class="back-btn" onclick="goBack()" title="返回">
+                <i class="fas fa-chevron-left"></i>
+                <span>返回</span>
+            </button>
+
+            <img src="qsamlogo.png" alt="管理局标志" class="system-logo">
+            <div class="system-name">管理局资料库 - 管理层</div>
+        </div>
+
+        <div class="user-info">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div>
+                <div id="usernameDisplay">管理层观察员</div>
+                <div style="font-size: 0.8rem; color: #a3d5ff;">管理层</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </div>
+    
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 部门头部 -->
+        <div class="department-header">
+            <div class="department-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h1 class="department-title">管理局管理层</h1>
+            <div class="department-subtitle">跨象限异常管理局最高决策与领导机构</div>
+            <div class="department-motto">"引领方向，统筹全局，守护秩序"</div>
+            <div class="special-notice">
+                <i class="fas fa-info-circle"></i> 
+                <strong>特殊说明：</strong>管理局管理层不通过外部招聘进入，仅由战斗署、研究处、后勤部三个核心部门的资深成员经严格考核后晋升而来。
+            </div>
+        </div>
+        
+        <!-- 发展历史 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-history section-icon"></i>
+                <h2 class="section-title">形成历史</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-book"></i>
+                    历史沿革
+                </div>
+                <div class="card-content">
+                    <p>管理局管理层并非一开始就存在的独立机构，而是在管理局发展过程中逐渐形成的领导核心。最初的管理局由创始人卡西亚女士领导，随着组织规模的扩大和职能的复杂化，需要更加系统化的决策机制和领导体系。</p>
+                    
+                    <p>终末C17年，管理局首次设立了"核心决策委员会"，由10位管理局初始成员组成，这是管理层的最初形态。随着时间的推移，这一机构逐渐演变为现在的管理局管理层，负责全局性的战略决策和跨部门协调。</p>
+                    
+                    <p>管理层成员全部来自基层，每个人都曾在一线工作多年，对管理局的各项业务有着深刻理解。这种"从基层中来"的原则确保了管理决策的务实性和可执行性。</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-timeline"></i>
+                    历史时间线
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末元年</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">初创时期</div>
+                            <div class="timeline-desc">管理局成立初期，由创始人卡西亚女士直接领导，各部门负责人直接向她汇报，决策高度集中。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C17</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">核心决策委员会成立</div>
+                            <div class="timeline-desc">随着管理局规模扩大，首次设立核心决策委员会，由10位表现突出的管理局初始成员组成，开始形成集体决策机制。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C23</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">管理层正式确立</div>
+                            <div class="timeline-desc">核心决策委员会正式改组为"管理局管理层"，明确其作为最高决策机构的地位和职能。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C59</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">晋升制度规范化</div>
+                            <div class="timeline-desc">制定《管理层成员晋升条例》，明确规定管理层成员必须从三个核心部门（战斗署、研究处、后勤部）的资深成员中选拔。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-year">终末C62</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">现代管理体系形成</div>
+                            <div class="timeline-desc">管理层形成现今的"战略-执行-监督"三级结构，建立了完善的决策、执行和监督机制。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 部门职能 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-tasks section-icon"></i>
+                <h2 class="section-title">核心职能</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-cogs"></i>
+                    主要职责
+                </div>
+                <div class="card-content">
+                    <p>管理局管理层是全局的"大脑"和"神经中枢"，负责制定战略方向、协调资源分配、监督执行效果，并确保管理局在复杂多变的跨象限环境中保持正确的方向。</p>
+                    
+                    <div class="function-list">
+                        <div class="function-item">
+                            <div class="function-icon">
+                                <i class="fas fa-chess"></i>
+                            </div>
+                            <div class="function-title">战略规划</div>
+                            <div class="function-desc">
+                                制定管理局长期发展战略，确定研究方向、资源分配和应对裂隙现象的整体策略，引领管理局应对未来挑战。
+                            </div>
+                        </div>
+                        
+                        <div class="function-item">
+                            <div class="function-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="function-title">跨部门协调</div>
+                            <div class="function-desc">
+                                协调战斗署、研究处、后勤部三大核心部门的工作，确保各部门在重大任务中协同高效，资源优化配置。
+                            </div>
+                        </div>
+                        
+                        <div class="function-item">
+                            <div class="function-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="function-title">决策裁决</div>
+                            <div class="function-desc">
+                                对重大事项、高优先级任务和资源分配争议进行最终裁决，确保决策的科学性和公正性。
+                            </div>
+                        </div>
+                        
+                        <div class="function-item">
+                            <div class="function-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="function-title">监督评估</div>
+                            <div class="function-desc">
+                                监督各部门工作执行情况，评估任务完成效果，对管理局整体运行效率和质量进行监控。
+                            </div>
+                        </div>
+                        
+                        <div class="function-item">
+                            <div class="function-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="function-title">风险管控</div>
+                            <div class="function-desc">
+                                识别和评估管理局面临的各种风险，制定风险应对策略，确保管理局在复杂环境中的稳定运行。
+                            </div>
+                        </div>
+                        
+                        <div class="function-item">
+                            <div class="function-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="function-title">人才发展</div>
+                            <div class="function-desc">
+                                制定人才发展战略，监督高级人才培养和选拔，确保管理局领导力的持续传承。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-sitemap"></i>
+                    组织结构
+                </div>
+                <div class="card-content">
+                    <p>管理层采用三级结构，确保决策的科学性和执行的有效性：</p>
+                    <ul style="margin-top: 15px; padding-left: 20px; color: #a3d5ff;">
+                        <li style="margin-bottom: 10px;"><strong>战略决策层</strong> - 由7名最高决策者组成，负责全局战略规划和重大决策</li>
+                        <li style="margin-bottom: 10px;"><strong>执行协调层</strong> - 由15名高级管理者组成，负责跨部门协调和资源调配</li>
+                        <li style="margin-bottom: 10px;"><strong>监督评估层</strong> - 由10名监督专家组成，负责工作监督和绩效评估</li>
+                    </ul>
+                    
+                    <p style="margin-top: 20px;">目前管理层共有成员32人，平均一线工作经验超过20年，全部来自三个核心部门。</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-road"></i>
+                    晋升路径与准入原则
+                </div>
+                <div class="card-content">
+                    <p><strong>重要原则：</strong>管理局管理层不通过外部招聘进入，所有成员必须从一线部门成长而来。</p>
+                    
+                    <div class="promotion-path">
+                        <div class="path-item">
+                            <div class="path-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="path-content">
+                                <div class="path-title">第一阶段：一线工作</div>
+                                <div class="path-desc">在战斗署、研究处或后勤部一线岗位工作至少10年，积累丰富实践经验，对所在部门工作有深入理解。</div>
+                            </div>
+                        </div>
+                        
+                        <div class="path-item">
+                            <div class="path-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="path-content">
+                                <div class="path-title">第二阶段：部门管理</div>
+                                <div class="path-desc">晋升为部门中层管理者，负责团队或项目领导，展现出色的管理能力和跨部门协作能力。</div>
+                            </div>
+                        </div>
+                        
+                        <div class="path-item">
+                            <div class="path-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="path-content">
+                                <div class="path-title">第三阶段：高级管理</div>
+                                <div class="path-desc">成为部门高级管理者，参与部门战略制定，展现全局视野和战略思维能力。</div>
+                            </div>
+                        </div>
+                        
+                        <div class="path-item">
+                            <div class="path-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="path-content">
+                                <div class="path-title">第四阶段：管理层候选</div>
+                                <div class="path-desc">经严格考核和现有管理层成员推荐，成为管理层候选人，接受为期2年的培训和评估。</div>
+                            </div>
+                        </div>
+                        
+                        <div class="path-item">
+                            <div class="path-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="path-content">
+                                <div class="path-title">第五阶段：正式晋升</div>
+                                <div class="path-desc">通过全部考核，经现有管理层全体成员投票通过，正式成为管理局管理层成员。</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 20px; color: #4fc3ff;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <strong>注：</strong>整个晋升过程通常需要15-25年，确保每位管理层成员都具备深厚的专业基础、丰富的实践经验和卓越的领导能力。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 办公地点 -->
+        <div class="content-section">
+            <div class="section-header">
+                <i class="fas fa-map-marked-alt section-icon"></i>
+                <h2 class="section-title">办公地点</h2>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-title">
+                    <i class="fas fa-building"></i>
+                    总部管理层专用区域
+                </div>
+                <div class="card-content">
+                    <p>管理局管理层办公地点位于跨象限异常管理局总部基地最核心区域，这里不仅是管理决策的中心，也是连接各部门的枢纽。</p>
+                    
+                    <div class="location-cards">
+                        <div class="location-card">
+                            <div class="location-image">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="location-content">
+                                <div class="location-title">管理层总部</div>
+                                <div class="location-info">
+                                    <div class="info-item">
+                                        <i class="fas fa-map-pin"></i>
+                                        <span>总部基地-地上工作区28至顶层</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>233-1000-1000</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>全天候运行</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                        <span>占地面积：8,000平方米</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-shield-alt"></i>
+                                        <span>安全等级：最高级</span>
+                                    </div>
+                                </div>
+                                <div class="function-desc">
+                                    管理局管理层核心办公区，包含战略决策中心、高级会议室、指挥中心和机密档案室。这里是所有重大决策的诞生地，也是管理局应对紧急情况的指挥中枢。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: rgba(0, 30, 80, 0.4); border-radius: 15px; border-left: 4px solid #6bffb8;">
+                        <h4 style="color: #6bffb8; margin-bottom: 10px;"><i class="fas fa-info-circle"></i> 办公区域特点</h4>
+                        <ul style="color: #a3d5ff; padding-left: 20px;">
+                            <li style="margin-bottom: 8px;"><strong>高度集成：</strong>与各部门数据系统直接连接，实时获取全局信息</li>
+                            <li style="margin-bottom: 8px;"><strong>安全保障：</strong>采用多重生物识别和量子加密技术，确保最高安全级别</li>
+                            <li style="margin-bottom: 8px;"><strong>决策支持：</strong>配备先进的数据分析系统和模拟预测系统</li>
+                            <li style="margin-bottom: 8px;"><strong>紧急指挥：</strong>设有全维度紧急情况指挥中心，可协调多象限行动</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const role = localStorage.getItem('auth_role');
+            const username = localStorage.getItem('auth_user');
+
+            // 更健壮的管理层检测（支持 qs_users_data 中的 department='管理层' 等情形）
+            function getUserIsManagement() {
+                try {
+                    if (localStorage.getItem('viewer_management') === '1') return true;
+                    if (localStorage.getItem('auth_viewer_level') === 'management') return true;
+                    if (localStorage.getItem('viewer_role') === 'management') return true;
+                    if (localStorage.getItem('auth_role') === 'management') return true;
+
+                    const stored = localStorage.getItem('qs_users_data') || localStorage.getItem('login_users');
+                    if (stored && username) {
+                        const parsed = JSON.parse(stored);
+                        const userInfo = parsed[username];
+                        if (userInfo) {
+                            const lvl = (userInfo.viewer_level || userInfo.level || userInfo.role || '').toString().toLowerCase();
+                            if (lvl === 'management' || lvl === '管理' || lvl === '管理层') return true;
+                            const dept = (userInfo.department || '').toString().toLowerCase();
+                            if (dept.includes('管理') || dept.includes('management')) return true;
+                            if (Array.isArray(userInfo.roles) && userInfo.roles.map(r=>r.toString().toLowerCase()).includes('management')) return true;
+                            if (Array.isArray(userInfo.tags) && userInfo.tags.map(t=>t.toString().toLowerCase()).includes('management')) return true;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('getUserIsManagement error', e);
+                }
+                return false;
+            }
+
+            // 允许 viewer 或 被判定为管理层访问
+            if (role !== 'viewer' && !getUserIsManagement()) {
+                alert('请先以观察员身份登录！');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 检查是否为管理层观察员
+            const isManagement = getUserIsManagement();
+
+            if (!isManagement) {
+                alert('此页面仅供管理层观察员访问！');
+                window.location.href = 'viewer.html';
+                return;
+            }
+
+            // 显示用户名（优先使用登录时保存的显示名）
+            const displayName = localStorage.getItem('auth_user_name') || username || '管理层观察员';
+            document.getElementById('usernameDisplay').textContent = displayName;
+            
+            // 添加动画效果
+            animateElements();
+            
+            // 更新时间显示（顶部状态栏）
+            function updateTime() {
+                const el = document.getElementById('currentTime');
+                if (el) el.textContent = new Date().toLocaleTimeString();
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+        
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 返回控制台
+        function goToDashboard() {
+            window.location.href = 'viewer.html';
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除登录状态
+                localStorage.removeItem('auth_user');
+                localStorage.removeItem('auth_role');
+                localStorage.removeItem('auth_time');
+                localStorage.removeItem('viewer_management');
+                
+                // 跳转到登录页
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // 打印页面
+        function printPage() {
+            window.print();
+        }
+        
+        // 元素动画效果
+        function animateElements() {
+            // 为卡片添加渐入动画
+            const cards = document.querySelectorAll('.content-card, .function-item, .location-card, .path-item');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + index * 50);
+            });
+            
+            // 为时间线项目添加动画
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 300 + index * 100);
+            });
+        }
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(event) {
+            // Esc键返回控制台
+            if (event.key === 'Escape') {
+                goToDashboard();
+            }
+            // Ctrl+P打印
+            if (event.ctrlKey && event.key === 'p') {
+                event.preventDefault();
+                printPage();
+            }
+            // 按B键返回上一页
+            if (event.key === 'b' && !event.ctrlKey) {
+                goBack();
+            }
+        });
+        
+        // 鼠标悬停效果增强
+        document.querySelectorAll('.content-card, .function-item, .location-card, .path-item').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+    </script>
+</body>
+</html>

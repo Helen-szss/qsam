@@ -1,0 +1,1473 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瑁傞殭鎬墿璧勬枡搴?- 绠＄悊灞€璧勬枡搴?/title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            --desktop-bg: radial-gradient(circle at center, #0a2463, #000000);
+            --status-bg: rgba(10, 36, 99, 0.8);
+            --panel-bg: rgba(6, 22, 60, 0.95);
+            --panel-border: rgba(0, 150, 255, 0.3);
+            --accent-danger: #ff6b6b;
+            --accent-warning: #ffa93d;
+            --accent-info: #4fc3ff;
+            --accent-success: #6bffb8;
+            --text-primary: #e0f7ff;
+            --muted-color: #a3d5ff;
+        }
+        
+        body {
+            /* Override global stylesheet that forces centered layout and disables scrolling.
+               Allow normal document flow and scrolling for this data-heavy page. */
+            display: block;
+            overflow: auto;
+            min-height: 100vh;
+            margin: 0;
+            background: var(--desktop-bg);
+            color: var(--text-primary);
+            font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
+        }
+        
+        /* 椤堕儴鐘舵€佹爮 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            background: var(--status-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+            height: 72px;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+        }
+        
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .system-logo {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 8px rgba(0, 150, 255, 0.7));
+        }
+        
+        .system-name {
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, #4fc3ff, #a3d5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+        }
+
+        .system-subtitle {
+            font-size: 0.85rem;
+            color: var(--muted-color);
+            letter-spacing: 1px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .time-display {
+            color: var(--muted-color);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        .logout-btn, .back-btn {
+            background: rgba(0, 60, 120, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            color: var(--muted-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .logout-btn:hover, .back-btn:hover {
+            background: rgba(0, 100, 200, 0.85);
+            transform: translateY(-1px);
+        }
+        
+        /* 涓昏鍐呭鍖哄煙 */
+        .main-content {
+            padding: 110px 30px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .page-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #ffa93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-title p {
+            color: var(--muted-color);
+            font-size: 1.2rem;
+            max-width: 700px;
+        }
+        
+        .page-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: rgba(0, 30, 80, 0.5);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            text-align: center;
+            min-width: 150px;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: var(--muted-color);
+            font-size: 0.9rem;
+        }
+        
+        /* 鎼滅储鍜岀瓫閫夊尯鍩?*/
+        .filter-section {
+            background: var(--panel-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--panel-border);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            background: rgba(0, 30, 80, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: rgba(0, 150, 255, 0.6);
+            box-shadow: 0 0 0 3px rgba(0, 150, 255, 0.1);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4fc3ff;
+            font-size: 1.2rem;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            padding: 12px 20px;
+            background: rgba(0, 30, 80, 0.7);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            min-width: 150px;
+        }
+        
+        /* 鎬墿鍒楄〃 */
+        .monster-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        
+        .monster-card {
+            background: var(--panel-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--panel-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .monster-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.6);
+            box-shadow: 0 15px 30px rgba(0, 150, 255, 0.2);
+        }
+        
+        .monster-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .monster-name {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ffa93d;
+            margin-bottom: 5px;
+        }
+        
+        .monster-id {
+            font-size: 0.9rem;
+            color: var(--muted-color);
+        }
+        
+        .monster-level {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .level-low { background: rgba(107, 255, 184, 0.2); color: #6bffb8; border: 1px solid rgba(107, 255, 184, 0.5); }
+        .level-medium { background: rgba(255, 217, 61, 0.2); color: #ffd93d; border: 1px solid rgba(255, 217, 61, 0.5); }
+        .level-high { background: rgba(255, 167, 61, 0.2); color: #ffa73d; border: 1px solid rgba(255, 167, 61, 0.5); }
+        .level-very-high { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.5); }
+        .level-disaster { background: rgba(153, 0, 153, 0.2); color: #ff66ff; border: 1px solid rgba(153, 0, 153, 0.5); }
+        
+        .monster-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        
+        .info-label {
+            width: 80px;
+            color: var(--muted-color);
+            flex-shrink: 0;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--text-primary);
+        }
+        
+        .attribute-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .attribute-tag {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .weakness-tag { background: rgba(255, 107, 107, 0.15); color: #ff8e8e; border: 1px solid rgba(255, 107, 107, 0.3); }
+        .resistance-tag { background: rgba(79, 195, 255, 0.15); color: #8ed1ff; border: 1px solid rgba(79, 195, 255, 0.3); }
+        
+        .view-details-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(79, 195, 255, 0.2);
+            border: 1px solid rgba(79, 195, 255, 0.4);
+            border-radius: 10px;
+            color: #4fc3ff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .view-details-btn:hover {
+            background: rgba(79, 195, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* 绌虹姸鎬?*/
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(10, 36, 99, 0.5);
+            border-radius: 15px;
+            border: 2px dashed rgba(0, 150, 255, 0.3);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(0, 150, 255, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--muted-color);
+        }
+        
+        .empty-state p {
+            color: var(--muted-color);
+            max-width: 600px;
+            margin: 0 auto 25px;
+            font-size: 1.1rem;
+        }
+        
+        /* 鍔犺浇鍔ㄧ敾 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(79, 195, 255, 0.3);
+            border-top: 5px solid #4fc3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: #e0f7ff;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        /* 鍒嗛〉 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+        
+        .pagination-btn {
+            padding: 10px 20px;
+            background: rgba(0, 30, 80, 0.5);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(0, 60, 120, 0.7);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-number {
+            padding: 10px 15px;
+            background: rgba(79, 195, 255, 0.2);
+            border-radius: 8px;
+            color: #4fc3ff;
+            font-weight: bold;
+        }
+        
+        /* 璇︽儏妯℃€佹 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10010;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 25px 50px rgba(0, 150, 255, 0.2);
+            max-width: 800px;
+            width: 100%;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-header {
+            margin-bottom: 30px;
+        }
+        
+        .modal-header h2 {
+            font-size: 2.2rem;
+            color: #ffa93d;
+            margin-bottom: 10px;
+        }
+        
+        .modal-header .monster-id {
+            color: var(--muted-color);
+            font-size: 1rem;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            color: #ff6b6b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .detail-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-section h3 {
+            font-size: 1.4rem;
+            color: #4fc3ff;
+            margin-bottom: 15px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 12px;
+        }
+        
+        .detail-label {
+            width: 120px;
+            color: var(--muted-color);
+            flex-shrink: 0;
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: var(--text-primary);
+        }
+        
+        /* 灞炴€у浘鏍?*/
+        .fire { color: #ff6b6b; }
+        .thunder { color: #ffd93d; }
+        .ice { color: #4fc3ff; }
+        .wind { color: #6bffb8; }
+        .rock { color: #c8a951; }
+        .light { color: #ffffa0; }
+        .gravity { color: #b366ff; }
+        .life { color: #6bff6b; }
+        .fusion { color: #ff66cc; }
+        .physical { color: #cccccc; }
+        
+        /* 鍝嶅簲寮忚璁?*/
+        @media (max-width: 768px) {
+            .status-bar {
+                padding: 10px 15px;
+                flex-direction: column;
+                gap: 15px;
+                height: auto;
+            }
+            
+            .system-info, .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .monster-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 椤堕儴鐘舵€佹爮 -->
+    <div class="status-bar">
+        <div class="system-info">
+            <img src="qsamlogo.png" alt="绯荤粺鏍囧織" class="system-logo">
+            <div>
+                <div class="system-name">绠＄悊灞€ - 瑁傞殭鎬墿璧勬枡搴?/div>
+                <div class="system-subtitle">鏌ョ湅宸叉敹褰曠殑瑁傞殭鎬墿妗ｆ</div>
+            </div>
+        </div>
+        
+        <div class="user-info">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="user-avatar">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+                <div id="userDisplayName" style="color: #ffd93d;">鍔犺浇涓?..</div>
+                <div id="userRoleText" style="font-size: 0.8rem; color: #a3d5ff;">鍔犺浇涓?..</div>
+            </div>
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> 杩斿洖
+            </button>
+        </div>
+    </div>
+    
+    <!-- 鍔犺浇鍔ㄧ敾 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">姝ｅ湪浠庝簯绔姞杞芥暟鎹?..</div>
+        </div>
+    </div>
+    
+    <!-- 涓昏鍐呭鍖哄煙 -->
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>瑁傞殭鎬墿鏁版嵁搴?/h1>
+                <p>绠＄悊灞€宸叉敹褰曠殑鎵€鏈夎闅欐€墿妗ｆ璧勬枡锛屽寘鍚睘鎬с€佸急鐐瑰拰濞佽儊绛夌骇淇℃伅</p>
+            </div>
+            <div class="page-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalMonsters">0</div>
+                    <div class="stat-label">鎬绘€墿鏁伴噺</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="highLevelMonsters">0</div>
+                    <div class="stat-label">楂樺嵄鍙婁互涓?/div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="commonRegion">-</div>
+                    <div class="stat-label">鏈€甯歌鍦板尯</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 鎼滅储鍜岀瓫閫夊尯鍩?-->
+        <div class="filter-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="鎼滅储鎬墿鍚嶇О鎴栧嚭娌″湴鍖?..">
+            </div>
+            <div class="filter-controls">
+                <select class="filter-select" id="levelFilter">
+                    <option value="">鎵€鏈夐毦搴︾瓑绾?/option>
+                    <option value="浣庡嵄">浣庡嵄</option>
+                    <option value="涓嵄">涓嵄</option>
+                    <option value="楂樺嵄">楂樺嵄</option>
+                    <option value="鏋侀珮鍗?>鏋侀珮鍗?/option>
+                    <option value="鐏鹃毦">鐏鹃毦</option>
+                </select>
+                <select class="filter-select" id="attributeFilter">
+                    <option value="">鎵€鏈夊睘鎬?/option>
+                    <option value="鐏?>鐏睘鎬?/option>
+                    <option value="闆?>闆峰睘鎬?/option>
+                    <option value="鍐?>鍐板睘鎬?/option>
+                    <option value="椋?>椋庡睘鎬?/option>
+                    <option value="宀?>宀╁睘鎬?/option>
+                    <option value="鍏?>鍏夊睘鎬?/option>
+                    <option value="閲嶅姏">閲嶅姏灞炴€?/option>
+                    <option value="鐢熷懡">鐢熷懡灞炴€?/option>
+                    <option value="铻嶅悎">铻嶅悎灞炴€?/option>
+                    <option value="鐗╃悊">鐗╃悊灞炴€?/option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 鎬墿鍒楄〃 -->
+        <div class="monster-list" id="monsterList">
+            <!-- 鎬墿鍗＄墖浼氶€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+        </div>
+        
+        <!-- 鍒嗛〉 -->
+        <div class="pagination" id="pagination">
+            <button class="pagination-btn" id="prevPage" disabled>涓婁竴椤?/button>
+            <div class="page-number" id="currentPage">1</div>
+            <button class="pagination-btn" id="nextPage" disabled>涓嬩竴椤?/button>
+        </div>
+    </main>
+    
+    <!-- 鎬墿璇︽儏妯℃€佹 -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeDetailModal">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-header">
+                <h2 id="detailName">鎬墿鍚嶇О</h2>
+                <div class="monster-id" id="detailId">ID: -</div>
+                <div class="monster-level" id="detailLevel">绛夌骇</div>
+            </div>
+            
+            <div class="detail-section">
+                <h3>鍩烘湰淇℃伅</h3>
+                <div class="detail-row">
+                    <div class="detail-label">鍑烘病鍦板尯:</div>
+                    <div class="detail-value" id="detailRegion">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">鍑虹幇棰戞:</div>
+                    <div class="detail-value" id="detailFrequency">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">濞佽儊绛夌骇:</div>
+                    <div class="detail-value" id="detailLevelText">-</div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3>灞炴€т俊鎭?/h3>
+                <div class="detail-row">
+                    <div class="detail-label">寮辩偣灞炴€?</div>
+                    <div class="detail-value">
+                        <div class="attribute-list" id="detailWeaknesses">
+                            <!-- 寮辩偣灞炴€т細鍔ㄦ€佺敓鎴?-->
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">鎶楁€у睘鎬?</div>
+                    <div class="detail-value">
+                        <div class="attribute-list" id="detailResistances">
+                            <!-- 鎶楁€у睘鎬т細鍔ㄦ€佺敓鎴?-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3>璇︾粏鎻忚堪</h3>
+                <div class="detail-value" id="detailNotes" style="line-height: 1.6;">
+                    鏆傛棤璇︾粏鎻忚堪
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3>璁板綍淇℃伅</h3>
+                <div class="detail-row">
+                    <div class="detail-label">棣栨璁板綍:</div>
+                    <div class="detail-value" id="detailCreatedAt">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">鏈€鍚庢洿鏂?</div>
+                    <div class="detail-value" id="detailUpdatedAt">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ================================================
+        // 閰嶇疆鍜屽垵濮嬪寲
+        // ================================================
+        // Supabase閰嶇疆
+        const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
+        
+        let supabaseClient = null;
+        let currentUser = null;
+        let currentRole = null;
+        
+        // 鎬墿鏁版嵁
+        let allMonsters = [];
+        let filteredMonsters = [];
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        
+        // 灞炴€ч厤缃?
+        const attributes = [
+            { id: 'fire', name: '鐏?, icon: 'fa-fire', colorClass: 'fire' },
+            { id: 'thunder', name: '闆?, icon: 'fa-bolt', colorClass: 'thunder' },
+            { id: 'ice', name: '鍐?, icon: 'fa-snowflake', colorClass: 'ice' },
+            { id: 'wind', name: '椋?, icon: 'fa-wind', colorClass: 'wind' },
+            { id: 'rock', name: '宀?, icon: 'fa-mountain', colorClass: 'rock' },
+            { id: 'light', name: '鍏?, icon: 'fa-sun', colorClass: 'light' },
+            { id: 'gravity', name: '閲嶅姏', icon: 'fa-weight-hanging', colorClass: 'gravity' },
+            { id: 'life', name: '鐢熷懡', icon: 'fa-heart', colorClass: 'life' },
+            { id: 'fusion', name: '铻嶅悎', icon: 'fa-atom', colorClass: 'fusion' },
+            { id: 'physical', name: '鐗╃悊', icon: 'fa-fist-raised', colorClass: 'physical' }
+        ];
+        
+        // 闅惧害绛夌骇閰嶇疆
+        const levels = [
+            { id: '浣庡嵄', name: '浣庡嵄', colorClass: 'level-low' },
+            { id: '涓嵄', name: '涓嵄', colorClass: 'level-medium' },
+            { id: '楂樺嵄', name: '楂樺嵄', colorClass: 'level-high' },
+            { id: '鏋侀珮鍗?, name: '鏋侀珮鍗?, colorClass: 'level-very-high' },
+            { id: '鐏鹃毦', name: '鐏鹃毦', colorClass: 'level-disaster' }
+        ];
+        
+        // ================================================
+        // 鍒濆鍖栧嚱鏁?
+        // ================================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('椤甸潰鍔犺浇瀹屾垚锛屽紑濮嬪垵濮嬪寲...');
+            
+            // 妫€鏌ョ櫥褰曠姸鎬?
+            await checkAuth();
+            
+            // 鍒濆鍖朣upabase瀹㈡埛绔?
+            initSupabase();
+            
+            // 鏇存柊鏃堕棿鍜屾樉绀虹敤鎴蜂俊鎭?
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // 鍔犺浇鎬墿鏁版嵁
+            await loadMonsters();
+            
+            // 璁剧疆浜嬩欢鐩戝惉鍣?
+            setupEventListeners();
+            
+            console.log('鍒濆鍖栧畬鎴?);
+        });
+        
+        // 妫€鏌ョ櫥褰曠姸鎬?
+        async function checkAuth() {
+            currentUser = localStorage.getItem('auth_user');
+            currentRole = localStorage.getItem('auth_role');
+            
+            if (!currentUser || !currentRole) {
+                alert('璇峰厛鐧诲綍锛?);
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // 鏄剧ず鐢ㄦ埛淇℃伅
+            document.getElementById('userDisplayName').textContent = currentUser;
+            
+            // 鏍规嵁瑙掕壊鏄剧ず涓嶅悓鐨勬枃鏈?
+            let roleText = '';
+            switch(currentRole) {
+                case 'admin':
+                    roleText = '鏈€楂樻潈闄愮鐞嗗憳';
+                    break;
+                case 'member':
+                case 'user':
+                    roleText = '绠＄悊灞€鎴愬憳';
+                    break;
+                case 'viewer':
+                    roleText = '瑙傚療鍛?;
+                    break;
+                default:
+                    roleText = '鐢ㄦ埛';
+            }
+            document.getElementById('userRoleText').textContent = roleText;
+        }
+        
+        // 鍒濆鍖朣upabase瀹㈡埛绔?
+        function initSupabase() {
+            try {
+                if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('Supabase瀹㈡埛绔凡鍒濆鍖?);
+                } else {
+                    console.warn('Supabase鏈厤缃紝灏嗕娇鐢ㄦ湰鍦版暟鎹?);
+                }
+            } catch (e) {
+                console.error('Supabase鍒濆鍖栧け璐?', e);
+            }
+        }
+        
+        // 鏇存柊褰撳墠鏃堕棿
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        // ================================================
+        // 鏁版嵁鍔犺浇鍑芥暟
+        // ================================================
+        // 浠嶴upabase鍔犺浇鎬墿鏁版嵁
+        async function loadMonsters() {
+            showLoading('姝ｅ湪浠庝簯绔姞杞芥€墿鏁版嵁...');
+            
+            try {
+                let monsters = [];
+                
+                // 棣栧厛灏濊瘯浠嶴upabase鍔犺浇
+                if (supabaseClient) {
+                    console.log('灏濊瘯浠嶴upabase鍔犺浇鎬墿鏁版嵁...');
+                    
+                    const { data, error } = await supabaseClient
+                        .from('rift_monsters')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (error) {
+                        console.error('浠嶴upabase鍔犺浇鎬墿澶辫触:', error);
+                        // 鍥為€€鍒版湰鍦版暟鎹?
+                        monsters = loadLocalMonsters();
+                    } else if (data && data.length > 0) {
+                        console.log(`浠嶴upabase鍔犺浇浜?${data.length} 鏉℃€墿璁板綍`);
+                        monsters = formatSupabaseMonsters(data);
+                        // 鏇存柊鏈湴缂撳瓨
+                        localStorage.setItem('rift_monsters_cache', JSON.stringify(monsters));
+                    } else {
+                        console.log('Supabase涓病鏈夋€墿鏁版嵁锛屼娇鐢ㄦ湰鍦版暟鎹?);
+                        monsters = loadLocalMonsters();
+                    }
+                } else {
+                    console.log('Supabase鏈厤缃紝浣跨敤鏈湴鏁版嵁');
+                    monsters = loadLocalMonsters();
+                }
+                
+                allMonsters = monsters;
+                filteredMonsters = [...allMonsters];
+                
+                // 鏇存柊缁熻鏁版嵁
+                updateStatistics();
+                
+                // 娓叉煋鍒楄〃
+                renderMonsterList();
+                
+                // 闅愯棌鍔犺浇鍔ㄧ敾
+                setTimeout(() => {
+                    hideLoading();
+                }, 500);
+                
+            } catch (error) {
+                console.error('鍔犺浇鎬墿鏁版嵁鏃跺嚭閿?', error);
+                hideLoading();
+                showNotification('鍔犺浇鏁版嵁澶辫触锛岃妫€鏌ョ綉缁滆繛鎺?, 'error');
+                
+                // 灏濊瘯浣跨敤鏈湴缂撳瓨
+                allMonsters = loadLocalMonsters();
+                filteredMonsters = [...allMonsters];
+                updateStatistics();
+                renderMonsterList();
+            }
+        }
+        
+        // 浠庢湰鍦板瓨鍌ㄥ姞杞芥€墿鏁版嵁
+        function loadLocalMonsters() {
+            try {
+                // 灏濊瘯浠庢湰鍦扮紦瀛樺姞杞?
+                const cached = localStorage.getItem('rift_monsters_cache');
+                if (cached) {
+                    const monsters = JSON.parse(cached);
+                    console.log(`浠庢湰鍦扮紦瀛樺姞杞戒簡 ${monsters.length} 鏉℃€墿璁板綍`);
+                    return monsters;
+                }
+                
+                // 濡傛灉娌℃湁缂撳瓨锛屽皾璇曚粠鍏朵粬鏈湴瀛樺偍浣嶇疆鍔犺浇
+                const stored = localStorage.getItem('rift_monsters_data');
+                if (stored) {
+                    const monsters = JSON.parse(stored);
+                    console.log(`浠庢湰鍦板瓨鍌ㄥ姞杞戒簡 ${monsters.length} 鏉℃€墿璁板綍`);
+                    return monsters;
+                }
+                
+                console.log('鏈湴娌℃湁鎬墿鏁版嵁');
+                return [];
+            } catch (e) {
+                console.error('鍔犺浇鏈湴鎬墿鏁版嵁澶辫触:', e);
+                return [];
+            }
+        }
+        
+        // 鏍煎紡鍖朣upabase鏁版嵁
+        function formatSupabaseMonsters(supabaseData) {
+            return supabaseData.map(monster => ({
+                id: monster.id || monster.local_id || `monster_${Date.now()}`,
+                name: monster.name || monster.title || '鏈煡鎬墿',
+                region: monster.region || '鏈煡鍖哄煙',
+                frequency: monster.frequency || '鏈煡',
+                level: monster.level || '涓嵄',
+                weaknesses: Array.isArray(monster.weaknesses) ? monster.weaknesses : 
+                           (monster.weaknesses ? JSON.parse(monster.weaknesses) : []),
+                resistances: Array.isArray(monster.resistances) ? monster.resistances : 
+                            (monster.resistances ? JSON.parse(monster.resistances) : []),
+                notes: monster.notes || '',
+                createdAt: monster.created_at || monster.createdAt || new Date().toISOString(),
+                updatedAt: monster.updated_at || monster.updatedAt || new Date().toISOString(),
+                cloudId: monster.id || null
+            }));
+        }
+        
+        // ================================================
+        // 娓叉煋鍑芥暟
+        // ================================================
+        // 鏇存柊缁熻鏁版嵁
+        function updateStatistics() {
+            const total = allMonsters.length;
+            const highLevel = allMonsters.filter(m => 
+                m.level === '楂樺嵄' || m.level === '鏋侀珮鍗? || m.level === '鐏鹃毦'
+            ).length;
+            
+            // 鎵惧嚭鏈€甯歌鐨勫嚭娌″湴鍖?
+            const regionCounts = {};
+            allMonsters.forEach(monster => {
+                const region = monster.region;
+                regionCounts[region] = (regionCounts[region] || 0) + 1;
+            });
+            
+            let mostCommonRegion = '-';
+            let maxCount = 0;
+            for (const [region, count] of Object.entries(regionCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostCommonRegion = region;
+                }
+            }
+            
+            document.getElementById('totalMonsters').textContent = total;
+            document.getElementById('highLevelMonsters').textContent = highLevel;
+            document.getElementById('commonRegion').textContent = mostCommonRegion;
+        }
+        
+        // 娓叉煋鎬墿鍒楄〃
+        function renderMonsterList() {
+            const monsterList = document.getElementById('monsterList');
+            const pagination = document.getElementById('pagination');
+            
+            // 娓呯┖鍒楄〃
+            monsterList.innerHTML = '';
+            
+            // 濡傛灉娌℃湁鎬墿锛屾樉绀虹┖鐘舵€?
+            if (filteredMonsters.length === 0) {
+                monsterList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-dragon"></i>
+                        </div>
+                        <h3>娌℃湁鎵惧埌鎬墿璁板綍</h3>
+                        <p>璇峰皾璇曡皟鏁存悳绱㈡潯浠舵垨绛涢€夋潯浠?/p>
+                    </div>
+                `;
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            // 璁＄畻鍒嗛〉
+            const totalPages = Math.ceil(filteredMonsters.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredMonsters.length);
+            const pageMonsters = filteredMonsters.slice(startIndex, endIndex);
+            
+            // 娓叉煋褰撳墠椤电殑鎬墿鍗＄墖
+            pageMonsters.forEach(monster => {
+                const card = document.createElement('div');
+                card.className = 'monster-card';
+                card.dataset.id = monster.id;
+                
+                // 鑾峰彇闅惧害绛夌骇鏍峰紡
+                const levelClass = levels.find(l => l.id === monster.level)?.colorClass || 'level-medium';
+                
+                // 鑾峰彇灞炴€у浘鏍?
+                const weaknessIcons = monster.weaknesses.map(weakness => {
+                    const attr = attributes.find(a => a.id === weakness);
+                    return attr ? `<i class="fas ${attr.icon} ${attr.colorClass}" title="${attr.name}"></i>` : '';
+                }).filter(icon => icon).join(' ');
+                
+                const resistanceIcons = monster.resistances.map(resistance => {
+                    const attr = attributes.find(a => a.id === resistance);
+                    return attr ? `<i class="fas ${attr.icon} ${attr.colorClass}" title="${attr.name}"></i>` : '';
+                }).filter(icon => icon).join(' ');
+                
+                // 瀹夊叏澶勭悊 id锛堟湁鏃跺悗绔繑鍥炴暟瀛楁垨 null锛?
+                const _idStr = (monster.id === undefined || monster.id === null) ? '' : String(monster.id);
+                const displayId = _idStr ? (_idStr.length > 8 ? _idStr.substring(0, 8) + '...' : _idStr) : '-';
+
+                card.innerHTML = `
+                    <div class="monster-header">
+                        <div>
+                            <div class="monster-name">${monster.name}</div>
+                            <div class="monster-id">ID: ${displayId}</div>
+                        </div>
+                        <div class="monster-level ${levelClass}">${monster.level}</div>
+                    </div>
+                    
+                    <div class="monster-info">
+                        <div class="info-item">
+                            <div class="info-label">鍑烘病鍦板尯:</div>
+                            <div class="info-value">${monster.region}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">鍑虹幇棰戞:</div>
+                            <div class="info-value">${monster.frequency}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">寮辩偣:</div>
+                            <div class="info-value">
+                                ${weaknessIcons || '鏃?}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">鎶楁€?</div>
+                            <div class="info-value">
+                                ${resistanceIcons || '鏃?}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="view-details-btn" onclick="viewMonsterDetail('${monster.id}')">
+                        <i class="fas fa-eye"></i> 鏌ョ湅璇︽儏
+                    </button>
+                `;
+                
+                monsterList.appendChild(card);
+
+                // Attach click handler to the details button (avoid inline onclick fragility)
+                const detailsBtn = card.querySelector('.view-details-btn');
+                if (detailsBtn) {
+                    detailsBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        try {
+                            viewMonsterDetail(monster.id);
+                        } catch (err) {
+                            console.error('鏃犳硶鎵撳紑璇︽儏:', err);
+                        }
+                    });
+                }
+            });
+            
+            // 鏇存柊鍒嗛〉鎺т欢
+            updatePagination(totalPages);
+        }
+        
+        // 鏇存柊鍒嗛〉鎺т欢
+        function updatePagination(totalPages) {
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const currentPageEl = document.getElementById('currentPage');
+            const pagination = document.getElementById('pagination');
+            
+            pagination.style.display = totalPages > 1 ? 'flex' : 'none';
+            currentPageEl.textContent = currentPage;
+            
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        }
+        
+        // ================================================
+        // 浜嬩欢澶勭悊鍑芥暟
+        // ================================================
+        // 璁剧疆浜嬩欢鐩戝惉鍣?
+        function setupEventListeners() {
+            // 鎼滅储杈撳叆
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(filterMonsters, 300));
+            }
+            
+            // 绛涢€夊櫒
+            const levelFilter = document.getElementById('levelFilter');
+            const attributeFilter = document.getElementById('attributeFilter');
+            
+            if (levelFilter) {
+                levelFilter.addEventListener('change', filterMonsters);
+            }
+            
+            if (attributeFilter) {
+                attributeFilter.addEventListener('change', filterMonsters);
+            }
+            
+            // 鍒嗛〉鎸夐挳
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderMonsterList();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    const totalPages = Math.ceil(filteredMonsters.length / itemsPerPage);
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderMonsterList();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            }
+            
+            // 璇︽儏妯℃€佹鍏抽棴鎸夐挳
+            const closeDetailBtn = document.getElementById('closeDetailModal');
+            if (closeDetailBtn) {
+                closeDetailBtn.addEventListener('click', closeDetailModal);
+            }
+            
+            // 鐐瑰嚮妯℃€佹澶栭儴鍏抽棴
+            const detailModal = document.getElementById('detailModal');
+            if (detailModal) {
+                detailModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeDetailModal();
+                    }
+                });
+            }
+        }
+        
+        // 闃叉姈鍑芥暟
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // 绛涢€夋€墿
+        function filterMonsters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const levelFilterValue = document.getElementById('levelFilter').value;
+            const attributeFilterValue = document.getElementById('attributeFilter').value;
+            
+            filteredMonsters = allMonsters.filter(monster => {
+                // 鎼滅储绛涢€?
+                const matchesSearch = !searchTerm || 
+                    monster.name.toLowerCase().includes(searchTerm) ||
+                    monster.region.toLowerCase().includes(searchTerm);
+                
+                // 闅惧害绛夌骇绛涢€?
+                const matchesLevel = !levelFilterValue || monster.level === levelFilterValue;
+                
+                // 灞炴€х瓫閫?
+                let matchesAttribute = true;
+                if (attributeFilterValue) {
+                    const attrName = attributeFilterValue;
+                    const attribute = attributes.find(a => a.name === attrName);
+                    if (attribute) {
+                        matchesAttribute = monster.weaknesses.includes(attribute.id) || 
+                                         monster.resistances.includes(attribute.id);
+                    }
+                }
+                
+                return matchesSearch && matchesLevel && matchesAttribute;
+            });
+            
+            // 閲嶇疆鍒扮涓€椤?
+            currentPage = 1;
+            
+            // 閲嶆柊娓叉煋鍒楄〃
+            renderMonsterList();
+        }
+        
+        // 鏌ョ湅鎬墿璇︽儏
+        function viewMonsterDetail(monsterId) {
+            // Be tolerant of id types (string/number/object). Compare by string form as fallback.
+            const lookupIdStr = monsterId === undefined || monsterId === null ? '' : String(monsterId);
+            const monster = allMonsters.find(m => {
+                if (m == null) return false;
+                try {
+                    return m.id === monsterId || String(m.id) === lookupIdStr;
+                } catch (e) {
+                    return false;
+                }
+            });
+            if (!monster) {
+                console.warn('鏈壘鍒板搴旀€墿锛宨d=', monsterId);
+                return;
+            }
+            
+            // 鏇存柊妯℃€佹鍐呭
+            document.getElementById('detailName').textContent = monster.name;
+            document.getElementById('detailId').textContent = `ID: ${monster.id}`;
+            document.getElementById('detailRegion').textContent = monster.region;
+            document.getElementById('detailFrequency').textContent = monster.frequency;
+            document.getElementById('detailLevelText').textContent = monster.level;
+            document.getElementById('detailNotes').textContent = monster.notes || '鏆傛棤璇︾粏鎻忚堪';
+            
+            // 璁剧疆闅惧害绛夌骇鏍峰紡
+            const levelEl = document.getElementById('detailLevel');
+            const levelClass = levels.find(l => l.id === monster.level)?.colorClass || 'level-medium';
+            levelEl.className = `monster-level ${levelClass}`;
+            levelEl.textContent = monster.level;
+            
+            // 鏍煎紡鍖栨棩鏈?
+            const formatDate = (dateString) => {
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } catch (e) {
+                    return dateString;
+                }
+            };
+            
+            document.getElementById('detailCreatedAt').textContent = formatDate(monster.createdAt);
+            document.getElementById('detailUpdatedAt').textContent = formatDate(monster.updatedAt);
+            
+            // 娓叉煋寮辩偣灞炴€?
+            const weaknessesEl = document.getElementById('detailWeaknesses');
+            weaknessesEl.innerHTML = '';
+            monster.weaknesses.forEach(weakness => {
+                const attr = attributes.find(a => a.id === weakness);
+                if (attr) {
+                    const tag = document.createElement('span');
+                    tag.className = 'attribute-tag weakness-tag';
+                    tag.innerHTML = `<i class="fas ${attr.icon} ${attr.colorClass}"></i> ${attr.name}`;
+                    weaknessesEl.appendChild(tag);
+                }
+            });
+            
+            // 娓叉煋鎶楁€у睘鎬?
+            const resistancesEl = document.getElementById('detailResistances');
+            resistancesEl.innerHTML = '';
+            monster.resistances.forEach(resistance => {
+                const attr = attributes.find(a => a.id === resistance);
+                if (attr) {
+                    const tag = document.createElement('span');
+                    tag.className = 'attribute-tag resistance-tag';
+                    tag.innerHTML = `<i class="fas ${attr.icon} ${attr.colorClass}"></i> ${attr.name}`;
+                    resistancesEl.appendChild(tag);
+                }
+            });
+            
+            // 鏄剧ず妯℃€佹
+            document.getElementById('detailModal').classList.add('active');
+        }
+        
+        // 鍏抽棴璇︽儏妯℃€佹
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+        
+        // ================================================
+        // 宸ュ叿鍑芥暟
+        // ================================================
+        // 鏄剧ず鍔犺浇鍔ㄧ敾
+        function showLoading(message = '姝ｅ湪鍔犺浇...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = document.getElementById('loadingText');
+            if (text) text.textContent = message;
+            if (overlay) overlay.style.display = 'flex';
+        }
+        
+        // 闅愯棌鍔犺浇鍔ㄧ敾
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+        
+        // 鏄剧ず閫氱煡
+        function showNotification(message, type = 'info') {
+            // 绉婚櫎鐜版湁閫氱煡
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // 鍒涘缓鏂伴€氱煡
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'rgba(107, 255, 184, 0.9)' : type === 'error' ? 'rgba(255, 107, 107, 0.9)' : 'rgba(79, 195, 255, 0.9)'};
+                color: white;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                z-index: 2000;
+                animation: fadeIn 0.5s ease;
+                backdrop-filter: blur(10px);
+                border: 1px solid ${type === 'success' ? 'rgba(107, 255, 184, 0.5)' : type === 'error' ? 'rgba(255, 107, 107, 0.5)' : 'rgba(79, 195, 255, 0.5)'};
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 3绉掑悗绉婚櫎閫氱煡
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.5s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        }
+        
+        // 杩斿洖涓婁竴椤?
+        function goBack() {
+            const role = localStorage.getItem('auth_role');
+            if (role === 'admin') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'member.html';
+            }
+        }
+        
+        // 閫€鍑虹櫥褰?
+        function logout() {
+            if (confirm('纭畾瑕侀€€鍑虹櫥褰曞悧锛?)) {
+                localStorage.removeItem('auth_user');
+                localStorage.removeItem('auth_role');
+                localStorage.removeItem('auth_time');
+                showLoading('姝ｅ湪閫€鍑虹郴缁?..');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        }
+        
+        // 娣诲姞CSS鍔ㄧ敾
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

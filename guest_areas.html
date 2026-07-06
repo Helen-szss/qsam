@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地区划分 - 管理局资料库</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            color: #e0f7ff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 页面容器与可滚动主区域，和其它页面保持一致 */
+        .desktop {
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            position: relative;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 0 0 40px; /* 去除顶部间距，保留底部间距以防遮挡 */
+        }
+        
+        /* 顶部状态栏（与 guest_qsam 保持一致） */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            background: rgba(10, 36, 99, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            flex-shrink: 0;
+            height: 60px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .system-logo {
+            width: 35px;
+            height: 35px;
+            filter: drop-shadow(0 0 8px rgba(0, 150, 255, 0.7));
+        }
+
+        .system-name {
+            font-size: 1.3rem;
+            background: linear-gradient(90deg, #4fc3ff, #a3d5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6b9ccc, #a3d5ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .time-display {
+            color: #a3d5ff;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-right: 10px;
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            background: rgba(0, 60, 120, 0.8);
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            color: #a3d5ff;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 150, 255, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+        }
+
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.25);
+            border: 1px solid rgba(255, 107, 107, 0.6);
+            color: #ff6b6b;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+            font-size: 0.95rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.35);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* 页面标题和描述 */
+        .page-header {
+            text-align: center;
+            padding: 30px 20px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #4fc3ff, #6bffb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(79, 195, 255, 0.3);
+        }
+        
+        .page-description {
+            font-size: 1.1rem;
+            color: #a3d5ff;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        /* 地区划分主容器 */
+        .regions-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+        
+        /* 区域卡片样式 */
+        .region-section {
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .region-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid;
+            position: relative;
+        }
+        
+        .region-header:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, currentColor, transparent);
+        }
+        
+        .region-icon {
+            font-size: 2.5rem;
+            margin-right: 20px;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+        
+        .region-title {
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .region-description {
+            font-size: 1.1rem;
+            color: #b3e0ff;
+            margin-top: 10px;
+            max-width: 800px;
+        }
+        
+        /* 赫尔卡西亚主题 */
+        .helesia .region-header {
+            border-color: #4fc3ff;
+            color: #4fc3ff;
+        }
+        
+        .helesia .region-icon {
+            color: #4fc3ff;
+        }
+        
+        /* 莫比乌斯之庭主题 */
+        .mobius .region-header {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        .mobius .region-icon {
+            color: #ff6b6b;
+        }
+        
+        /* 子区域网格布局 */
+        .subregions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        /* 子区域卡片 */
+        .subregion-card {
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+        
+        .subregion-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .subregion-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, currentColor, transparent);
+        }
+        
+        /* 赫尔卡西亚子区域卡片 */
+        .helesia .subregion-card {
+            border-color: rgba(79, 195, 255, 0.4);
+        }
+        
+        .helesia .subregion-card:hover {
+            border-color: rgba(79, 195, 255, 0.8);
+            box-shadow: 0 15px 30px rgba(79, 195, 255, 0.2);
+        }
+        
+        .helesia .subregion-card:before {
+            background: linear-gradient(90deg, #4fc3ff, transparent);
+        }
+        
+        /* 莫比乌斯之庭子区域卡片 */
+        .mobius .subregion-card {
+            border-color: rgba(255, 107, 107, 0.4);
+        }
+        
+        .mobius .subregion-card:hover {
+            border-color: rgba(255, 107, 107, 0.8);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.2);
+        }
+        
+        .mobius .subregion-card:before {
+            background: linear-gradient(90deg, #ff6b6b, transparent);
+        }
+        
+        /* 子区域标题 */
+        .subregion-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .subregion-icon {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+        
+        .subregion-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        /* 子区域描述 */
+        .subregion-description {
+            color: #cce7ff;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        /* 二级子区域列表 */
+        .nested-subregions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nested-title {
+            font-size: 1.1rem;
+            color: #ffd93d;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nested-title i {
+            margin-right: 8px;
+        }
+        
+        .nested-list {
+            list-style-type: none;
+        }
+        
+        .nested-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(0, 30, 80, 0.5);
+            border-radius: 8px;
+            border-left: 3px solid;
+            transition: all 0.2s ease;
+        }
+        
+        .nested-item:hover {
+            background: rgba(0, 40, 100, 0.7);
+            transform: translateX(5px);
+        }
+        
+        /* 赫尔卡西亚嵌套项 */
+        .helesia .nested-item {
+            border-left-color: #4fc3ff;
+        }
+        
+        /* 莫比乌斯之庭嵌套项 */
+        .mobius .nested-item {
+            border-left-color: #ff6b6b;
+        }
+        
+        /* 底部功能面板 */
+        .function-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background: rgba(10, 36, 99, 0.9);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            display: flex;
+            gap: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        
+        .panel-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(0, 60, 120, 0.8);
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            color: #a3d5ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.3rem;
+        }
+        
+        .panel-btn:hover {
+            background: rgba(0, 150, 255, 0.4);
+            transform: scale(1.15);
+            box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+        }
+        
+        /* 区域详情模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: radial-gradient(circle at center, #0a2463, #000000);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 60px;
+            transform: translateY(30px);
+            transition: transform 0.4s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #4fc3ff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: rgba(255, 107, 107, 0.25);
+            border: 1px solid rgba(255, 107, 107, 0.6);
+            color: #ff6b6b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 107, 107, 0.35);
+        }
+        
+        .modal-body {
+            color: #e0f7ff;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+        
+        .modal-details {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 30, 80, 0.6);
+            border-radius: 12px;
+        }
+        
+        .modal-details h4 {
+            color: #ffd93d;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .modal-details ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .modal-details li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .modal-details li i {
+            position: absolute;
+            left: 0;
+            font-size: 1.1rem;
+            color: #6bffb8;
+        }
+        
+        /* 访问提示 */
+        .access-note {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 20px;
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            text-align: center;
+            color: #a3d5ff;
+            backdrop-filter: blur(5px);
+        }
+        
+        .access-title {
+            color: #ffd93d;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1100px) {
+            .subregions-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .region-title {
+                font-size: 1.7rem;
+            }
+            
+            .subregions-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .function-panel {
+                padding: 12px 25px;
+                gap: 20px;
+                bottom: 15px;
+            }
+            
+            .panel-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .status-bar {
+                padding: 5px 10px;
+                height: 50px;
+            }
+            
+            .system-name {
+                font-size: 1.1rem;
+            }
+            
+            .page-header {
+                padding: 20px 15px 15px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .region-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .region-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .subregion-card {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                padding: 25px;
+            }
+            
+            .modal-title {
+                font-size: 1.6rem;
+            }
+            
+            .function-panel {
+                padding: 10px 20px;
+                gap: 15px;
+            }
+            
+            .panel-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .page-title {
+                font-size: 1.6rem;
+            }
+            
+            .region-title {
+                font-size: 1.5rem;
+            }
+            
+            .subregion-title {
+                font-size: 1.3rem;
+            }
+            
+            .function-panel {
+                padding: 8px 15px;
+                gap: 10px;
+                bottom: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .user-info .time-display {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="desktop">
+        <div class="main-content">
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="system-info">
+            <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+            <div class="system-name">管理局 - 游客访问模式</div>
+        </div>
+        
+        <div class="user-info">
+            <div class="time-display" id="currentTime">00:00:00</div>
+            <div class="user-avatar">
+                <i class="fas fa-user-clock"></i>
+            </div>
+            <div>
+                <div style="color: #a3d5ff;">访客</div>
+                <div style="font-size: 0.8rem; color: #6b9ccc;">游客访问权限</div>
+            </div>
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> 返回
+            </button>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </div>
+    
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h1 class="page-title">地区划分</h1>
+        <p class="page-description">
+            “时间癌变”后，世界由混乱趋于稳定，并逐渐分割为两大区域：赫尔卡西亚和莫比乌斯之庭。
+            每个地区都有其独特的环境特征和异常现象，经由管理局探测与分析，得出以下分析资料，仅供参考。
+        </p>
+    </div>
+    
+    <!-- 地区划分内容 -->
+    <div class="regions-container">
+        <!-- 赫尔卡西亚区域 -->
+        <div class="region-section helesia">
+            <div class="region-header">
+                <i class="fas fa-industry region-icon"></i>
+                <div>
+                    <h2 class="region-title">赫尔卡西亚</h2>
+                    <p class="region-description">
+                        有相对稳定的时间与空间结构以时铸厂为中心，阶级划分森严
+                    </p>
+                </div>
+            </div>
+            
+            <div class="subregions-grid">
+                <!-- 锈带铁路 -->
+                <div class="subregion-card" data-region="rust-belt">
+                    <div class="subregion-header">
+                        <i class="fas fa-train subregion-icon" style="color: #8B4513;"></i>
+                        <h3 class="subregion-title">锈带铁路</h3>
+                    </div>
+                    <p class="subregion-description">贯穿赫尔卡西亚的浮空轨道系统，部分路段受时空裂隙影响，存在失踪与异常风险。</p>
+                </div>
+                
+                <!-- 深井 -->
+                <div class="subregion-card" data-region="deep-well">
+                    <div class="subregion-header">
+                            <i class="fas fa-database subregion-icon" style="color: #2E8B57;"></i>
+                            <h3 class="subregion-title">深井</h3>
+                        </div>
+                    <p class="subregion-description">城市地底的古代数据与时晶产地，深处危险且储存着被篡改的记忆。</p>
+                </div>
+                
+                <!-- 时铸厂 -->
+                <div class="subregion-card" data-region="time-foundry">
+                    <div class="subregion-header">
+                            <i class="fas fa-building subregion-icon" style="color: #FFA500;"></i>
+                            <h3 class="subregion-title">时铸厂</h3>
+                        </div>
+                    <p class="subregion-description">城市的工业与科技核心，实行严格安保并由强势家族主导。</p>
+                </div>
+                
+                <!-- 时骸区 -->
+                <div class="subregion-card" data-region="time-bone">
+                    <div class="subregion-header">
+                            <i class="fas fa-city subregion-icon" style="color: #A9A9A9;"></i>
+                            <h3 class="subregion-title">时骸区</h3>
+                        </div>
+                    <p class="subregion-description">充斥着非法交易与时空异常的贫民区，环境危险且建筑不稳。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 莫比乌斯之庭区域 -->
+        <div class="region-section mobius">
+            <div class="region-header">
+                <i class="fas fa-infinity region-icon"></i>
+                <div>
+                    <h2 class="region-title">莫比乌斯之庭</h2>
+                    <p class="region-description">
+                        这是一片无人管辖的区域，人迹罕至，时空裂隙频出，任何信仰在这样一个时空错乱危机四伏的地方都不存在
+                    </p>
+                </div>
+            </div>
+            
+            <div class="subregions-grid">
+                <!-- 彼岸市 -->
+                <div class="subregion-card" data-region="othershore-city">
+                    <div class="subregion-header">
+                        <i class="fas fa-city subregion-icon" style="color: #9370DB;"></i>
+                        <h3 class="subregion-title">彼岸市</h3>
+                    </div>
+                    <p class="subregion-description">
+                        时间线杂乱无章，建筑风格混杂，有一些通过时空裂隙而来人选择定居在此处。
+                    </p>
+                    
+                    <!-- 二级子区域 -->
+                    <div class="nested-subregions">
+                        <div class="nested-title">
+                            <i class="fas fa-sitemap"></i> 包含区域
+                        </div>
+                        <ul class="nested-list">
+                            <li class="nested-item">记忆公海 - 由城市居民的记忆碎片形成的意识海洋，普通人会被记忆吞噬，请谨慎前往</li>
+                            <li class="nested-item">锁孔剧院 - 上演历史悲剧，可能是任何一个人的，甚至是观看者自己，如选择前往，请时刻关注自身的精神阈值</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 虚数沙漠 -->
+                <div class="subregion-card" data-region="imaginary-desert">
+                    <div class="subregion-header">
+                        <i class="fas fa-sun subregion-icon" style="color: #FFD700;"></i>
+                        <h3 class="subregion-title">虚数沙漠</h3>
+                    </div>
+                    <p class="subregion-description">
+                        时间流速混乱，时空裂隙最频发地段，生活条件恶劣，危险重重。
+                    </p>
+                    
+                    <!-- 二级子区域 -->
+                    <div class="nested-subregions">
+                        <div class="nested-title">
+                            <i class="fas fa-sitemap"></i> 包含区域
+                        </div>
+                        <ul class="nested-list">
+                            <li class="nested-item">海市蜃楼 - 其他时空的投影，可理解为一种另类的时空裂隙，但更加不可控</li>
+                            <li class="nested-item">沙漏坟场 - 原本为一些时痕者的葬身之处，在一次裂隙怪物入侵后，时痕者尸体被侵蚀为裂隙怪物，危险指数上涨</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 观测站Π -->
+                <div class="subregion-card" data-region="observatory-pi">
+                    <div class="subregion-header">
+                        <i class="fas fa-satellite-dish subregion-icon" style="color: #1E90FF;"></i>
+                        <h3 class="subregion-title">观测站Π</h3>
+                    </div>
+                    <p class="subregion-description">
+                        隶属于跨象限异常管理局，外表为黑色方碑，位于虚数沙漠南边缘，用于检测莫比乌斯之庭异常信号以及时空裂隙活动。
+                    </p>
+                    <p class="subregion-description" style="margin-top: 10px; color: #ffd93d; font-size: 0.95rem;">
+                        <i class="fas fa-exclamation-triangle"></i> 仅对管理局成员开放使用权限
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 访问提示 -->
+    <div class="access-note">
+        <div class="access-title">
+            <i class="fas fa-info-circle"></i> 访问权限说明
+        </div>
+        <p>您正在以游客身份访问管理局公开地区资料。部分区域的详细资料和实时监测数据仅对授权成员开放。</p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: #ffd93d;">
+            <i class="fas fa-exclamation-triangle"></i> 如需申请特定区域的详细资料或进入权限，请通过"发布任务"功能提交申请。
+        </p>
+    </div>
+
+        </div> <!-- .main-content -->
+
+    <!-- 区域详情模态框 -->
+    <div class="modal-overlay" id="regionModal">
+        <div class="modal-content" id="modalContent">
+            <!-- 动态内容将通过JavaScript填充 -->
+        </div>
+    </div>
+    
+    <script>
+        // 地区详细数据
+        const regionData = {
+            "rust-belt": {
+                title: "锈带铁路",
+                icon: "fa-train",
+                color: "#8B4513",
+                description: "横跨赫尔卡西亚的古老铁路系统，因时间异常而部分路段永远处于不同时间流速中。",
+                details: `
+                    <ul>
+                        <li>浮空轨道系统</li>
+                        <li>锈带铁路是贯穿城市的浮空轨道系统，共三条线路，基本连接了主要区域</li>
+                        <li>轨道偶尔会受到不稳定时空裂隙影响，导致列车失踪或出现异常</li>
+                        <li>铁路沿线分布着众多废弃站点与工业设施，充满危险</li>
+                        <li>13号车厢的传闻：传闻13号车厢可抵达平行世界，吸引冒险者</li>
+                        <li>车厢内部可能出现未收录的时空裂隙与裂隙怪物，危险程度未知</li>
+                        <li>13号车厢出现概率极低，如遭遇，请优先自保并向管理局求援</li>
+                    </ul>
+                `,
+                access: "游客可查看基本信息，更多详细信息可检索锈带铁路官方网站"
+            },
+            "deep-well": {
+                title: "深井",
+                icon: "fa-database",
+                color: "#2E8B57",
+                description: "深入地下的异常矿脉，产出具有时间特性的矿物'时晶'。",
+                details: `
+                    <ul>
+                        <li>古代数据井</li>
+                        <li>深井是城市地底万米的古代数据存储设施，保存着被篡改的历史记忆</li>
+                        <li>数据存储介质为未知材料，能够抵抗时空侵蚀</li>
+                        <li>井内数据可能包含关于古代文明与时空技术的关键信息</li>
+                        <li>熵兽的威胁：井底潜伏着“熵兽”，暂定为高危裂隙怪物，暂无解决方式</li>
+                    </ul>
+                `,
+                access: "游客可查看基本信息，该地区危险系数搞，不可发布相关任务"
+            },
+            "time-foundry": {
+                title: "时铸厂",
+                icon: "fa-building",
+                color: "#FFA500",
+                description: "实际掌握赫尔卡西亚权力的巨型企业。",
+                details: `
+                    <ul>
+                        <li>超级公司总部</li>
+                        <li>时铸厂是巨型企业总部所在地，象征着城市的经济与科技核心</li>
+                        <li>区域内设有先进的安保系统，严格限制人员进出</li>
+                        <li>各企业既有合作也有竞争，形成复杂权力网络，当前引领家族为弗洛斯特家族</li>
+                        <li>其余信息暂不公开</li>
+                    </ul>
+                `,
+                access: "游客可查看基本信息，其他相关详细信息暂无权限"
+            },
+            "time-bone": {
+                title: "时骸区",
+                icon: "fa-city",
+                color: "#D3D3D3",
+                description: "赫尔卡西亚最为复杂的地段，包括但不限于生产活动与流动人员。",
+                details: `
+                    <ul>
+                        <li>贫民窟与黑市</li>
+                        <li>时骸区是赫尔卡西亚中最混乱的区域，充斥着非法交易与犯罪活动</li>
+                        <li>居民多为被社会遗弃的底层人群，生活条件极其恶劣</li>
+                        <li>黑市交易以时空裂隙产物为主，吸引众多时痕者</li>
+                        <li>建筑由时间癌变遗留下来的残骸拼凑而成，结构不稳定，常发生坍塌</li>
+                        <li>街道狭窄曲折，容易迷路且充满危险</li>
+                    </ul>
+                `,
+                access: "游客可查看基本信息，详细勘探数据和实时监测暂不予开放"
+            },
+            "othershore-city": {
+                title: "彼岸市",
+                icon: "fa-city",
+                color: "#9370DB",
+                description: "存在于虚实之间的城市，市民由记忆碎片和认知投影构成。",
+                details: `
+                    <p>彼岸市是莫比乌斯之庭最大的聚居点，常住'居民'人数浮动较大，不具有参考价值。</p>
+                    <p>城市具有以下异常特性：</p>
+                    <ul>
+                        <li><i class="fas fa-brain"></i> 认知依赖性：城市结构随观察者意识变化</li>
+                        <li><i class="fas fa-brain"></i> 居民特殊性：城市居民多为时空裂隙穿越者</li>
+                        <li><i class="fas fa-brain"></i> 城市结构：复杂，且极易迷失方向</li>
+                    </ul>
+                    <div class="modal-details">
+                        <h4><i class="fas fa-sitemap"></i> 包含子区域</h4>
+                        <ul>
+                            <li><i class="fas fa-water"></i> <strong>记忆公海</strong> - 由城市居民的记忆碎片形成的意识海洋，可进行记忆捕捞和意识潜航，但该行为危险系数较高</li>
+                            <li><i class="fas fa-theater-masks"></i> <strong>锁孔剧院</strong> - 以观察者潜意识为剧本不断演变的剧场，上演观察者内心深处的故事</li>
+                        </ul>
+                    </div>
+                `,
+                access: "游客可查看基本信息，暂不推荐个人深入探索"
+            },
+            "imaginary-desert": {
+                title: "虚数沙漠",
+                icon: "fa-sun",
+                color: "#FFD700",
+                description: "由虚数粒子构成的沙漠，物理定律在此部分失效，时间流速呈非线性分布。",
+                details: `
+                    <p>虚数沙漠覆盖莫比乌斯之庭约60%的区域，主要由虚数粒子构成的'沙粒'组成。</p>
+                    <p>沙漠的异常特性包括：</p>
+                    <ul>
+                        <li><i class="fas fa-ruler-combined"></i> 非欧几里得几何：空间距离和方向不遵循常规几何规则</li>
+                        <li><i class="fas fa-hourglass-half"></i> 非线性时间：时间流速随位置变化，最快与最慢相差300倍</li>
+                        <li><i class="fas fa-cloud-sun"></i> 恶劣气候：昼夜温差高达100摄氏度，生存条件极其恶劣，人迹罕至</li>
+                    </ul>
+                    <div class="modal-details">
+                        <h4><i class="fas fa-sitemap"></i> 包含子区域</h4>
+                        <ul>
+                            <li><i class="fas fa-photo-video"></i> <strong>海市蜃楼</strong> - 特殊的时空裂隙，虚实界限完全模糊，需配备现实锚定装置</li>
+                            <li><i class="fas fa-hourglass-end"></i> <strong>沙漏坟场</strong> - 大型裂隙怪物侵蚀区，机遇与危险并存，不建议独自前往</li>
+                        </ul>
+                    </div>
+                `,
+                access: "游客可查看基本信息，虚数物理数据和深层探索不予开放"
+            },
+            "observatory-pi": {
+                title: "观测站Π",
+                icon: "fa-satellite-dish",
+                color: "#1E90FF",
+                description: "管理局在莫比乌斯之庭设立的主要观测站，负责监测该区域的所有异常现象。",
+                details: `
+                    <p>观测站Π是管理局在莫比乌斯之庭的核心设施，外观为黑色方碑，特殊材料制成，免受外部异常影响。</p>
+                    <p>观测站的主要功能：</p>
+                    <ul>
+                        <li><i class="fas fa-eye"></i> 全域监测：实时监测莫比乌斯之庭的所有异常现象</li>
+                        <li><i class="fas fa-database"></i> 数据收集：收集和分析异常数据，建立预测模型</li>
+                        <li><i class="fas fa-sync-alt"></i> 稳定维持：维持时空泡的稳定性，保护站内人员安全</li>
+                        <li><i class="fas fa-broadcast-tower"></i> 通讯中继：作为管理局在该区域的通讯枢纽</li>
+                    </ul>
+                    <p>观测站同时作为探险队的后勤基地和紧急避难所，设有医疗站、装备库和通讯中心。</p>
+                `,
+                access: "仅对管理局成员开放使用"
+            }
+        };
+
+        // 返回按钮功能（与 guest_qsam 一致）
+        function goBack() {
+            // 创建简单加载覆盖层并跳转到游客首页
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 4000;
+                backdrop-filter: blur(8px);
+            `;
+            overlay.innerHTML = `
+                <div style="text-align:center;color:#e0f7ff;">
+                    <div style="width:70px;height:70px;border:6px solid rgba(79,195,255,0.2);border-top:6px solid #4fc3ff;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+                    <div style="font-size:1.1rem">正在返回...</div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            setTimeout(() => {
+                window.location.href = 'guest.html';
+            }, 400);
+        }
+
+        
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 更新时间显示
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // 为子区域卡片添加点击事件
+            const subregionCards = document.querySelectorAll('.subregion-card');
+            subregionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const regionId = this.getAttribute('data-region');
+                    if (regionId && regionData[regionId]) {
+                        openRegionModal(regionId);
+                    }
+                });
+            });
+            
+            // 为嵌套项添加点击事件
+            const nestedItems = document.querySelectorAll('.nested-item');
+            nestedItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 防止事件冒泡
+                    const regionText = this.textContent;
+                    const regionName = regionText.split(' - ')[0];
+                    alert(`您点击了: ${regionText}\n\n该子区域的详细资料正在整理中，将在后续版本更新。`);
+                });
+            });
+        });
+
+        // 更新时间函数
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // 打开区域详情模态框
+        function openRegionModal(regionId) {
+            const region = regionData[regionId];
+            if (!region) return;
+            
+            const modal = document.getElementById('regionModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            // 设置模态框边框颜色
+            modalContent.style.borderColor = region.color;
+            modalContent.style.boxShadow = `0 0 60px ${region.color}80`;
+            
+            // 填充模态框内容
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas ${region.icon}" style="color: ${region.color}; margin-right: 10px;"></i>
+                        ${region.title}
+                    </h2>
+                    <button class="modal-close" onclick="closeRegionModal()">
+                        <i class="fas fa-times"></i> 关闭
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 1.2rem; color: #ffd93d; margin-bottom: 20px;">
+                        ${region.description}
+                    </p>
+                    ${region.details}
+                    <div class="modal-details">
+                        <h4><i class="fas fa-user-lock"></i> 访问权限</h4>
+                        <p>${region.access}</p>
+                    </div>
+                </div>
+            `;
+            
+            // 显示模态框
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭区域详情模态框
+        function closeRegionModal() {
+            const modal = document.getElementById('regionModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // 点击模态框外部也可关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeRegionModal();
+                }
+            });
+        }
+
+        // 打开帮助中心
+        function openHelp() {
+            const helpContent = `
+                <h3 style="color: #4fc3ff; margin-bottom: 15px; font-size: 1.4rem;">地区划分帮助</h3>
+                <div style="margin-bottom: 15px; font-size: 1.05rem;">
+                    <strong style="color: #ffd93d;">点击区域卡片：</strong> 查看该区域的详细资料和访问权限信息。
+                </div>
+                <div style="margin-bottom: 15px; font-size: 1.05rem;">
+                    <strong style="color: #ffd93d;">权限说明：</strong> 不同区域对访问权限有不同要求，部分区域仅对授权成员开放。
+                </div>
+                <div style="margin-bottom: 15px; font-size: 1.05rem;">
+                    <strong style="color: #ffd93d;">子区域：</strong> 部分区域包含更细分的子区域，点击子区域名称可查看简要介绍。
+                </div>
+                <div style="color: #ffd93d; margin-top: 25px; font-size: 0.95rem; padding: 15px; background: rgba(255, 217, 61, 0.1); border-radius: 8px;">
+                    <i class="fas fa-exclamation-circle"></i> 如需申请特定区域的详细资料或进入权限，请通过"发布任务"功能提交申请。
+                </div>
+            `;
+            
+            alertWithHTML('帮助中心', helpContent);
+        }
+
+        // 自定义HTML弹窗
+        function alertWithHTML(title, content) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+                backdrop-filter: blur(10px);
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: radial-gradient(circle at center, #0a2463, #000000);
+                    padding: 35px;
+                    border-radius: 20px;
+                    border: 2px solid rgba(0, 150, 255, 0.6);
+                    max-width: 500px;
+                    width: 90%;
+                    box-shadow: 0 0 40px rgba(0, 150, 255, 0.5);
+                ">
+                    <h3 style="
+                        background: linear-gradient(90deg, #4fc3ff, #ffffff);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        margin: 0 0 25px 0;
+                        text-align: center;
+                        font-size: 1.6rem;
+                    ">${title}</h3>
+                    <div style="color: #e0f7ff; line-height: 1.6;">
+                        ${content}
+                    </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                            background: rgba(79, 195, 255, 0.25);
+                            border: 1px solid rgba(79, 195, 255, 0.6);
+                            color: #4fc3ff;
+                            padding: 12px 35px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            font-size: 1.05rem;
+                            font-weight: bold;
+                        " onmouseover="this.style.background='rgba(79, 195, 255, 0.35)'" 
+                         onmouseout="this.style.background='rgba(79, 195, 255, 0.25)'">
+                            确定
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 点击模态框外部关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出游客访问吗？')) {
+                localStorage.clear();
+                // 显示加载动画
+                const loadingOverlay = document.createElement('div');
+                loadingOverlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.95);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 3000;
+                    backdrop-filter: blur(10px);
+                `;
+                loadingOverlay.innerHTML = `
+                    <div class="loading-spinner" style="width: 80px; height: 80px; border: 5px solid rgba(79, 195, 255, 0.3); border-top: 5px solid #4fc3ff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div style="color: #e0f7ff; margin-top: 20px; font-size: 1.2rem; letter-spacing: 2px;">正在退出系统...</div>
+                `;
+                document.body.appendChild(loadingOverlay);
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        }
+
+        // 添加加载动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成员控制台 - 管理局资料库</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 全局重置：让页面铺满屏幕并移除默认边距 */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* 桌面样式 */
+        .desktop {
+            min-height: 100vh;
+            background: var(--desktop-bg);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        :root{
+            --desktop-bg: radial-gradient(circle at center, #0a2463, #000000);
+            --status-bg: rgba(10, 36, 99, 0.8);
+            --panel-bg: rgba(6,22,60,0.92);
+            --panel-border: rgba(0,150,255,0.25);
+            --accent-1: #ff6b6b;
+            --accent-2: #ffd93d;
+            --text-primary: #e0f7ff;
+            --muted-color: #a3d5ff;
+            --icon-glow: rgba(79, 195, 255, 0.2);
+        }
+        
+        /* 顶部状态栏 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--status-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+            margin-bottom: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .system-logo {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.7));
+        }
+        
+        .system-name {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .time-display {
+            color: var(--muted-color);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        /* 桌面图标网格 */
+        .desktop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 桌面图标样式 */
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 150px;
+            padding: 20px;
+            background: rgba(10, 36, 99, 0.7);
+            border-radius: 20px;
+            border: 2px solid rgba(0, 150, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+        
+        .desktop-icon:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 150, 255, 0.8);
+            box-shadow: 
+                0 10px 30px rgba(0, 150, 255, 0.3),
+                inset 0 0 30px rgba(0, 150, 255, 0.1);
+        }
+        
+        .desktop-icon.active {
+            background: rgba(0, 60, 120, 0.8);
+            border-color: rgba(0, 200, 255, 0.8);
+        }
+        
+        .icon-image {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.7));
+            transition: transform 0.3s ease;
+        }
+        
+        .desktop-icon:hover .icon-image {
+            transform: scale(1.1);
+        }
+        
+        .icon-label {
+            color: #e0f7ff;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
+            line-height: 1.3;
+        }
+        
+        .icon-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        /* 统一图标容器 */
+        .icon-container {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .icon-base {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #4fc3ff, #6b9ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px rgba(79, 195, 255, 0.5));
+        }
+        
+        .icon-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, var(--icon-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        /* 特殊图标颜色 */
+        .icon-danger .icon-base {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            filter: drop-shadow(0 0 8px rgba(255, 107, 107, 0.5));
+        }
+        
+        .icon-danger .icon-glow {
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.2) 0%, transparent 70%);
+        }
+        
+        .icon-success .icon-base {
+            background: linear-gradient(135deg, #6bffb8, #8effcc);
+            filter: drop-shadow(0 0 8px rgba(107, 255, 184, 0.5));
+        }
+        
+        .icon-success .icon-glow {
+            background: radial-gradient(circle, rgba(107, 255, 184, 0.2) 0%, transparent 70%);
+        }
+        
+        .icon-warning .icon-base {
+            background: linear-gradient(135deg, #ffd93d, #ffa93d);
+            filter: drop-shadow(0 0 8px rgba(255, 217, 61, 0.5));
+        }
+        
+        .icon-warning .icon-glow {
+            background: radial-gradient(circle, rgba(255, 217, 61, 0.2) 0%, transparent 70%);
+        }
+        
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(79, 195, 255, 0.3);
+            border-top: 5px solid #4fc3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: #e0f7ff;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        /* 欢迎提示 */
+        .welcome-toast {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 20px 30px;
+            background: var(--status-bg);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            border-radius: 15px;
+            color: #e0f7ff;
+            box-shadow: 0 10px 30px rgba(0, 150, 255, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+            backdrop-filter: blur(10px);
+        }
+        
+        .welcome-title {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #4fc3ff;
+        }
+        
+        .welcome-message {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--accent-2), var(--accent-1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        
+        /* 功能面板 */
+        /* 底部功能面板 - 与 admin 保持一致 */
+        .function-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: rgba(10,36,99,0.9);
+            border-radius: 40px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0,150,255,0.25);
+            display: flex;
+            gap: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+
+        .panel-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(0,60,120,0.85);
+            border: 1px solid rgba(0,150,255,0.35);
+            color: #a3d5ff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            transition: all .2s ease;
+            font-size:1.2rem;
+        }
+
+        .panel-btn:hover {
+            background: rgba(0,150,255,0.35);
+            transform: scale(1.12);
+            box-shadow: 0 0 12px rgba(0,150,255,0.4);
+        }
+
+        /* 底部虚拟面板样式（与 admin 保持一致） */
+        .bottom-panel {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(920px, 92%);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            display: none;
+            z-index: 2500;
+        }
+
+        .bottom-panel[aria-hidden="false"] { display: block; }
+
+        .bottom-panel .panel-header { font-size: 1.1rem; color: #4fc3ff; margin-bottom: 8px; font-weight: bold; }
+        .bottom-panel .panel-body { color: #e0f7ff; }
+        .panel-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+        .panel-item { background: rgba(0,30,80,0.5); padding:12px; border-radius:8px; text-align:center; }
+        .muted { color: #6b9ccc; font-size:0.85rem; }
+
+        .metric { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+        .meter { flex:1; height:10px; background: rgba(255,255,255,0.06); border-radius:6px; overflow:hidden; }
+        .meter-fill { height:100%; background: linear-gradient(90deg,#4fc3ff,#00ccff); }
+
+        .panel-footer { margin-top:12px; text-align:right; }
+        .bottom-panel .close-btn { background: rgba(255,107,107,0.2); border: 1px solid rgba(255,107,107,0.35); color: #ff6b6b; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+
+        .notes-area { width: 100%; height: 160px; padding: 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.45); color:#e0f7ff; resize:vertical; }
+
+        .theme-option { display:flex; gap:8px; align-items:center; margin:10px 0; }
+
+        .theme-dark {}
+        .theme-light { --desktop-bg: radial-gradient(circle at center, #e6f0ff, #ffffff); --status-bg: rgba(240,248,255,0.95); --panel-bg: rgba(250,250,255,0.95); --panel-border: rgba(0,120,200,0.12); --accent-1: #0066cc; --accent-2: #0099ff; --text-primary: #0a2463; --muted-color: #0a2463; --icon-glow: rgba(0, 150, 255, 0.12); }
+        .theme-high-contrast { --desktop-bg: linear-gradient(180deg,#000000,#111111); --status-bg: #000000; --panel-bg: #000000; --panel-border: #ffffff; --accent-1: #ffffff; --accent-2: #ffffff; --text-primary: #ffffff; --muted-color: #ffffff; --icon-glow: rgba(255,255,255,0.08); }
+        
+        /* 动画 */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .desktop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 20px;
+            }
+            
+            .desktop-icon {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .icon-container {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .icon-base {
+                font-size: 2rem;
+            }
+        }
+        
+        /* 退出按钮样式 */
+        .logout-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* 成员专属样式 */
+        .member-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(79, 195, 255, 0.2);
+            border: 1px solid rgba(79, 195, 255, 0.5);
+            color: #4fc3ff;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        
+        /* 部门信息显示 */
+        .department-info {
+            font-size: 0.9rem;
+            color: #a3d5ff;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 欢迎提示 -->
+    <div class="welcome-toast" id="welcomeToast">
+        <div class="welcome-title" id="timeGreeting"></div>
+        <div class="welcome-message" id="userGreeting"></div>
+    </div>
+    
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">正在加载...</div>
+        </div>
+    </div>
+    
+    <!-- 桌面界面 -->
+    <div class="desktop">
+        <!-- 顶部状态栏 -->
+        <div class="status-bar">
+            <div class="system-info">
+                <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+                <div class="system-name">管理局 - 成员控制台</div>
+            </div>
+            
+            <div class="user-info">
+                <div class="time-display" id="currentTime">00:00:00</div>
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div style="color: #4fc3ff;" id="userDisplayName">加载中...</div>
+                    <div style="font-size: 0.8rem; color: #a3d5ff;" id="userDepartment">普通成员</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </button>
+            </div>
+        </div>
+        
+        <!-- 桌面图标网格 -->
+        <div class="desktop-grid">
+            <!-- 个人信息详情 -->
+            <a href="javascript:void(0)" class="desktop-icon" onclick="viewPersonalInfo()">
+                <div class="icon-container">
+                    <i class="fas fa-id-card icon-base icon-success"></i>
+                    <div class="icon-glow"></div>
+                </div>
+                <div class="icon-label">个人信息详情</div>
+            </a>
+            
+            <!-- 队伍信息 -->
+            <a href="member-teams.html" class="desktop-icon" data-page-name="队伍信息">
+                <div class="icon-container">
+                    <i class="fas fa-users icon-base"></i>
+                    <div class="icon-glow"></div>
+                </div>
+                <div class="icon-label">队伍信息</div>
+                <div class="icon-badge">5</div>
+            </a>
+            
+            <!-- 任务详情 -->
+            <a href="member-tasks.html" class="desktop-icon" data-page-name="任务详情">
+                <div class="icon-container">
+                    <i class="fas fa-tasks icon-base icon-warning"></i>
+                    <div class="icon-glow"></div>
+                </div>
+                <div class="icon-label">任务详情</div>
+                <div class="icon-badge" style="background: linear-gradient(135deg, #ffd93d, #ffa93d);">3</div>
+            </a>
+            
+            <!-- 已收录裂隙怪物 -->
+            <a href="monsters.html" class="desktop-icon" data-page-name="裂隙怪物">
+                <div class="icon-container">
+                    <i class="fas fa-dragon icon-base icon-danger"></i>
+                    <div class="icon-glow"></div>
+                </div>
+                <div class="icon-label">已收录<br>裂隙怪物</div>
+                <div class="icon-badge" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e);">47</div>
+            </a>
+            
+            <!-- 已收录实验体 -->
+            <a href="subjects.html" class="desktop-icon" data-page-name="实验体">
+                <div class="icon-container">
+                    <i class="fas fa-flask icon-base icon-success"></i>
+                    <div class="icon-glow"></div>
+                </div>
+                <div class="icon-label">已收录<br>实验体</div>
+                <div class="icon-badge" style="background: linear-gradient(135deg, #6bffb8, #8effcc);">1</div>
+            </a>
+        </div>
+        
+        <!-- 底部功能面板（成员）：笔记 与 主题 -->
+        <div class="function-panel">
+            <div class="panel-btn" title="笔记" onclick="openPanel('notesPanel')">
+                <i class="fas fa-sticky-note"></i>
+            </div>
+            <div class="panel-btn" title="主题" onclick="openPanel('themePanel')">
+                <i class="fas fa-palette"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notes 面板 -->
+    <div id="notesPanel" class="bottom-panel" aria-hidden="true" style="display:none;">
+        <div class="panel-header">笔记 &nbsp; <button class="close-btn" onclick="closePanel('notesPanel')">关闭</button></div>
+        <div id="notesBody" class="panel-body">
+            <textarea id="notesTextarea" class="notes-area" placeholder="在此记录个人笔记..."></textarea>
+            <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                <div id="notesStatus" class="muted"></div>
+                <div>
+                    <button onclick="saveNotes()" style="background:rgba(79,195,255,0.18);border:1px solid rgba(79,195,255,0.36);color:#4fc3ff;padding:8px 12px;border-radius:6px;cursor:pointer;">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme 面板 -->
+    <div id="themePanel" class="bottom-panel" aria-hidden="true" style="display:none;">
+        <div class="panel-header">界面主题 &nbsp; <button class="close-btn" onclick="closePanel('themePanel')">关闭</button></div>
+        <div id="themeBody" class="panel-body">
+            <div class="theme-option"><input type="radio" name="themeChoice" id="mThemeDark" value="dark" onclick="applyTheme('dark', false)"><label for="mThemeDark">深色（默认）</label></div>
+            <div class="theme-option"><input type="radio" name="themeChoice" id="mThemeLight" value="light" onclick="applyTheme('light', false)"><label for="mThemeLight">浅色（演示）</label></div>
+            <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+                <div id="themePreview" style="flex:1; height:40px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center;" data-theme="dark">预览区域</div>
+                <div>
+                    <button onclick="applyThemeAndClose()" style="background:rgba(79,195,255,0.18);border:1px solid rgba(79,195,255,0.36);color:#4fc3ff;padding:8px 12px;border-radius:6px;cursor:pointer;">应用</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面链接配置
+        const pageConfig = {
+            'teams': {
+                url: 'member-teams.html',
+                name: '队伍信息',
+                description: '查看所在队伍信息、队友资料和队伍任务'
+            },
+            'tasks': {
+                url: 'member-tasks.html',
+                name: '任务详情',
+                description: '查看分配的任务详情、进度和提交报告'
+            },
+            'monsters': {
+                url: 'monsters.html',
+                name: '裂隙怪物',
+                description: '浏览已收录的裂隙怪物档案和研究数据'
+            },
+            'subjects': {
+                url: 'subjects.html',
+                name: '实验体',
+                description: '浏览已收录的实验体样本和研究结果'
+            }
+        };
+        
+        // 检查登录状态
+        const role = localStorage.getItem('auth_role');
+        const username = localStorage.getItem('auth_user');
+        
+        if (role !== 'member' && role !== 'user') {
+            alert('请先以成员身份登录！');
+            window.location.href = 'index.html';
+        }
+        
+        // 获取用户信息
+        let userInfo = null;
+        
+        // 获取时间并显示问候语
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            // 更新时间显示
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // 问候语
+            let greeting = '';
+            if (hours >= 5 && hours < 12) {
+                greeting = '早上好';
+            } else if (hours >= 12 && hours < 18) {
+                greeting = '下午好';
+            } else if (hours >= 18 && hours < 22) {
+                greeting = '晚上好';
+            } else {
+                greeting = '夜深了';
+            }
+            
+            document.getElementById('timeGreeting').textContent = greeting;
+            
+            // 用户问候语
+            const userDisplayName = document.getElementById('userDisplayName').textContent;
+            if (userDisplayName && userDisplayName !== '加载中...') {
+                document.getElementById('userGreeting').textContent = `${userDisplayName}。`;
+            } else {
+                document.getElementById('userGreeting').textContent = username ? `${username}。` : '成员。';
+            }
+        }
+        
+        // 加载用户信息
+        async function loadUserInfo() {
+            try {
+                // 尝试从本地存储获取用户信息
+                const qsUsersData = localStorage.getItem('qs_users_data');
+                if (qsUsersData) {
+                    const users = JSON.parse(qsUsersData);
+                    if (users[username]) {
+                        userInfo = users[username];
+                        
+                        // 更新界面显示
+                        document.getElementById('userDisplayName').textContent = userInfo.name || username;
+                        document.getElementById('userDepartment').textContent = 
+                            `${userInfo.department || '未分配'} - ${userInfo.team || '未分配队伍'}`;
+                        
+                        // 如果有职位信息，也显示
+                        if (userInfo.position) {
+                            document.getElementById('userDepartment').textContent += ` (${userInfo.position})`;
+                        }
+                        
+                        return;
+                    }
+                }
+                
+                // 如果本地没有，使用默认信息
+                document.getElementById('userDisplayName').textContent = username;
+                document.getElementById('userDepartment').textContent = '管理局成员';
+                
+            } catch (error) {
+                console.error('加载用户信息失败:', error);
+                document.getElementById('userDisplayName').textContent = username;
+                document.getElementById('userDepartment').textContent = '管理局成员';
+            }
+        }
+        
+        // 查看个人信息详情
+        function viewPersonalInfo() {
+            if (!username) {
+                alert('无法获取用户信息');
+                return;
+            }
+            
+            showLoading('正在加载个人信息...');
+            
+            // 保存要查看的成员信息到本地存储
+            if (userInfo) {
+                // 如果有详细的用户信息
+                localStorage.setItem('viewing_member_username', username);
+                localStorage.setItem('viewing_member_id', userInfo.id || Date.now());
+            } else {
+                // 如果只有用户名
+                localStorage.setItem('viewing_member_username', username);
+                localStorage.setItem('viewing_member_id', Date.now());
+            }
+            
+            // 跳转到成员详情页面
+            try { sessionStorage.setItem('previousPage', 'member.html'); } catch (e) { /* ignore */ }
+            setTimeout(() => {
+                window.location.href = 'member-detail.html';
+            }, 1000);
+        }
+        
+        // 显示加载动画
+        function showLoading(message = '正在加载...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = document.getElementById('loadingText');
+            text.textContent = message;
+            overlay.style.display = 'flex';
+        }
+        
+        // 隐藏加载动画
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        // 页面跳转函数
+        function navigateTo(pageKey) {
+            const page = pageConfig[pageKey];
+            if (!page) {
+                alert('页面不存在！');
+                return;
+            }
+            
+            showLoading(`正在跳转到${page.name}...`);
+            
+            // 模拟网络延迟
+            setTimeout(() => {
+                window.location.href = page.url;
+            }, 1000);
+        }
+        
+        // 为图标链接添加点击处理
+        document.addEventListener('DOMContentLoaded', function() {
+            const icons = document.querySelectorAll('.desktop-icon[data-page-name]');
+            
+            icons.forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    const pageName = this.getAttribute('data-page-name');
+                    const link = this.getAttribute('href');
+                    
+                    // 如果链接存在，显示加载动画
+                    if (link && link !== 'javascript:void(0)') {
+                        showLoading(`正在打开${pageName}...`);
+                    } else {
+                        // 对于没有链接的按钮，阻止默认行为
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+        
+        // 页面加载时显示欢迎信息
+        window.onload = async function() {
+            // 先加载用户信息
+            await loadUserInfo();
+            
+            // 然后更新时间
+            updateTime();
+            setInterval(updateTime, 1000);
+            // 应用已保存的主题（若有）
+            try { applyTheme(localStorage.getItem('admin_theme') || 'dark', false); } catch(e) {}
+            
+            // 5秒后隐藏欢迎提示
+            setTimeout(() => {
+                document.getElementById('welcomeToast').style.display = 'none';
+            }, 5000);
+        };
+        
+        // 打开底部面板（notes/theme）
+        function openPanel(panelId) {
+            ['notesPanel','themePanel'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (id === panelId) {
+                    el.style.display = 'block';
+                    el.setAttribute('aria-hidden','false');
+                } else {
+                    el.style.display = 'none';
+                    el.setAttribute('aria-hidden','true');
+                }
+            });
+
+            if (panelId === 'notesPanel') populateNotesPanel();
+            if (panelId === 'themePanel') populateThemePanel();
+        }
+
+        function closePanel(panelId) {
+            const el = document.getElementById(panelId);
+            if (!el) return;
+            el.style.display = 'none';
+            el.setAttribute('aria-hidden','true');
+        }
+
+        // 笔记功能
+        function populateNotesPanel() {
+            const ta = document.getElementById('notesTextarea');
+            const status = document.getElementById('notesStatus');
+            if (status) status.textContent = '';
+            try { if (ta) ta.value = localStorage.getItem('member_notes') || ''; } catch(e) { if (ta) ta.value = ''; }
+        }
+
+        function saveNotes() {
+            const ta = document.getElementById('notesTextarea');
+            const status = document.getElementById('notesStatus');
+            if (!ta) return;
+            try { localStorage.setItem('member_notes', ta.value); if (status) { status.textContent = '已保存'; setTimeout(()=>status.textContent='',1500); } }
+            catch(e){ if (status) status.textContent = '保存失败'; }
+        }
+
+        // 主题功能（简单）
+        function populateThemePanel() {
+            const current = localStorage.getItem('admin_theme') || 'dark';
+            const radios = document.getElementsByName('themeChoice');
+            radios.forEach(r => r.checked = (r.value === current));
+            applyTheme(current, false);
+            const preview = document.getElementById('themePreview'); if (preview) preview.setAttribute('data-theme', current);
+        }
+
+        function applyTheme(theme, persist = true) {
+            document.documentElement.classList.remove('theme-dark','theme-light','theme-high-contrast');
+            if (!theme || theme === 'dark') document.documentElement.classList.add('theme-dark');
+            else if (theme === 'light') document.documentElement.classList.add('theme-light');
+            else if (theme === 'high-contrast') document.documentElement.classList.add('theme-high-contrast');
+            if (persist) localStorage.setItem('admin_theme', theme || 'dark');
+            const preview = document.getElementById('themePreview'); if (preview) preview.setAttribute('data-theme', theme || 'dark');
+        }
+
+        function applyThemeAndClose() {
+            const radios = document.getElementsByName('themeChoice'); let selected = 'dark'; radios.forEach(r => { if (r.checked) selected = r.value; });
+            applyTheme(selected, true);
+            closePanel('themePanel');
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('auth_user');
+                localStorage.removeItem('auth_role');
+                localStorage.removeItem('auth_time');
+                showLoading('正在退出系统...');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        }
+
+        
+
+        
+        // 检查是否有新通知（徽章）
+        function checkNotifications() {
+            // 这里可以添加实际的通知检查逻辑
+            // 目前使用模拟数据
+            const hasNewNotifications = true;
+            if (hasNewNotifications) {
+                // 可以在通知图标上添加徽章
+                console.log('有新的通知');
+            }
+        }
+        
+        // 初始化时检查通知
+        checkNotifications();
+    </script>
+</body>
+</html>

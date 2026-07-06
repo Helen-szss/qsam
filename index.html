@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理局资料库 - 登录</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 开屏动画 -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="logo-container">
+            <img src="qsamlogo.png" alt="管理局标志" class="logo">
+        </div>
+        <div class="welcome-text" id="welcomeText">
+            欢迎访问管理局资料库，请登录后使用
+        </div>
+    </div>
+
+    <!-- 登录界面 -->
+    <div class="login-container" id="loginContainer" style="display: none;">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="qsamlogo.png" alt="管理局标志" class="login-logo">
+                <h1>管理局资料库</h1>
+                <p>身份验证系统</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="用户名" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="密码" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </button>
+                    
+                    <button type="button" class="btn-guest" id="guestLogin">
+                        <i class="fas fa-user-clock"></i> 游客访问
+                    </button>
+                </div>
+                
+            </form>
+            
+            <div class="copyright">
+                © 管理局资料库 - 机密系统
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
