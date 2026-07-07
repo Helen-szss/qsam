@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>绠＄悊鍛樻帶鍒跺彴 - 绠＄悊灞€璧勬枡搴?/title>
+    <title>管理员控制台 - 管理局资料库</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -19,7 +19,7 @@
             --muted-color: #a3d5ff;
             --icon-glow: rgba(79, 195, 255, 0.2);
         }
-        /* 妗岄潰鏍峰紡 */
+        /* 桌面样式 */
         .desktop {
             min-height: 100vh;
             background: var(--desktop-bg);
@@ -28,7 +28,7 @@
             overflow: hidden;
         }
         
-        /* 椤堕儴鐘舵€佹爮 */
+        /* 顶部状态栏 */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -86,7 +86,7 @@
             letter-spacing: 1px;
         }
         
-        /* 妗岄潰鍥炬爣缃戞牸 */
+        /* 桌面图标网格 */
         .desktop-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -96,7 +96,7 @@
             padding: 20px;
         }
         
-        /* 妗岄潰鍥炬爣鏍峰紡 */
+        /* 桌面图标样式 */
         .desktop-icon {
             display: flex;
             flex-direction: column;
@@ -164,7 +164,7 @@
             color: white;
         }
         
-        /* 缁熶竴鍥炬爣瀹瑰櫒 */
+        /* 统一图标容器 */
         .icon-container {
             width: 60px;
             height: 60px;
@@ -195,7 +195,7 @@
             z-index: -1;
         }
         
-        /* 鐗规畩鍥炬爣棰滆壊 */
+        /* 特殊图标颜色 */
         .icon-danger .icon-base {
             background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
             filter: drop-shadow(0 0 8px rgba(255, 107, 107, 0.5));
@@ -223,7 +223,7 @@
             background: radial-gradient(circle, rgba(255, 217, 61, 0.2) 0%, transparent 70%);
         }
         
-        /* 鍔犺浇鍔ㄧ敾 */
+        /* 加载动画 */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -254,7 +254,7 @@
             letter-spacing: 2px;
         }
         
-        /* 娆㈣繋鎻愮ず */
+        /* 欢迎提示 */
         .welcome-toast {
             position: fixed;
             top: 100px;
@@ -284,8 +284,8 @@
             font-weight: bold;
         }
         
-        /* 搴曢儴鍔熻兘闈㈡澘鏍峰紡宸茬Щ闄わ紙鍔熻兘琚垹闄わ級 */
-        /* 搴曢儴鍔熻兘闈㈡澘 - 绠＄悊鍛樹笓鐢紙淇濈暀绠€娲佷袱涓寜閽級 */
+        /* 底部功能面板样式已移除（功能被删除） */
+        /* 底部功能面板 - 管理员专用（保留简洁两个按钮） */
         .function-panel {
             position: fixed;
             bottom: 20px;
@@ -323,7 +323,7 @@
             box-shadow: 0 0 12px rgba(0,150,255,0.4);
         }
         
-        /* 鍔ㄧ敾 */
+        /* 动画 */
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -350,7 +350,7 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* 鍝嶅簲寮忚璁?*/
+        /* 响应式设计 */
         @media (max-width: 768px) {
             .desktop-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -372,7 +372,7 @@
             }
         }
         
-        /* 閫€鍑烘寜閽牱寮?*/
+        /* 退出按钮样式 */
         .logout-btn {
             background: rgba(255, 107, 107, 0.2);
             border: 1px solid rgba(255, 107, 107, 0.5);
@@ -389,7 +389,7 @@
             transform: scale(1.05);
         }
 
-        /* 搴曢儴铏氭嫙闈㈡澘鏍峰紡 */
+        /* 底部虚拟面板样式 */
         .bottom-panel {
             position: fixed;
             bottom: 90px;
@@ -427,7 +427,7 @@
         .meter-fill { height:100%; background: linear-gradient(90deg,#4fc3ff,#00ccff); }
 
         .panel-footer { margin-top:12px; text-align:right; }
-        /* 闈㈡澘閫氱敤灏忔牱寮?*/
+        /* 面板通用小样式 */
         .bottom-panel .close-btn {
             background: rgba(255,107,107,0.2);
             border: 1px solid rgba(255,107,107,0.35);
@@ -441,8 +441,8 @@
 
         .theme-option { display:flex; gap:8px; align-items:center; margin:10px 0; }
 
-        /* 涓婚绫伙細瑕嗙洊鍙橀噺浠ュ垏鎹富棰?*/
-        .theme-dark { /* 榛樿锛屼娇鐢?:root 鍙橀噺 鈥?鏃犻渶瑕嗙洊 */ }
+        /* 主题类：覆盖变量以切换主题 */
+        .theme-dark { /* 默认，使用 :root 变量 — 无需覆盖 */ }
 
         .theme-light {
             --desktop-bg: radial-gradient(circle at center, #e6f0ff, #ffffff);
@@ -470,27 +470,27 @@
     </style>
 </head>
 <body>
-    <!-- 娆㈣繋鎻愮ず -->
+    <!-- 欢迎提示 -->
     <div class="welcome-toast" id="welcomeToast">
         <div class="welcome-title" id="timeGreeting"></div>
-        <div class="welcome-message">鍗¤タ浜氬コ澹€?/div>
+        <div class="welcome-message">卡西亚女士。</div>
     </div>
     
-    <!-- 鍔犺浇鍔ㄧ敾 -->
+    <!-- 加载动画 -->
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div>
             <div class="loading-spinner"></div>
-            <div class="loading-text" id="loadingText">姝ｅ湪鍔犺浇...</div>
+            <div class="loading-text" id="loadingText">正在加载...</div>
         </div>
     </div>
     
-    <!-- 妗岄潰鐣岄潰 -->
+    <!-- 桌面界面 -->
     <div class="desktop">
-        <!-- 椤堕儴鐘舵€佹爮 -->
+        <!-- 顶部状态栏 -->
         <div class="status-bar">
             <div class="system-info">
-                <img src="qsamlogo.png" alt="绯荤粺鏍囧織" class="system-logo">
-                <div class="system-name">绠＄悊灞€ - 鏈€楂樻潈闄愭帶鍒跺彴</div>
+                <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+                <div class="system-name">管理局 - 最高权限控制台</div>
             </div>
             
             <div class="user-info">
@@ -500,214 +500,214 @@
                 </div>
                 <div>
                     <div style="color: #ffd93d;">Ophelia</div>
-                    <div style="font-size: 0.8rem; color: #a3d5ff;">鏈€楂樻潈闄愮鐞嗗憳</div>
+                    <div style="font-size: 0.8rem; color: #a3d5ff;">最高权限管理员</div>
                 </div>
                 <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> 閫€鍑?
+                    <i class="fas fa-sign-out-alt"></i> 退出
                 </button>
             </div>
         </div>
         
-        <!-- 妗岄潰鍥炬爣缃戞牸 -->
+        <!-- 桌面图标网格 -->
         <div class="desktop-grid">
-            <!-- 绠＄悊鎴愬憳 -->
-            <a href="members.html" class="desktop-icon" data-page-name="绠＄悊鎴愬憳">
+            <!-- 管理成员 -->
+            <a href="members.html" class="desktop-icon" data-page-name="管理成员">
                 <div class="icon-container">
                     <i class="fas fa-users icon-base"></i>
                     <div class="icon-glow"></div>
                 </div>
-                <div class="icon-label">绠＄悊鎴愬憳</div>
+                <div class="icon-label">管理成员</div>
                 <div class="icon-badge">17</div>
             </a>
             
-            <!-- 闃熶紞鍚嶅崟 -->
-            <a href="teams.html" class="desktop-icon" data-page-name="闃熶紞鍚嶅崟">
+            <!-- 队伍名单 -->
+            <a href="teams.html" class="desktop-icon" data-page-name="队伍名单">
                 <div class="icon-container">
                     <i class="fas fa-layer-group icon-base"></i>
                     <div class="icon-glow"></div>
                 </div>
-                <div class="icon-label">闃熶紞鍚嶅崟</div>
+                <div class="icon-label">队伍名单</div>
                 <div class="icon-badge">5</div>
             </a>
             
-            <!-- 浠诲姟璇︽儏 -->
-            <a href="tasks.html" class="desktop-icon" data-page-name="浠诲姟璇︽儏">
+            <!-- 任务详情 -->
+            <a href="tasks.html" class="desktop-icon" data-page-name="任务详情">
                 <div class="icon-container">
                     <i class="fas fa-tasks icon-base icon-warning"></i>
                     <div class="icon-glow"></div>
                 </div>
-                <div class="icon-label">浠诲姟璇︽儏</div>
+                <div class="icon-label">任务详情</div>
                 <div class="icon-badge" style="background: linear-gradient(135deg, #ffd93d, #ffa93d);">1</div>
             </a>
 
-            <!-- 缁堝绠€鍘嗭紙绠＄悊鍛樹笓鐢級 -->
-            <a href="final-check.html" class="desktop-icon" data-page-name="缁堝绠€鍘?>
+            <!-- 终审简历（管理员专用） -->
+            <a href="final-check.html" class="desktop-icon" data-page-name="终审简历">
                 <div class="icon-container">
                         <i class="fas fa-file-alt icon-base icon-success"></i>
                     <div class="icon-glow"></div>
                 </div>
-                <div class="icon-label">缁堝绠€鍘?/div>
+                <div class="icon-label">终审简历</div>
             </a>
             
-            <!-- 宸叉敹褰曡闅欐€墿 -->
-            <a href="monsters.html" class="desktop-icon" data-page-name="瑁傞殭鎬墿">
+            <!-- 已收录裂隙怪物 -->
+            <a href="monsters.html" class="desktop-icon" data-page-name="裂隙怪物">
                 <div class="icon-container">
                     <i class="fas fa-dragon icon-base icon-danger"></i>
                     <div class="icon-glow"></div>
                 </div>
-                <div class="icon-label">宸叉敹褰?br>瑁傞殭鎬墿</div>
+                <div class="icon-label">已收录<br>裂隙怪物</div>
                 <div class="icon-badge" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e);">47</div>
             </a>
             
-            <!-- 宸叉敹褰曞疄楠屼綋 -->
-            <a href="subjects.html" class="desktop-icon" data-page-name="瀹為獙浣?>
+            <!-- 已收录实验体 -->
+            <a href="subjects.html" class="desktop-icon" data-page-name="实验体">
                 <div class="icon-container">
                     <i class="fas fa-flask icon-base icon-success"></i>
                     <div class="icon-glow"></div>
                 </div>
-                <div class="icon-label">宸叉敹褰?br>瀹為獙浣?/div>
+                <div class="icon-label">已收录<br>实验体</div>
                 <div class="icon-badge" style="background: linear-gradient(135deg, #6bffb8, #8effcc);">1</div>
             </a>
             
-            <!-- 宸茬Щ闄わ細绯荤粺鏃ュ織 / 绯荤粺璁剧疆 / 鍥炴敹绔欙紙鎸夐渶姹傚垹闄わ級 -->
+            <!-- 已移除：系统日志 / 系统设置 / 回收站（按需求删除） -->
         </div>
         
         
-        <!-- 搴曢儴鍔熻兘闈㈡澘锛堢鐞嗗憳锛夛細绗旇 涓?涓婚 -->
+        <!-- 底部功能面板（管理员）：笔记 与 主题 -->
         <div class="function-panel">
-            <div class="panel-btn" title="绗旇" onclick="openPanel('notesPanel')">
+            <div class="panel-btn" title="笔记" onclick="openPanel('notesPanel')">
                 <i class="fas fa-sticky-note"></i>
             </div>
-            <div class="panel-btn" title="涓婚" onclick="openPanel('themePanel')">
+            <div class="panel-btn" title="主题" onclick="openPanel('themePanel')">
                 <i class="fas fa-palette"></i>
             </div>
         </div>
 
     </div>
 
-    <!-- Notes 闈㈡澘 -->
+    <!-- Notes 面板 -->
     <div id="notesPanel" class="bottom-panel" aria-hidden="true">
-        <div class="panel-header">绗旇 &nbsp; <button class="close-btn" onclick="closePanel('notesPanel')">鍏抽棴</button></div>
+        <div class="panel-header">笔记 &nbsp; <button class="close-btn" onclick="closePanel('notesPanel')">关闭</button></div>
         <div id="notesBody" class="panel-body">
-            <textarea id="notesTextarea" class="notes-area" placeholder="鍦ㄦ璁板綍绠＄悊鍛樼瑪璁?.."></textarea>
+            <textarea id="notesTextarea" class="notes-area" placeholder="在此记录管理员笔记..."></textarea>
             <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
                 <div id="notesStatus" class="muted"></div>
                 <div>
-                    <button onclick="saveNotes()" style="background:rgba(79,195,255,0.2);border:1px solid rgba(79,195,255,0.4);color:#4fc3ff;padding:8px 12px;border-radius:6px;cursor:pointer;">淇濆瓨</button>
+                    <button onclick="saveNotes()" style="background:rgba(79,195,255,0.2);border:1px solid rgba(79,195,255,0.4);color:#4fc3ff;padding:8px 12px;border-radius:6px;cursor:pointer;">保存</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Theme 闈㈡澘 -->
+    <!-- Theme 面板 -->
     <div id="themePanel" class="bottom-panel" aria-hidden="true">
-        <div class="panel-header">鐣岄潰涓婚 &nbsp; <button class="close-btn" onclick="closePanel('themePanel')">鍏抽棴</button></div>
+        <div class="panel-header">界面主题 &nbsp; <button class="close-btn" onclick="closePanel('themePanel')">关闭</button></div>
         <div id="themeBody" class="panel-body">
-            <div class="theme-option"><input type="radio" name="themeChoice" id="themeDark" value="dark" onclick="applyTheme('dark', false)"><label for="themeDark">娣辫壊锛堥粯璁わ級</label></div>
-            <div class="theme-option"><input type="radio" name="themeChoice" id="themeLight" value="light" onclick="applyTheme('light', false)"><label for="themeLight">娴呰壊锛堟紨绀猴級</label></div>
-            <div class="theme-option"><input type="radio" name="themeChoice" id="themeHC" value="high-contrast" onclick="applyTheme('high-contrast', false)"><label for="themeHC">楂樺姣?/label></div>
-            <div style="margin-top:8px;color:#6b9ccc;font-size:0.95rem;">鍒囨崲涓洪瑙堝悗鐐瑰嚮鈥滃簲鐢ㄢ€濅繚瀛樹负鏈湴鍋忓ソ銆?/div>
+            <div class="theme-option"><input type="radio" name="themeChoice" id="themeDark" value="dark" onclick="applyTheme('dark', false)"><label for="themeDark">深色（默认）</label></div>
+            <div class="theme-option"><input type="radio" name="themeChoice" id="themeLight" value="light" onclick="applyTheme('light', false)"><label for="themeLight">浅色（演示）</label></div>
+            <div class="theme-option"><input type="radio" name="themeChoice" id="themeHC" value="high-contrast" onclick="applyTheme('high-contrast', false)"><label for="themeHC">高对比</label></div>
+            <div style="margin-top:8px;color:#6b9ccc;font-size:0.95rem;">切换为预览后点击“应用”保存为本地偏好。</div>
             <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
-                <div id="themePreview" style="flex:1; height:44px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center;" data-theme="dark">棰勮鍖哄煙</div>
+                <div id="themePreview" style="flex:1; height:44px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center;" data-theme="dark">预览区域</div>
                 <div>
-                    <button onclick="applyThemeAndClose()" style="background:rgba(79,195,255,0.2);border:1px solid rgba(79,195,255,0.4);color:#4fc3ff;padding:8px 12px;border-radius:6px;cursor:pointer;">搴旂敤</button>
+                    <button onclick="applyThemeAndClose()" style="background:rgba(79,195,255,0.2);border:1px solid rgba(79,195,255,0.4);color:#4fc3ff;padding:8px 12px;border-radius:6px;cursor:pointer;">应用</button>
                 </div>
             </div>
         </div>
     </div>
     
     <script>
-        // 椤甸潰閾炬帴閰嶇疆
+        // 页面链接配置
         const pageConfig = {
             'members': {
                 url: 'members.html',
-                name: '绠＄悊鎴愬憳',
-                description: '绠＄悊灞€鎵€鏈夋垚鍛樼殑璇︾粏璧勬枡鍜屾潈闄愮鐞?
+                name: '管理成员',
+                description: '管理局所有成员的详细资料和权限管理'
             },
             'teams': {
                 url: 'teams.html',
-                name: '闃熶紞鍚嶅崟',
-                description: '琛屽姩闃熶紞鐨勭粍鎴愩€佺姸鎬佸拰浠诲姟鍒嗛厤'
+                name: '队伍名单',
+                description: '行动队伍的组成、状态和任务分配'
             },
             'tasks': {
                 url: 'tasks.html',
-                name: '浠诲姟璇︽儏',
-                description: '褰撳墠杩涜涓拰宸插畬鎴愮殑鍚勯」浠诲姟璇︽儏'
+                name: '任务详情',
+                description: '当前进行中和已完成的各项任务详情'
             },
             'monsters': {
                 url: 'monsters.html',
-                name: '瑁傞殭鎬墿',
-                description: '宸叉敹褰曠殑瑁傞殭鎬墿妗ｆ鍜岀爺绌舵暟鎹?
+                name: '裂隙怪物',
+                description: '已收录的裂隙怪物档案和研究数据'
             },
             'subjects': {
                 url: 'subjects.html',
-                name: '瀹為獙浣?,
-                description: '宸叉敹褰曠殑瀹為獙浣撴牱鏈拰瀹為獙缁撴灉'
+                name: '实验体',
+                description: '已收录的实验体样本和实验结果'
             },
-            // 宸茬Щ闄? 'logs', 'settings', 'recycle'锛堝浘鏍囧凡浠庢闈腑鍒犻櫎锛?
+            // 已移除: 'logs', 'settings', 'recycle'（图标已从桌面中删除）
         };
 
-        // Supabase 榛樿閰嶇疆锛堝彲鐢?localStorage 瑕嗙洊锛?
+        // Supabase 默认配置（可用 localStorage 覆盖）
         const DEFAULT_SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
         const DEFAULT_SUPABASE_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
 
-        // 鍒濆鍖?supabase-js 瀹㈡埛绔紙鑻?CDN 鍙敤锛夛紝浼樺厛浣跨敤 localStorage 涓殑閰嶇疆瑕嗙洊榛樿鍊?
+        // 初始化 supabase-js 客户端（若 CDN 可用），优先使用 localStorage 中的配置覆盖默认值
         const SUPABASE_URL = (localStorage.getItem('supabase_url') || DEFAULT_SUPABASE_URL).trim();
         const SUPABASE_ANON_KEY = (localStorage.getItem('supabase_key') || DEFAULT_SUPABASE_KEY).trim();
         const _supabase = (window.supabase || window.supabaseJs) && typeof (window.supabase || window.supabaseJs).createClient === 'function'
             ? (window.supabase || window.supabaseJs).createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
             : null;
         
-        // 妫€鏌ョ櫥褰曠姸鎬?
+        // 检查登录状态
         const role = localStorage.getItem('auth_role');
         if (role !== 'admin') {
-            alert('璇峰厛浠ョ鐞嗗憳韬唤鐧诲綍锛?);
+            alert('请先以管理员身份登录！');
             window.location.href = 'index.html';
         }
         
-        // 鑾峰彇鏃堕棿骞舵樉绀洪棶鍊欒
+        // 获取时间并显示问候语
         function updateTime() {
             const now = new Date();
             const hours = now.getHours();
             const minutes = now.getMinutes().toString().padStart(2, '0');
             const seconds = now.getSeconds().toString().padStart(2, '0');
             
-            // 鏇存柊鏃堕棿鏄剧ず
+            // 更新时间显示
             document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
             
-            // 闂€欒
+            // 问候语
             let greeting = '';
             if (hours >= 5 && hours < 12) {
-                greeting = '鏃╀笂濂?;
+                greeting = '早上好';
             } else if (hours >= 12 && hours < 18) {
-                greeting = '涓嬪崍濂?;
+                greeting = '下午好';
             } else if (hours >= 18 && hours < 22) {
-                greeting = '鏅氫笂濂?;
+                greeting = '晚上好';
             } else {
-                greeting = '澶滄繁浜?;
+                greeting = '夜深了';
             }
             
             document.getElementById('timeGreeting').textContent = greeting;
         }
         
-        // 鏄剧ず鍔犺浇鍔ㄧ敾
-        function showLoading(message = '姝ｅ湪鍔犺浇...') {
+        // 显示加载动画
+        function showLoading(message = '正在加载...') {
             const overlay = document.getElementById('loadingOverlay');
             const text = document.getElementById('loadingText');
             text.textContent = message;
             overlay.style.display = 'flex';
         }
         
-        // 闅愯棌鍔犺浇鍔ㄧ敾
+        // 隐藏加载动画
         async function populateDesktopPanel() {
-            // 淇濇寔涓庡悓姝ョ増鏈竴鑷达細浠呭睍绀烘湰鍦扮函鏂囨湰淇℃伅锛堜笉璁块棶浜戠鎴栫郴缁熶俊鎭級
+            // 保持与同步版本一致：仅展示本地纯文本信息（不访问云端或系统信息）
             const tasksListEl = document.getElementById('tasksList');
             const iconsListEl = document.getElementById('iconsList');
             const peopleListEl = document.getElementById('peopleList');
             const cloudSyncEl = document.getElementById('cloudSyncStatus');
 
             if (tasksListEl) {
-                tasksListEl.textContent = '妗岄潰蹇嵎锛堝紓姝ュ叆鍙ｏ級锛歕n- 鐐瑰嚮鍥炬爣浠ユ墦寮€瀵瑰簲椤甸潰銆俓n- 鏈潰鏉夸粎鏄剧ず鏈湴闈欐€佽鏄庯紝涓嶈繛鎺ヤ换浣曚簯绔垨绯荤粺淇℃伅銆?;
+                tasksListEl.textContent = '桌面快捷（异步入口）：\n- 点击图标以打开对应页面。\n- 本面板仅显示本地静态说明，不连接任何云端或系统信息。';
                 tasksListEl.style.whiteSpace = 'pre-wrap';
             }
 
@@ -726,39 +726,39 @@
                         iconsListEl.appendChild(li);
                     });
                 } else {
-                    iconsListEl.innerHTML = '<li class="muted">鏃犳闈㈠浘鏍囥€?/li>';
+                    iconsListEl.innerHTML = '<li class="muted">无桌面图标。</li>';
                 }
             }
 
             if (peopleListEl) {
-                peopleListEl.textContent = '鎴愬憳淇℃伅锛歕n- 璇峰湪鈥滅鐞嗘垚鍛樷€濋〉闈㈡煡鐪嬭缁嗘垚鍛樿祫鏂欙紙鏈湴闈欐€佹彁绀猴級銆?;
+                peopleListEl.textContent = '成员信息：\n- 请在“管理成员”页面查看详细成员资料（本地静态提示）。';
                 peopleListEl.style.whiteSpace = 'pre-wrap';
             }
 
             if (cloudSyncEl) {
-                cloudSyncEl.textContent = '鏈湴妯″紡锛氫笉杩炴帴浜戠銆傛墍鏈夋暟鎹粎涓烘湰鍦板睍绀恒€?;
+                cloudSyncEl.textContent = '本地模式：不连接云端。所有数据仅为本地展示。';
             }
         }
         // Modal popup removed per user request: no automatic popup on admin login.
         
-        // 椤甸潰鍔犺浇鏃舵樉绀烘杩庝俊鎭?
+        // 页面加载时显示欢迎信息
         window.onload = function() {
             updateTime();
             setInterval(updateTime, 1000);
             
-            // 搴旂敤宸蹭繚瀛樼殑涓婚锛堣嫢鏈夛級
+            // 应用已保存的主题（若有）
             try { applyTheme(localStorage.getItem('admin_theme') || 'dark', false); } catch(e) {}
             
-            // 5绉掑悗闅愯棌娆㈣繋鎻愮ず
+            // 5秒后隐藏欢迎提示
             setTimeout(() => {
                 document.getElementById('welcomeToast').style.display = 'none';
             }, 5000);
         };
         
-        // 鏄剧ず妗岄潰锛堟敹璧锋墍鏈夌獥鍙ｏ級
-        // 鎵撳紑搴曢儴铏氭嫙闈㈡澘锛堝彧鎵撳紑涓€涓級
+        // 显示桌面（收起所有窗口）
+        // 打开底部虚拟面板（只打开一个）
         function openPanel(panelId) {
-                // 鍏抽棴骞舵墦寮€鐩爣闈㈡澘锛堜粎淇濈暀甯姪銆佺瑪璁颁笌涓婚闈㈡澘锛?
+                // 关闭并打开目标面板（仅保留帮助、笔记与主题面板）
                 ['helpPanel','notesPanel','themePanel'].forEach(id => {
                     const el = document.getElementById(id);
                     if (!el) return;
@@ -769,7 +769,7 @@
                     }
                 });
 
-                // 濉厖鍔ㄦ€佹暟鎹?
+                // 填充动态数据
                 if (panelId === 'helpPanel') populateHelpPanel();
                 if (panelId === 'notesPanel') populateNotesPanel();
                 if (panelId === 'themePanel') populateThemePanel();
@@ -780,7 +780,7 @@
             if (el) el.setAttribute('aria-hidden','true');
         }
 
-        // 濉厖妗岄潰闈㈡澘锛堢畝鍖栫増锛氫粎鏈湴绾枃鏈紝涓嶈闂簯绔垨绯荤粺淇℃伅锛?
+        // 填充桌面面板（简化版：仅本地纯文本，不访问云端或系统信息）
         function populateDesktopPanel() {
             const tasksListEl = document.getElementById('tasksList');
             const iconsListEl = document.getElementById('iconsList');
@@ -788,12 +788,12 @@
             const cloudSyncEl = document.getElementById('cloudSyncStatus');
 
             if (tasksListEl) {
-                tasksListEl.textContent = '妗岄潰蹇嵎锛歕n- 鐐瑰嚮鍥炬爣浠ユ墦寮€瀵瑰簲椤甸潰銆俓n- 鏈潰鏉夸粎鏄剧ず鏈湴闈欐€佽鏄庯紝涓嶈繛鎺ヤ换浣曚簯绔垨绯荤粺淇℃伅銆?;
+                tasksListEl.textContent = '桌面快捷：\n- 点击图标以打开对应页面。\n- 本面板仅显示本地静态说明，不连接任何云端或系统信息。';
                 tasksListEl.style.whiteSpace = 'pre-wrap';
             }
 
             if (iconsListEl) {
-                // 鍒楀嚭妗岄潰鍥炬爣鍚嶇О锛堜粎浣滀负鏈湴绾枃鏈睍绀猴級
+                // 列出桌面图标名称（仅作为本地纯文本展示）
                 const names = [];
                 document.querySelectorAll('.desktop-grid .desktop-icon').forEach(a => {
                     const name = (a.getAttribute('data-page-name') || a.textContent || '').trim().split('\n')[0];
@@ -804,27 +804,27 @@
                     names.forEach(n => {
                         const li = document.createElement('li');
                         li.style.padding = '6px 0';
-                        li.textContent = n; // 绾枃鏈?
+                        li.textContent = n; // 纯文本
                         iconsListEl.appendChild(li);
                     });
                 } else {
-                    iconsListEl.innerHTML = '<li class="muted">鏃犳闈㈠浘鏍囥€?/li>';
+                    iconsListEl.innerHTML = '<li class="muted">无桌面图标。</li>';
                 }
             }
 
             if (peopleListEl) {
-                peopleListEl.textContent = '鎴愬憳淇℃伅锛歕n- 璇峰湪鈥滅鐞嗘垚鍛樷€濋〉闈㈡煡鐪嬭缁嗘垚鍛樿祫鏂欙紙鏈湴闈欐€佹彁绀猴級銆?;
+                peopleListEl.textContent = '成员信息：\n- 请在“管理成员”页面查看详细成员资料（本地静态提示）。';
                 peopleListEl.style.whiteSpace = 'pre-wrap';
             }
 
             if (cloudSyncEl) {
-                cloudSyncEl.textContent = '鏈湴妯″紡锛氫笉杩炴帴浜戠銆傛墍鏈夋暟鎹粎涓烘湰鍦板睍绀恒€?;
+                cloudSyncEl.textContent = '本地模式：不连接云端。所有数据仅为本地展示。';
             }
         }
 
         async function fetchCloudSummary() {
-                    // 濡傛灉閰嶇疆浜?Supabase锛屽垯浼樺厛浣跨敤 Supabase REST API锛堥渶瑕佸湪 localStorage 涓厤缃?`supabase_url` 涓?`supabase_key`锛?
-                    // 棣栭€変娇鐢?supabase-js 瀹㈡埛绔紙鏇村彲闈狅紝閬垮厤鎵嬪姩鏋勯€?REST 杩囨护瀛楃涓诧級
+                    // 如果配置了 Supabase，则优先使用 Supabase REST API（需要在 localStorage 中配置 `supabase_url` 与 `supabase_key`）
+                    // 首选使用 supabase-js 客户端（更可靠，避免手动构造 REST 过滤字符串）
                     if (_supabase) {
                         try {
                             const { data: tasks, error: tErr } = await _supabase
@@ -838,11 +838,11 @@
                                 .limit(8);
                             return { tasks: tasks || [], people: people || [], updated: new Date().toISOString(), errors: [tErr, uErr].filter(Boolean) };
                         } catch (e) {
-                            // 濡傛灉 supabase-js 璇锋眰鎶涢敊锛岀户缁洖閫€閫昏緫
+                            // 如果 supabase-js 请求抛错，继续回退逻辑
                         }
                     }
 
-                    // 鍏煎姝ゅ墠鐨勯€氱敤 cloud_api 鍥為€€
+                    // 兼容此前的通用 cloud_api 回退
                     const endpoints = [];
                     const configured = localStorage.getItem('cloud_api');
                     if (configured) endpoints.push(configured.replace(/\/$/, '') + '/summary');
@@ -881,24 +881,24 @@
                 });
             }
 
-            if (cloudEl) cloudEl.textContent = '姝ｅ湪浠庝簯绔幏鍙?..';
+            if (cloudEl) cloudEl.textContent = '正在从云端获取...';
             let cloud = null;
             try { cloud = await fetchCloudSummary(); } catch (e) { cloud = null; }
 
             if (cloud) {
                 if (tasksEl) {
                     const tasks = Array.isArray(cloud.tasks) ? cloud.tasks : [];
-                    tasksEl.innerHTML = tasks.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + tasks.slice(0,5).map(t => `<li>${escapeHtml(t.title || t)}</li>`).join('') + '</ul>') : '<div class="muted">鏃犺繎鏈熶换鍔°€?/div>';
+                    tasksEl.innerHTML = tasks.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + tasks.slice(0,5).map(t => `<li>${escapeHtml(t.title || t)}</li>`).join('') + '</ul>') : '<div class="muted">无近期任务。</div>';
                 }
                 if (peopleEl) {
                     const people = Array.isArray(cloud.people) ? cloud.people : [];
-                    peopleEl.innerHTML = people.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + people.slice(0,8).map(p => `<li>${escapeHtml(p.name || p)}</li>`).join('') + '</ul>') : '<div class="muted">鏈彂鐜板湪绾挎垚鍛樸€?/div>';
+                    peopleEl.innerHTML = people.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + people.slice(0,8).map(p => `<li>${escapeHtml(p.name || p)}</li>`).join('') + '</ul>') : '<div class="muted">未发现在线成员。</div>';
                 }
-                if (cloudEl) cloudEl.textContent = '宸蹭粠浜戠鍚屾' + (cloud.updated ? ('锛? + escapeHtml(cloud.updated) + '锛?) : '銆?);
+                if (cloudEl) cloudEl.textContent = '已从云端同步' + (cloud.updated ? ('（' + escapeHtml(cloud.updated) + '）') : '。');
                 return;
             }
 
-            if (cloudEl) cloudEl.textContent = '鏃犳硶杩炴帴浜戠锛屾敼鐢ㄦ湰鍦版暟鎹€?;
+            if (cloudEl) cloudEl.textContent = '无法连接云端，改用本地数据。';
 
             if (tasksEl) {
                 try {
@@ -915,10 +915,10 @@
                                 const hMatches = txt.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/g);
                                 if (hMatches && hMatches.length) for (let i = 0; i < Math.min(5, hMatches.length); i++) snippets.push(hMatches[i].replace(/<[^>]+>/g, ''));
                             }
-                            tasksEl.innerHTML = snippets.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + snippets.map(s => `<li>${escapeHtml(s)}</li>`).join('') + '</ul>') : '<div class="muted">鏃犳湰鍦颁换鍔℃暟鎹€?/div>';
-                        }).catch(() => { tasksEl.innerHTML = '<div class="muted">鏃犳硶鍔犺浇浠诲姟椤甸潰锛堝彲鑳藉湪 file:// 鐜涓嬭闃绘锛夈€?/div>'; });
+                            tasksEl.innerHTML = snippets.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + snippets.map(s => `<li>${escapeHtml(s)}</li>`).join('') + '</ul>') : '<div class="muted">无本地任务数据。</div>';
+                        }).catch(() => { tasksEl.innerHTML = '<div class="muted">无法加载任务页面（可能在 file:// 环境下被阻止）。</div>'; });
                     }
-                } catch (e) { tasksEl.innerHTML = '<div class="muted">鏃犳硶璇诲彇鏈湴浠诲姟鏁版嵁銆?/div>'; }
+                } catch (e) { tasksEl.innerHTML = '<div class="muted">无法读取本地任务数据。</div>'; }
             }
 
             if (peopleEl) {
@@ -931,34 +931,34 @@
                             const liMatches = txt.match(/<li[^>]*>(.*?)<\/li>/g);
                             const snippets = [];
                             if (liMatches && liMatches.length) for (let i = 0; i < Math.min(8, liMatches.length); i++) snippets.push(liMatches[i].replace(/<[^>]+>/g, ''));
-                            peopleEl.innerHTML = snippets.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + snippets.map(s => `<li>${escapeHtml(s)}</li>`).join('') + '</ul>') : '<div class="muted">鏃犳垚鍛樻暟鎹€?/div>';
-                        }).catch(() => { peopleEl.innerHTML = '<div class="muted">鏃犳硶鍔犺浇鎴愬憳椤甸潰锛堟枃浠惰闂彈闄愶級銆?/div>'; });
+                            peopleEl.innerHTML = snippets.length ? ('<ul style="list-style:none;padding-left:0;color:#6b9ccc;">' + snippets.map(s => `<li>${escapeHtml(s)}</li>`).join('') + '</ul>') : '<div class="muted">无成员数据。</div>';
+                        }).catch(() => { peopleEl.innerHTML = '<div class="muted">无法加载成员页面（文件访问受限）。</div>'; });
                     }
-                } catch (e) { peopleEl.innerHTML = '<div class="muted">鏃犳硶璇诲彇鏈湴鎴愬憳鏁版嵁銆?/div>'; }
+                } catch (e) { peopleEl.innerHTML = '<div class="muted">无法读取本地成员数据。</div>'; }
             }
         }
 
-        // `performQuickSearch` 宸插垹闄わ紙蹇€熸悳绱㈠姛鑳芥寜鐢ㄦ埛瑕佹眰绉婚櫎锛?
+        // `performQuickSearch` 已删除（快速搜索功能按用户要求移除）
 
         function populateHelpPanel() {
             const el = document.getElementById('helpBody');
             if (!el) return;
-            // 浠呮樉绀烘湰鍦扮函鏂囨湰鐨勫府鍔╄鏄庯紝涓嶅寘鍚换浣曠郴缁熸垨浜戠淇℃伅
+            // 仅显示本地纯文本的帮助说明，不包含任何系统或云端信息
             el.innerHTML = '';
             const lines = [];
-            lines.push('甯姪涓績锛?);
-            lines.push('- 濡備綍鍙戝竷浠诲姟锛氱鐞嗗憳鐐瑰嚮鈥滀换鍔¤鎯呪€濆苟浣跨敤椤甸潰鍐呯殑鍙戝竷琛ㄥ崟銆?);
-            lines.push('- 鎴愬憳鎺ュ彇锛氭垚鍛樺彲鍦ㄢ€滄垚鍛樹换鍔♀€濋〉闈㈡煡鐪嬪苟鎺ュ彇鍙敤浠诲姟銆?);
-            lines.push('- 鏉冮檺璇存槑锛氫笉鍚岃鑹叉嫢鏈変笉鍚屾搷浣滄潈闄愶紝璇峰挩璇㈢鐞嗗憳銆?);
+            lines.push('帮助中心：');
+            lines.push('- 如何发布任务：管理员点击“任务详情”并使用页面内的发布表单。');
+            lines.push('- 成员接取：成员可在“成员任务”页面查看并接取可用任务。');
+            lines.push('- 权限说明：不同角色拥有不同操作权限，请咨询管理员。');
             lines.push('');
-            lines.push('璇存槑锛氭湰甯姪涓烘湰鍦伴潤鎬佹枃鏈紝绋嬪簭涓嶄細璁块棶浜戠鎴栬鍙栫郴缁熶俊鎭€?);
+            lines.push('说明：本帮助为本地静态文本，程序不会访问云端或读取系统信息。');
             const p = document.createElement('div');
             p.style.whiteSpace = 'pre-wrap';
             p.textContent = lines.join('\n');
             el.appendChild(p);
         }
 
-        // 绗旇闈㈡澘锛氬姞杞戒笌淇濆瓨鏈湴绗旇
+        // 笔记面板：加载与保存本地笔记
         function populateNotesPanel() {
             const el = document.getElementById('notesBody');
             if (!el) return;
@@ -980,15 +980,15 @@
             try {
                 localStorage.setItem('admin_notes', ta.value);
                 if (status) {
-                    status.textContent = '宸蹭繚瀛?;
+                    status.textContent = '已保存';
                     setTimeout(() => status.textContent = '', 1500);
                 }
             } catch (e) {
-                if (status) status.textContent = '淇濆瓨澶辫触';
+                if (status) status.textContent = '保存失败';
             }
         }
 
-        // 涓婚闈㈡澘锛氶€夋嫨骞跺簲鐢ㄧ畝鍗曚富棰?
+        // 主题面板：选择并应用简单主题
         function populateThemePanel() {
             const current = localStorage.getItem('admin_theme') || 'dark';
             const radios = document.getElementsByName('themeChoice');
@@ -1024,11 +1024,11 @@
             return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         }
         
-        // 閫€鍑虹櫥褰?
+        // 退出登录
         function logout() {
-            if (confirm('纭畾瑕侀€€鍑虹櫥褰曞悧锛?)) {
+            if (confirm('确定要退出登录吗？')) {
                 localStorage.clear();
-                showLoading('姝ｅ湪閫€鍑虹郴缁?..');
+                showLoading('正在退出系统...');
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1000);
@@ -1039,6 +1039,6 @@
     </script>
 </body>
 </html>
-    <!-- 搴曢儴铏氭嫙鍗＄墖宸插垹闄わ紙鐢ㄦ埛瑕佹眰锛?-->
+    <!-- 底部虚拟卡片已删除（用户要求） -->
 </body>
 </html>

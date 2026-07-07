@@ -1,13 +1,13 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>浠诲姟绠＄悊 - 绠＄悊灞€璧勬枡搴?/title>
+    <title>任务管理 - 管理局资料库</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 鍩虹鏍峰紡 */
+        /* 基础样式 */
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +23,7 @@
             font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
         }
         
-        /* 鍏ㄥ睆妗岄潰鏍峰紡 */
+        /* 全屏桌面样式 */
         .desktop {
             width: 100vw;
             height: 100vh;
@@ -34,7 +34,7 @@
             flex-direction: column;
         }
         
-        /* 椤堕儴鐘舵€佹爮 */
+        /* 顶部状态栏 */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -93,7 +93,7 @@
             margin-right: 10px;
         }
         
-        /* 杩斿洖鎸夐挳 */
+        /* 返回按钮 */
         .back-btn {
             background: rgba(0, 60, 120, 0.8);
             border: 1px solid rgba(0, 150, 255, 0.4);
@@ -115,7 +115,7 @@
             box-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
         }
         
-        /* 涓昏鍐呭鍖哄煙 */
+        /* 主要内容区域 */
         .main-content {
             flex: 1;
             display: flex;
@@ -124,7 +124,7 @@
             gap: 20px;
         }
         
-        /* 浠诲姟鍒楄〃鍖哄煙 */
+        /* 任务列表区域 */
         .task-list-container {
             flex: 1;
             background: rgba(10, 36, 99, 0.85);
@@ -138,7 +138,7 @@
             overflow: hidden;
         }
         
-        /* 浠诲姟璇︽儏鍖哄煙 */
+        /* 任务详情区域 */
         .task-detail-container {
             flex: 1;
             background: rgba(10, 36, 99, 0.85);
@@ -173,7 +173,7 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* 浠诲姟鍒楄〃澶撮儴 */
+        /* 任务列表头部 */
         .list-header {
             display: flex;
             justify-content: space-between;
@@ -244,7 +244,7 @@
             background: rgba(255, 107, 107, 0.35);
         }
         
-        /* 浠诲姟琛ㄦ牸 */
+        /* 任务表格 */
         .task-table-container {
             flex: 1;
             overflow-y: auto;
@@ -290,7 +290,7 @@
             border-left: 3px solid #4fc3ff;
         }
         
-        /* 鐘舵€佹爣绛?*/
+        /* 状态标签 */
         .status-badge {
             display: inline-block;
             padding: 6px 12px;
@@ -318,7 +318,7 @@
             border: 1px solid rgba(107, 255, 184, 0.4);
         }
         
-        /* 闅惧害鏍囩 */
+        /* 难度标签 */
         .difficulty-badge {
             display: inline-block;
             padding: 6px 12px;
@@ -364,7 +364,7 @@
             border: 1px solid rgba(107, 156, 204, 0.4);
         }
         
-        /* 璇︽儏鍖哄煙鏍峰紡 */
+        /* 详情区域样式 */
         .detail-content {
             flex: 1;
             overflow-y: auto;
@@ -411,7 +411,7 @@
             line-height: 1.6;
         }
         
-        /* 鍒嗛厤琛ㄥ崟 */
+        /* 分配表单 */
         .assign-form {
             background: rgba(0, 30, 80, 0.6);
             border-radius: 12px;
@@ -461,7 +461,7 @@
             margin-top: 20px;
         }
         
-        /* 鍙戝竷浠诲姟琛ㄥ崟 */
+        /* 发布任务表单 */
         .publish-form {
             background: rgba(0, 30, 80, 0.6);
             border-radius: 12px;
@@ -528,7 +528,7 @@
             transform: none;
         }
         
-        /* 绌虹姸鎬?*/
+        /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -547,7 +547,7 @@
             color: #a3d5ff;
         }
         
-        /* 妯℃€佹鏍峰紡 */
+        /* 模态框样式 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -647,7 +647,7 @@
             transform: scale(1.05);
         }
         
-        /* 鍔犺浇鍔ㄧ敾 */
+        /* 加载动画 */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -687,7 +687,7 @@
             text-align: center;
         }
         
-        /* 鍝嶅簲寮忚璁?*/
+        /* 响应式设计 */
         @media (max-width: 1100px) {
             .main-content {
                 flex-direction: column;
@@ -750,7 +750,7 @@
             }
         }
         
-        /* 鍔ㄧ敾 */
+        /* 动画 */
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -774,13 +774,13 @@
     </style>
 </head>
 <body>
-    <!-- 妗岄潰鐣岄潰 -->
+    <!-- 桌面界面 -->
     <div class="desktop">
-        <!-- 椤堕儴鐘舵€佹爮 -->
+        <!-- 顶部状态栏 -->
         <div class="status-bar">
             <div class="system-info">
-                <img src="qsamlogo.png" alt="绯荤粺鏍囧織" class="system-logo">
-                <div class="system-name">绠＄悊灞€ - 浠诲姟绠＄悊绯荤粺</div>
+                <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+                <div class="system-name">管理局 - 任务管理系统</div>
             </div>
             
             <div class="user-info">
@@ -789,48 +789,48 @@
                     <i class="fas fa-user-shield"></i>
                 </div>
                 <div>
-                        <div id="userDisplayName" style="color: #ffd93d;">璁垮</div>
+                        <div id="userDisplayName" style="color: #ffd93d;">访客</div>
                         <div id="userRoleText" style="font-size: 0.8rem; color: #a3d5ff;"></div>
                 </div>
-                    <button class="back-btn" onclick="goBack()" aria-label="杩斿洖" title="杩斿洖">
-                        <i class="fas fa-arrow-left" aria-hidden="true"></i> 杩斿洖
+                    <button class="back-btn" onclick="goBack()" aria-label="返回" title="返回">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i> 返回
                     </button>
             </div>
         </div>
         
-        <!-- 涓昏鍐呭鍖哄煙 -->
+        <!-- 主要内容区域 -->
         <div class="main-content">
-            <!-- 宸︿晶锛氫换鍔″垪琛?-->
+            <!-- 左侧：任务列表 -->
             <div class="task-list-container">
                 <div class="list-header">
                     <div class="filter-controls">
                         <select class="filter-select" id="statusFilter">
-                            <option value="all">鎵€鏈夌姸鎬?/option>
-                            <option value="鏈帴鍙?>鏈帴鍙?/option>
-                            <option value="宸叉帴鍙?>宸叉帴鍙?/option>
-                            <option value="宸插畬鎴?>宸插畬鎴?/option>
+                            <option value="all">所有状态</option>
+                            <option value="未接取">未接取</option>
+                            <option value="已接取">已接取</option>
+                            <option value="已完成">已完成</option>
                         </select>
                         <select class="filter-select" id="difficultyFilter">
-                            <option value="all">鎵€鏈夐毦搴?/option>
-                            <option value="浣庡嵄">浣庡嵄</option>
-                            <option value="涓嵄">涓嵄</option>
-                            <option value="楂樺嵄">楂樺嵄</option>
-                            <option value="鏋侀珮鍗?>鏋侀珮鍗?/option>
-                            <option value="鐏鹃毦">鐏鹃毦</option>
-                            <option value="鏆傛棤">鏆傛棤璇勭骇</option>
+                            <option value="all">所有难度</option>
+                            <option value="低危">低危</option>
+                            <option value="中危">中危</option>
+                            <option value="高危">高危</option>
+                            <option value="极高危">极高危</option>
+                            <option value="灾难">灾难</option>
+                            <option value="暂无">暂无评级</option>
                         </select>
                         <select class="filter-select" id="sourceFilter">
-                            <option value="all">鎵€鏈夋潵婧?/option>
-                            <option value="娓稿">娓稿鍙戝竷</option>
-                            <option value="绠＄悊鍛?>绠＄悊鍛樺彂甯?/option>
+                            <option value="all">所有来源</option>
+                            <option value="游客">游客发布</option>
+                            <option value="管理员">管理员发布</option>
                         </select>
                     </div>
                     <div class="action-buttons">
                         <button class="btn btn-primary" onclick="openPublishModal()">
-                            <i class="fas fa-plus"></i> 鍙戝竷鏂颁换鍔?
+                            <i class="fas fa-plus"></i> 发布新任务
                         </button>
                         <button class="btn" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i> 鍒锋柊
+                            <i class="fas fa-sync-alt"></i> 刷新
                         </button>
                     </div>
                 </div>
@@ -839,44 +839,44 @@
                     <table class="task-table" id="taskTable">
                         <thead>
                             <tr>
-                                <th>浠诲姟鍚嶇О</th>
-                                <th>绫诲瀷</th>
-                                <th>闅惧害</th>
-                                <th>鐘舵€?/th>
-                                <th>鏉ユ簮</th>
-                                <th>鍙戝竷鏃堕棿</th>
+                                <th>任务名称</th>
+                                <th>类型</th>
+                                <th>难度</th>
+                                <th>状态</th>
+                                <th>来源</th>
+                                <th>发布时间</th>
                             </tr>
                         </thead>
                         <tbody id="taskTableBody">
-                            <!-- 浠诲姟鍒楄〃灏嗗姩鎬佸姞杞?-->
+                            <!-- 任务列表将动态加载 -->
                         </tbody>
                     </table>
                 </div>
             </div>
             
-            <!-- 鍙充晶锛氫换鍔¤鎯呬笌鎿嶄綔 -->
+            <!-- 右侧：任务详情与操作 -->
             <div class="task-detail-container">
                 <div class="section-title">
                     <i class="fas fa-info-circle"></i>
-                    <h2>浠诲姟璇︽儏</h2>
+                    <h2>任务详情</h2>
                 </div>
                 
                 <div class="detail-content" id="taskDetailContent">
                     <div class="empty-state">
                         <i class="fas fa-tasks"></i>
-                        <h3>閫夋嫨浠诲姟鏌ョ湅璇︽儏</h3>
-                        <p>鐐瑰嚮宸︿晶鍒楄〃涓殑浠诲姟浠ユ煡鐪嬭缁嗕俊鎭?/p>
+                        <h3>选择任务查看详情</h3>
+                        <p>点击左侧列表中的任务以查看详细信息</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- 鍙戝竷浠诲姟妯℃€佹 -->
+    <!-- 发布任务模态框 -->
     <div class="modal-overlay" id="publishModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title">鍙戝竷鏂颁换鍔?/h3>
+                <h3 class="modal-title">发布新任务</h3>
                 <div class="modal-close" onclick="closeModal('publishModal')">
                     <i class="fas fa-times"></i>
                 </div>
@@ -884,46 +884,46 @@
             <div class="modal-body">
                 <form id="publishForm">
                     <div class="form-group">
-                        <label class="form-label">浠诲姟鍚嶇О</label>
-                        <input type="text" id="publishTaskName" class="form-input" placeholder="璇疯緭鍏ヤ换鍔″悕绉? required>
+                        <label class="form-label">任务名称</label>
+                        <input type="text" id="publishTaskName" class="form-input" placeholder="请输入任务名称" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">浠诲姟绫诲瀷</label>
+                        <label class="form-label">任务类型</label>
                         <select id="publishTaskType" class="form-select" required>
-                            <option value="">璇烽€夋嫨浠诲姟绫诲瀷</option>
-                            <option value="寮傚父鐢熺墿澶勭悊">寮傚父鐢熺墿澶勭悊</option>
-                            <option value="鏃剁┖瑁傞殭澶勭悊">鏃剁┖瑁傞殭澶勭悊</option>
-                            <option value="鍏朵粬">鍏朵粬</option>
+                            <option value="">请选择任务类型</option>
+                            <option value="异常生物处理">异常生物处理</option>
+                            <option value="时空裂隙处理">时空裂隙处理</option>
+                            <option value="其他">其他</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">闅惧害璇勭骇</label>
+                        <label class="form-label">难度评级</label>
                         <select id="publishTaskDifficulty" class="form-select" required>
-                            <option value="">璇烽€夋嫨闅惧害</option>
-                            <option value="浣庡嵄">浣庡嵄</option>
-                            <option value="涓嵄">涓嵄</option>
-                            <option value="楂樺嵄">楂樺嵄</option>
-                            <option value="鏋侀珮鍗?>鏋侀珮鍗?/option>
-                            <option value="鐏鹃毦">鐏鹃毦</option>
+                            <option value="">请选择难度</option>
+                            <option value="低危">低危</option>
+                            <option value="中危">中危</option>
+                            <option value="高危">高危</option>
+                            <option value="极高危">极高危</option>
+                            <option value="灾难">灾难</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">鏃堕檺瑕佹眰锛堝ぉ锛?/label>
-                        <input type="number" id="publishTimeLimit" class="form-input" placeholder="璇疯緭鍏ヤ换鍔℃椂闄愶紙澶╂暟锛? min="1" max="365" required>
+                        <label class="form-label">时限要求（天）</label>
+                        <input type="number" id="publishTimeLimit" class="form-input" placeholder="请输入任务时限（天数）" min="1" max="365" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">浠诲姟鎻忚堪</label>
-                        <textarea id="publishTaskDescription" class="form-input" rows="4" placeholder="璇疯缁嗘弿杩颁换鍔″唴瀹广€佸湴鐐广€佽姹傜瓑淇℃伅..." required></textarea>
+                        <label class="form-label">任务描述</label>
+                        <textarea id="publishTaskDescription" class="form-input" rows="4" placeholder="请详细描述任务内容、地点、要求等信息..." required></textarea>
                     </div>
                     
                     <div class="form-actions">
-                        <button type="button" class="btn" onclick="closeModal('publishModal')">鍙栨秷</button>
+                        <button type="button" class="btn" onclick="closeModal('publishModal')">取消</button>
                         <button type="submit" class="btn-submit">
-                            <i class="fas fa-paper-plane"></i> 鍙戝竷浠诲姟
+                            <i class="fas fa-paper-plane"></i> 发布任务
                         </button>
                     </div>
                 </form>
@@ -931,79 +931,79 @@
         </div>
     </div>
     
-    <!-- 鎴愬姛鎻愮ず妯℃€佹 -->
+    <!-- 成功提示模态框 -->
     <div class="modal-overlay" id="successModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title">鎿嶄綔鎴愬姛</h3>
+                <h3 class="modal-title">操作成功</h3>
                 <div class="modal-close" onclick="closeModal('successModal')">
                     <i class="fas fa-times"></i>
                 </div>
             </div>
             <div class="modal-body" id="successMessage">
-                <!-- 鎴愬姛淇℃伅灏嗘樉绀哄湪杩欓噷 -->
+                <!-- 成功信息将显示在这里 -->
             </div>
             <div class="modal-actions">
-                <button class="btn-modal" onclick="closeModal('successModal')">纭畾</button>
+                <button class="btn-modal" onclick="closeModal('successModal')">确定</button>
             </div>
         </div>
     </div>
     
-    <!-- 閿欒鎻愮ず妯℃€佹 -->
+    <!-- 错误提示模态框 -->
     <div class="modal-overlay" id="errorModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title">鎿嶄綔澶辫触</h3>
+                <h3 class="modal-title">操作失败</h3>
                 <div class="modal-close" onclick="closeModal('errorModal')">
                     <i class="fas fa-times"></i>
                 </div>
             </div>
             <div class="modal-body" id="errorMessage">
-                <!-- 閿欒淇℃伅灏嗘樉绀哄湪杩欓噷 -->
+                <!-- 错误信息将显示在这里 -->
             </div>
             <div class="modal-actions">
-                <button class="btn-modal" onclick="closeModal('errorModal')">纭畾</button>
+                <button class="btn-modal" onclick="closeModal('errorModal')">确定</button>
             </div>
         </div>
     </div>
     
-    <!-- 鍔犺浇鍔ㄧ敾 -->
+    <!-- 加载动画 -->
     <div class="loading-overlay" id="loadingOverlay">
         <div>
             <div class="loading-spinner"></div>
-            <div class="loading-text" id="loadingText">姝ｅ湪澶勭悊...</div>
+            <div class="loading-text" id="loadingText">正在处理...</div>
         </div>
     </div>
 
-    <!-- Supabase瀹㈡埛绔剼鏈?-->
+    <!-- Supabase客户端脚本 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
-        // 褰撳墠閫変腑鐨勪换鍔D
+        // 当前选中的任务ID
         let selectedTaskId = null;
         let allTasks = [];
         
-        // 浜戠 Supabase 閰嶇疆锛堢敤浜庡姞杞戒汉鍛樻暟鎹笌浠诲姟鍚屾锛?
+        // 云端 Supabase 配置（用于加载人员数据与任务同步）
         const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
         let supabaseClient = null;
 
-        // 鍙鐞嗙殑闃熶紞鍚嶇О锛堝浐瀹氬垪琛級
-        const TEAM_NAMES = ['缁煎悎绠＄悊缁?, '鍩庡競搴旀€ョ粍', '瑁傞殭搴斿缁?, '鐗规畩鏀跺缁?, '404鐗归仯闃?];
+        // 可管理的队伍名称（固定列表）
+        const TEAM_NAMES = ['综合管理组', '城市应急组', '裂隙应对组', '特殊收容组', '404特遣队'];
 
-        // 杩愯鏃剁敓鎴愮殑闃熶紞鏁版嵁锛堜粠浜戠鍔犺浇鎴愬憳锛?
+        // 运行时生成的队伍数据（从云端加载成员）
         let teams = [];
 
-        // 浠嶴upabase鍔犺浇鐢ㄦ埛骞舵瀯寤簍eams鏁版嵁缁撴瀯
+        // 从Supabase加载用户并构建teams数据结构
         async function loadUsersAndBuildTeams() {
-            // 濡傛灉娌℃湁Supabase瀹㈡埛绔紙cdn宸插紩鍏ワ級锛屽皾璇曞垱寤哄苟缂撳瓨鍒板叏灞€
+            // 如果没有Supabase客户端（cdn已引入），尝试创建并缓存到全局
             try {
                 if (!supabaseClient && window.supabase) {
                     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     window.supabaseClient = supabaseClient;
                 }
             } catch (e) {
-                console.warn('鏃犳硶鍒涘缓Supabase瀹㈡埛绔細', e);
+                console.warn('无法创建Supabase客户端：', e);
             }
 
             let users = [];
@@ -1013,28 +1013,28 @@
                     if (!error && data) {
                         users = data;
                     } else {
-                        console.warn('浠嶴upabase鑾峰彇鐢ㄦ埛澶辫触锛屼娇鐢ㄦ湰鍦扮紦瀛?榛樿锛?, error);
+                        console.warn('从Supabase获取用户失败，使用本地缓存/默认：', error);
                     }
                 } catch (err) {
-                    console.warn('璇锋眰Supabase鐢ㄦ埛澶辫触锛?, err);
+                    console.warn('请求Supabase用户失败：', err);
                 }
             }
 
-            // 濡傛灉娌℃湁浜戠鏁版嵁锛屽皾璇曚粠鏈湴缂撳瓨鍔犺浇
+            // 如果没有云端数据，尝试从本地缓存加载
             if (users.length === 0) {
                 try {
                     const qsUsersData = localStorage.getItem('qs_users_data') || localStorage.getItem('login_users');
                     if (qsUsersData) {
                         const parsed = JSON.parse(qsUsersData);
-                        // parsed 鍙兘鏄璞?keyed by username
+                        // parsed 可能是对象 keyed by username
                         users = Object.keys(parsed).map(key => ({ id: parsed[key].id || key, username: key, name: parsed[key].name || key, team: parsed[key].team || '' }));
                     }
                 } catch (e) {
-                    console.warn('瑙ｆ瀽鏈湴鐢ㄦ埛鏁版嵁澶辫触锛?, e);
+                    console.warn('解析本地用户数据失败：', e);
                 }
             }
 
-            // 鏋勫缓 teams 鏁扮粍
+            // 构建 teams 数组
             teams = TEAM_NAMES.map(name => ({ id: name, name, members: [] }));
 
             users.forEach(u => {
@@ -1047,11 +1047,11 @@
                 }
             });
 
-            // 瀵规瘡涓槦浼嶆寜瀛楁瘝椤哄簭鎺掑簭锛堝彲閫夛級
+            // 对每个队伍按字母顺序排序（可选）
             teams.forEach(t => t.members.sort());
         }
 
-        // 妫€鏌ュ綋鍓嶇敤鎴锋槸鍚︿负绠＄悊灞傦紙鍏煎澶氱鏈湴瀛樺偍瀛楁鍜宷s_users_data锛?
+        // 检查当前用户是否为管理层（兼容多种本地存储字段和qs_users_data）
         function getUserIsManagement() {
             try {
                 if (localStorage.getItem('viewer_management') === '1') return true;
@@ -1065,14 +1065,14 @@
                     const userInfo = parsed[username];
                     if (userInfo) {
                         const lvl = (userInfo.viewer_level || userInfo.level || userInfo.role || '').toString().toLowerCase();
-                        if (lvl === 'management' || lvl === '绠＄悊' || lvl === '绠＄悊灞?) return true;
+                        if (lvl === 'management' || lvl === '管理' || lvl === '管理层') return true;
                         const dept = (userInfo.department || '').toString().toLowerCase();
-                        if (dept.includes('绠＄悊') || dept.includes('management')) return true;
+                        if (dept.includes('管理') || dept.includes('management')) return true;
                         if (Array.isArray(userInfo.roles) && userInfo.roles.map(r=>r.toString().toLowerCase()).includes('management')) return true;
                         if (Array.isArray(userInfo.tags) && userInfo.tags.map(t=>t.toString().toLowerCase()).includes('management')) return true;
                     }
                 }
-                // 棰濆锛氬鏋?auth_role 鏍囪涓?'management'
+                // 额外：如果 auth_role 标记为 'management'
                 if (localStorage.getItem('auth_role') === 'management') return true;
             } catch (e) {
                 console.warn('getUserIsManagement error', e);
@@ -1080,84 +1080,84 @@
             return false;
         }
         
-        // 鍒濆鍖栧簲鐢?
+        // 初始化应用
         async function initApp() {
-            console.log('鍒濆鍖栦换鍔＄鐞嗙郴缁?..');
+            console.log('初始化任务管理系统...');
             
-            // 妫€鏌ョ櫥褰曠姸鎬侊細鍏佽 admin 鎴?绠＄悊灞?observer in management)
+            // 检查登录状态：允许 admin 或 管理层(observer in management)
             const role = localStorage.getItem('auth_role');
             if (role !== 'admin' && !getUserIsManagement()) {
-                showError('闇€瑕佺鐞嗗憳鎴栫鐞嗗眰鏉冮檺璁块棶姝ら〉闈?);
+                showError('需要管理员或管理层权限访问此页面');
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 3000);
                 return;
             }
 
-            // 鏄剧ず鍙充笂瑙掔櫥褰曞悕涓庤鑹茶鏄?
+            // 显示右上角登录名与角色说明
             try {
                 const displayNameEl = document.getElementById('userDisplayName');
                 const roleTextEl = document.getElementById('userRoleText');
                 const username = localStorage.getItem('auth_user') || '';
-                const displayName = localStorage.getItem('auth_user_name') || username || '璁垮';
+                const displayName = localStorage.getItem('auth_user_name') || username || '访客';
                 if (displayNameEl) displayNameEl.textContent = displayName;
                 if (roleTextEl) {
-                    if (role === 'admin') roleTextEl.textContent = '鏈€楂樻潈闄愮鐞嗗憳';
-                    else if (getUserIsManagement()) roleTextEl.textContent = '绠＄悊灞傝瀵熷憳';
+                    if (role === 'admin') roleTextEl.textContent = '最高权限管理员';
+                    else if (getUserIsManagement()) roleTextEl.textContent = '管理层观察员';
                     else roleTextEl.textContent = role || '';
                 }
             } catch (e) {
                 console.warn('set user display failed', e);
             }
             
-            // 鍒濆鍖栨椂闂存樉绀?
+            // 初始化时间显示
             updateTime();
             setInterval(updateTime, 1000);
             
-            // 鍒濆鍖?Supabase 瀹㈡埛绔紙渚涗换鍔′簯鍚屾涓庡叾瀹冮〉闈㈤噸鐢級
+            // 初始化 Supabase 客户端（供任务云同步与其它页面重用）
             try {
                 if (!supabaseClient && window.supabase) {
                     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     window.supabaseClient = supabaseClient;
-                    console.log('Supabase 瀹㈡埛绔凡鍒濆鍖?);
+                    console.log('Supabase 客户端已初始化');
                 }
             } catch (error) {
-                console.warn('Supabase 鍒濆鍖栧け璐ワ紝灏嗕娇鐢ㄦ湰鍦板瓨鍌ㄤ綔涓哄浠斤細', error);
+                console.warn('Supabase 初始化失败，将使用本地存储作为备份：', error);
             }
             
-            // 鍔犺浇浜哄憳骞舵瀯寤洪槦浼嶏紝鐒跺悗鍔犺浇浠诲姟鍒楄〃
+            // 加载人员并构建队伍，然后加载任务列表
             await loadUsersAndBuildTeams();
             await loadTasks();
             
-            // 缁戝畾浜嬩欢
+            // 绑定事件
             document.getElementById('refreshBtn').addEventListener('click', loadTasks);
             document.getElementById('statusFilter').addEventListener('change', filterTasks);
             document.getElementById('difficultyFilter').addEventListener('change', filterTasks);
             document.getElementById('sourceFilter').addEventListener('change', filterTasks);
             document.getElementById('publishForm').addEventListener('submit', handlePublishTask);
             
-            // 娣诲姞閿洏蹇嵎閿?
+            // 添加键盘快捷键
             document.addEventListener('keydown', (e) => {
-                // F5 鍒锋柊浠诲姟鍒楄〃
+                // F5 刷新任务列表
                 if (e.key === 'F5') {
                     e.preventDefault();
                     loadTasks();
                 }
                 
-                // Ctrl + N 鏂板缓浠诲姟
+                // Ctrl + N 新建任务
                 if (e.ctrlKey && e.key === 'n') {
                     e.preventDefault();
                     openPublishModal();
                 }
                 
-                // Esc 鍏抽棴妯℃€佹
+                // Esc 关闭模态框
                 if (e.key === 'Escape') {
                     closeAllModals();
                 }
             });
         }
         
-        // 鏇存柊鏃堕棿鏄剧ず
+        // 更新时间显示
         function updateTime() {
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
@@ -1166,56 +1166,56 @@
             document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
         }
         
-        // 鏄剧ず鍔犺浇鍔ㄧ敾
-        function showLoading(message = '姝ｅ湪澶勭悊...') {
+        // 显示加载动画
+        function showLoading(message = '正在处理...') {
             document.getElementById('loadingText').textContent = message;
             document.getElementById('loadingOverlay').classList.add('active');
         }
         
-        // 闅愯棌鍔犺浇鍔ㄧ敾
+        // 隐藏加载动画
         function hideLoading() {
             document.getElementById('loadingOverlay').classList.remove('active');
         }
         
-        // 鏄剧ず妯℃€佹
+        // 显示模态框
         function showModal(modalId) {
             document.getElementById(modalId).classList.add('active');
         }
         
-        // 鍏抽棴妯℃€佹
+        // 关闭模态框
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
         
-        // 鍏抽棴鎵€鏈夋ā鎬佹
+        // 关闭所有模态框
         function closeAllModals() {
             document.querySelectorAll('.modal-overlay.active').forEach(modal => {
                 modal.classList.remove('active');
             });
         }
         
-        // 鏄剧ず鎴愬姛娑堟伅
+        // 显示成功消息
         function showSuccess(message) {
             document.getElementById('successMessage').textContent = message;
             showModal('successModal');
         }
         
-        // 鏄剧ず閿欒
+        // 显示错误
         function showError(message) {
             document.getElementById('errorMessage').textContent = message;
             showModal('errorModal');
         }
         
-        // 鐢熸垚浠诲姟ID
+        // 生成任务ID
         function generateTaskId() {
             const timestamp = Date.now().toString(36);
             const random = Math.random().toString(36).substring(2, 6);
             return `ADMIN-TASK-${timestamp}-${random}`.toUpperCase();
         }
         
-        // 鍔犺浇浠诲姟鍒楄〃锛堜紭鍏堜簯绔紝澶辫触鍥為€€鍒版湰鍦帮級
+        // 加载任务列表（优先云端，失败回退到本地）
         async function loadTasks() {
-            showLoading('姝ｅ湪鍔犺浇浠诲姟鍒楄〃...');
+            showLoading('正在加载任务列表...');
             
             try {
                 let loadedFromCloud = false;
@@ -1225,10 +1225,10 @@
                         .select('*')
                         .order('created_at', { ascending: false });
                     if (!error && data) {
-                        // 鍚堝苟浜戠涓庢湰鍦帮細浠ユ洿鏂版椂闂?updated_at)涓哄噯锛屼繚鐣欐渶鏂版洿鏀?
+                        // 合并云端与本地：以更新时间(updated_at)为准，保留最新更改
                         const cloudTasks = data || [];
 
-                        // 鏈湴缂撳瓨
+                        // 本地缓存
                         const localGuest = JSON.parse(localStorage.getItem('guest_tasks') || '[]');
                         const localAdmin = JSON.parse(localStorage.getItem('admin_tasks') || '[]');
                         const localAll = [...localGuest, ...localAdmin];
@@ -1243,55 +1243,55 @@
                                     const localTime = new Date(lt.updated_at).getTime();
                                     const cloudTime = new Date(ct.updated_at).getTime();
                                     if (!isNaN(localTime) && !isNaN(cloudTime) && localTime > cloudTime) {
-                                        return lt; // 鏈湴鏇存柊鏇存櫄锛屼繚鐣欐湰鍦?
+                                        return lt; // 本地更新更晚，保留本地
                                     }
                                 } catch (e) {
-                                    // 濡傛灉瑙ｆ瀽鏃堕棿澶辫触锛岀户缁娇鐢ㄤ簯绔?
+                                    // 如果解析时间失败，继续使用云端
                                 }
                             }
-                            return ct; // 榛樿浣跨敤浜戠
+                            return ct; // 默认使用云端
                         });
 
-                        // 灏嗘湰鍦颁腑浜戠娌℃湁鐨勬柊浠诲姟杩藉姞锛堜緥濡傦細鏈湴鍒氬垱寤恒€佷簯绔湭鍚屾鐨勪换鍔★級
+                        // 将本地中云端没有的新任务追加（例如：本地刚创建、云端未同步的任务）
                         const cloudIds = new Set(cloudTasks.map(t => t.id));
                         localAll.forEach(lt => { if (lt && lt.id && !cloudIds.has(lt.id)) merged.push(lt); });
 
                         allTasks = merged;
                         loadedFromCloud = true;
-                        console.log('浠庝簯绔姞杞藉苟鍚堝苟浠诲姟锛?, allTasks.length);
+                        console.log('从云端加载并合并任务：', allTasks.length);
 
-                        // 鏇存柊鏈湴澶囦唤锛氭寜鏉ユ簮鍖哄垎淇濆瓨
-                        localStorage.setItem('guest_tasks', JSON.stringify(allTasks.filter(t => t.created_by !== '绠＄悊鍛?)));
-                        localStorage.setItem('admin_tasks', JSON.stringify(allTasks.filter(t => t.created_by === '绠＄悊鍛?)));
+                        // 更新本地备份：按来源区分保存
+                        localStorage.setItem('guest_tasks', JSON.stringify(allTasks.filter(t => t.created_by !== '管理员')));
+                        localStorage.setItem('admin_tasks', JSON.stringify(allTasks.filter(t => t.created_by === '管理员')));
                     } else {
-                        console.warn('浜戠鍔犺浇浠诲姟澶辫触锛?, error);
+                        console.warn('云端加载任务失败：', error);
                     }
                 }
 
                 if (!loadedFromCloud) {
-                    // 浠庢湰鍦板瓨鍌ㄥ姞杞戒换鍔★紙鍖呭惈娓稿鍙戝竷涓庣鐞嗗憳鍙戝竷锛?
+                    // 从本地存储加载任务（包含游客发布与管理员发布）
                     const localTasks = JSON.parse(localStorage.getItem('guest_tasks') || '[]');
                     const adminTasks = JSON.parse(localStorage.getItem('admin_tasks') || '[]');
                     allTasks = [...localTasks, ...adminTasks];
-                    console.log(`浠庢湰鍦板姞杞戒簡 ${allTasks.length} 涓换鍔);
+                    console.log(`从本地加载了 ${allTasks.length} 个任务`);
                 }
                 
-                // 娓叉煋浠诲姟鍒楄〃
+                // 渲染任务列表
                 renderTaskTable(allTasks);
                 
-                // 娓呴櫎閫変腑鐘舵€?
+                // 清除选中状态
                 selectedTaskId = null;
                 clearTaskDetail();
                 
             } catch (error) {
-                console.error('鍔犺浇浠诲姟澶辫触:', error);
-                showError('鍔犺浇浠诲姟鍒楄〃澶辫触锛岃閲嶈瘯');
+                console.error('加载任务失败:', error);
+                showError('加载任务列表失败，请重试');
             } finally {
                 hideLoading();
             }
         }
         
-        // 娓叉煋浠诲姟琛ㄦ牸
+        // 渲染任务表格
         function renderTaskTable(tasks) {
             const tableBody = document.getElementById('taskTableBody');
             
@@ -1301,7 +1301,7 @@
                         <td colspan="6" style="text-align: center; padding: 40px;">
                             <div style="color: #6b9ccc;">
                                 <i class="fas fa-tasks" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
-                                <div>鏆傛棤浠诲姟鏁版嵁</div>
+                                <div>暂无任务数据</div>
                             </div>
                         </td>
                     </tr>
@@ -1312,31 +1312,31 @@
             let tableHTML = '';
             
             tasks.forEach(task => {
-                // 纭畾闅惧害鏍囩
+                // 确定难度标签
                 let difficultyClass = 'difficulty-unknown';
-                if (task.difficulty === '浣庡嵄') {
+                if (task.difficulty === '低危') {
                     difficultyClass = 'difficulty-low';
-                } else if (task.difficulty === '涓嵄') {
+                } else if (task.difficulty === '中危') {
                     difficultyClass = 'difficulty-medium';
-                } else if (task.difficulty === '楂樺嵄') {
+                } else if (task.difficulty === '高危') {
                     difficultyClass = 'difficulty-high';
-                } else if (task.difficulty === '鏋侀珮鍗?) {
+                } else if (task.difficulty === '极高危') {
                     difficultyClass = 'difficulty-veryhigh';
-                } else if (task.difficulty === '鐏鹃毦') {
+                } else if (task.difficulty === '灾难') {
                     difficultyClass = 'difficulty-catastrophic';
                 }
                 
-                // 纭畾鐘舵€佹爣绛?
+                // 确定状态标签
                 let statusClass = 'status-new';
                 let statusText = task.status;
                 
-                if (task.status === '宸叉帴鍙?) {
+                if (task.status === '已接取') {
                     statusClass = 'status-in-progress';
-                } else if (task.status === '宸插畬鎴?) {
+                } else if (task.status === '已完成') {
                     statusClass = 'status-completed';
                 }
                 
-                // 鏍煎紡鍖栨椂闂?
+                // 格式化时间
                 const createdDate = new Date(task.created_at);
                 const formattedDate = createdDate.toLocaleDateString('zh-CN', {
                     month: '2-digit',
@@ -1345,8 +1345,8 @@
                     minute: '2-digit'
                 });
                 
-                // 纭畾鏉ユ簮
-                const source = task.id && task.id.includes('ADMIN-TASK') ? '绠＄悊鍛? : '娓稿';
+                // 确定来源
+                const source = task.id && task.id.includes('ADMIN-TASK') ? '管理员' : '游客';
                 
                 const isSelected = selectedTaskId === task.id ? 'selected' : '';
                 
@@ -1354,7 +1354,7 @@
                     <tr class="${isSelected}" onclick="selectTask('${task.id}')">
                         <td>${task.name}</td>
                         <td>${task.type}</td>
-                        <td><span class="difficulty-badge ${difficultyClass}">${task.difficulty || '鏆傛棤'}</span></td>
+                        <td><span class="difficulty-badge ${difficultyClass}">${task.difficulty || '暂无'}</span></td>
                         <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                         <td>${source}</td>
                         <td>${formattedDate}</td>
@@ -1365,26 +1365,26 @@
             tableBody.innerHTML = tableHTML;
         }
         
-        // 杩囨护浠诲姟
+        // 过滤任务
         function filterTasks() {
             const statusFilter = document.getElementById('statusFilter').value;
             const difficultyFilter = document.getElementById('difficultyFilter').value;
             const sourceFilter = document.getElementById('sourceFilter').value;
             
             const filteredTasks = allTasks.filter(task => {
-                // 鐘舵€佽繃婊?
+                // 状态过滤
                 if (statusFilter !== 'all' && task.status !== statusFilter) {
                     return false;
                 }
                 
-                // 闅惧害杩囨护
+                // 难度过滤
                 if (difficultyFilter !== 'all' && task.difficulty !== difficultyFilter) {
                     return false;
                 }
                 
-                // 鏉ユ簮杩囨护
+                // 来源过滤
                 if (sourceFilter !== 'all') {
-                    const source = task.id && task.id.includes('ADMIN-TASK') ? '绠＄悊鍛? : '娓稿';
+                    const source = task.id && task.id.includes('ADMIN-TASK') ? '管理员' : '游客';
                     if (source !== sourceFilter) {
                         return false;
                     }
@@ -1396,17 +1396,17 @@
             renderTaskTable(filteredTasks);
         }
         
-        // 閫夋嫨浠诲姟
+        // 选择任务
         function selectTask(taskId) {
             selectedTaskId = taskId;
             
-            // 鏇存柊琛ㄦ牸閫変腑鐘舵€?
+            // 更新表格选中状态
             const rows = document.querySelectorAll('#taskTableBody tr');
             rows.forEach(row => {
                 row.classList.remove('selected');
             });
             
-            // 鎵惧埌瀵瑰簲琛屽苟娣诲姞閫変腑鐘舵€?
+            // 找到对应行并添加选中状态
             const selectedRow = Array.from(rows).find(row => 
                 row.getAttribute('onclick') && row.getAttribute('onclick').includes(`'${taskId}'`)
             );
@@ -1415,11 +1415,11 @@
                 selectedRow.classList.add('selected');
             }
             
-            // 鏄剧ず浠诲姟璇︽儏
+            // 显示任务详情
             showTaskDetail(taskId);
         }
         
-        // 鏄剧ず浠诲姟璇︽儏
+        // 显示任务详情
         function showTaskDetail(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             
@@ -1428,29 +1428,29 @@
                 return;
             }
             
-            // 纭畾闅惧害鏍囩绫?
+            // 确定难度标签类
             let difficultyClass = 'difficulty-unknown';
-            if (task.difficulty === '浣庡嵄') {
+            if (task.difficulty === '低危') {
                 difficultyClass = 'difficulty-low';
-            } else if (task.difficulty === '涓嵄') {
+            } else if (task.difficulty === '中危') {
                 difficultyClass = 'difficulty-medium';
-            } else if (task.difficulty === '楂樺嵄') {
+            } else if (task.difficulty === '高危') {
                 difficultyClass = 'difficulty-high';
-            } else if (task.difficulty === '鏋侀珮鍗?) {
+            } else if (task.difficulty === '极高危') {
                 difficultyClass = 'difficulty-veryhigh';
-            } else if (task.difficulty === '鐏鹃毦') {
+            } else if (task.difficulty === '灾难') {
                 difficultyClass = 'difficulty-catastrophic';
             }
             
-            // 纭畾鐘舵€佹爣绛剧被
+            // 确定状态标签类
             let statusClass = 'status-new';
-            if (task.status === '宸叉帴鍙?) {
+            if (task.status === '已接取') {
                 statusClass = 'status-in-progress';
-            } else if (task.status === '宸插畬鎴?) {
+            } else if (task.status === '已完成') {
                 statusClass = 'status-completed';
             }
             
-            // 鏍煎紡鍖栨椂闂?
+            // 格式化时间
             const createdDate = new Date(task.created_at);
             const formattedDate = createdDate.toLocaleDateString('zh-CN', {
                 year: 'numeric',
@@ -1460,144 +1460,144 @@
                 minute: '2-digit'
             });
             
-            // 鏉ユ簮
-            const source = task.id && task.id.includes('ADMIN-TASK') ? '绠＄悊鍛? : '娓稿';
+            // 来源
+            const source = task.id && task.id.includes('ADMIN-TASK') ? '管理员' : '游客';
             
-            // 鍒嗛厤淇℃伅
-            const assignedTeam = task.assigned_team || '鏈垎閰?;
-            const assignedMember = task.assigned_member || '鏈垎閰?;
+            // 分配信息
+            const assignedTeam = task.assigned_team || '未分配';
+            const assignedMember = task.assigned_member || '未分配';
             
-            // 鍒涘缓璇︽儏HTML
+            // 创建详情HTML
             let detailHTML = `
                 <div class="detail-section">
-                    <h3><i class="fas fa-info-circle"></i> 浠诲姟淇℃伅</h3>
+                    <h3><i class="fas fa-info-circle"></i> 任务信息</h3>
                     <div class="detail-row">
-                        <div class="detail-label">浠诲姟鍚嶇О锛?/div>
+                        <div class="detail-label">任务名称：</div>
                         <div class="detail-value">${task.name}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">浠诲姟缂栧彿锛?/div>
+                        <div class="detail-label">任务编号：</div>
                         <div class="detail-value">${task.id}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">浠诲姟绫诲瀷锛?/div>
+                        <div class="detail-label">任务类型：</div>
                         <div class="detail-value">${task.type}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">浠诲姟鐘舵€侊細</div>
+                        <div class="detail-label">任务状态：</div>
                         <div class="detail-value"><span class="status-badge ${statusClass}">${task.status}</span></div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">闅惧害璇勭骇锛?/div>
-                        <div class="detail-value"><span class="difficulty-badge ${difficultyClass}">${task.difficulty || '鏆傛棤'}</span></div>
+                        <div class="detail-label">难度评级：</div>
+                        <div class="detail-value"><span class="difficulty-badge ${difficultyClass}">${task.difficulty || '暂无'}</span></div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">鏃堕檺瑕佹眰锛?/div>
-                        <div class="detail-value">${task.time_limit}澶?/div>
+                        <div class="detail-label">时限要求：</div>
+                        <div class="detail-value">${task.time_limit}天</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">鍙戝竷鏉ユ簮锛?/div>
+                        <div class="detail-label">发布来源：</div>
                         <div class="detail-value">${source}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">鍙戝竷鏃堕棿锛?/div>
+                        <div class="detail-label">发布时间：</div>
                         <div class="detail-value">${formattedDate}</div>
                     </div>
                 </div>
                 
                 <div class="detail-section">
-                    <h3><i class="fas fa-align-left"></i> 浠诲姟鎻忚堪</h3>
+                    <h3><i class="fas fa-align-left"></i> 任务描述</h3>
                     <div class="detail-description">
-                        ${task.description || '鏆傛棤鎻忚堪'}
+                        ${task.description || '暂无描述'}
                     </div>
                 </div>
                 
                 <div class="detail-section">
-                    <h3><i class="fas fa-user-friends"></i> 鍒嗛厤淇℃伅</h3>
+                    <h3><i class="fas fa-user-friends"></i> 分配信息</h3>
                     <div class="detail-row">
-                        <div class="detail-label">鍒嗛厤闃熶紞锛?/div>
+                        <div class="detail-label">分配队伍：</div>
                         <div class="detail-value">${assignedTeam}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">鍒嗛厤浜哄憳锛?/div>
+                        <div class="detail-label">分配人员：</div>
                         <div class="detail-value">${assignedMember}</div>
                     </div>
                 </div>
             `;
             
-            // 娣诲姞鍒嗛厤琛ㄥ崟锛堜粎褰撲换鍔℃湭瀹屾垚鏃讹級
-            if (task.status !== '宸插畬鎴?) {
+            // 添加分配表单（仅当任务未完成时）
+            if (task.status !== '已完成') {
                 detailHTML += `
                     <div class="assign-form" id="assignForm">
-                        <h3><i class="fas fa-user-check"></i> 浠诲姟鍒嗛厤</h3>
+                        <h3><i class="fas fa-user-check"></i> 任务分配</h3>
                         <form id="assignmentForm">
                             <div class="form-group">
-                                <label class="form-label">鍒嗛厤闃熶紞</label>
+                                <label class="form-label">分配队伍</label>
                                 <select id="assignTeam" class="form-select" required>
-                                    <option value="">璇烽€夋嫨闃熶紞</option>
-                                    <option value="缁煎悎绠＄悊缁? ${assignedTeam === '缁煎悎绠＄悊缁? ? 'selected' : ''}>缁煎悎绠＄悊缁?/option>
-                                    <option value="鍩庡競搴旀€ョ粍" ${assignedTeam === '鍩庡競搴旀€ョ粍' ? 'selected' : ''}>鍩庡競搴旀€ョ粍</option>
-                                    <option value="瑁傞殭搴斿缁? ${assignedTeam === '瑁傞殭搴斿缁? ? 'selected' : ''}>瑁傞殭搴斿缁?/option>
-                                    <option value="鐗规畩鏀跺缁? ${assignedTeam === '鐗规畩鏀跺缁? ? 'selected' : ''}>鐗规畩鏀跺缁?/option>
-                                    <option value="404鐗归仯闃? ${assignedTeam === '404鐗归仯闃? ? 'selected' : ''}>404鐗归仯闃?/option>
-                                    <option value="澶氶槦浼嶈仈鍚堟墽琛? ${assignedTeam === '澶氶槦浼嶈仈鍚堟墽琛? ? 'selected' : ''}>澶氶槦浼嶈仈鍚堟墽琛?/option>
-                                    <option value="澶氫汉鎵ц" ${assignedTeam === '澶氫汉鎵ц' ? 'selected' : ''}>澶氫汉鎵ц</option>
-                                    <option value="鍗曠嫭鎸囨淳" ${assignedTeam === '鍗曠嫭鎸囨淳' ? 'selected' : ''}>鍗曠嫭鎸囨淳</option>
+                                    <option value="">请选择队伍</option>
+                                    <option value="综合管理组" ${assignedTeam === '综合管理组' ? 'selected' : ''}>综合管理组</option>
+                                    <option value="城市应急组" ${assignedTeam === '城市应急组' ? 'selected' : ''}>城市应急组</option>
+                                    <option value="裂隙应对组" ${assignedTeam === '裂隙应对组' ? 'selected' : ''}>裂隙应对组</option>
+                                    <option value="特殊收容组" ${assignedTeam === '特殊收容组' ? 'selected' : ''}>特殊收容组</option>
+                                    <option value="404特遣队" ${assignedTeam === '404特遣队' ? 'selected' : ''}>404特遣队</option>
+                                    <option value="多队伍联合执行" ${assignedTeam === '多队伍联合执行' ? 'selected' : ''}>多队伍联合执行</option>
+                                    <option value="多人执行" ${assignedTeam === '多人执行' ? 'selected' : ''}>多人执行</option>
+                                    <option value="单独指派" ${assignedTeam === '单独指派' ? 'selected' : ''}>单独指派</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">鍒嗛厤浜哄憳</label>
+                                <label class="form-label">分配人员</label>
                                 <select id="assignMember" class="form-select" required>
-                                    <option value="">璇烽€夋嫨浜哄憳</option>
-                                    <!-- 浜哄憳閫夐」灏嗛€氳繃JavaScript鍔ㄦ€佸～鍏?-->
+                                    <option value="">请选择人员</option>
+                                    <!-- 人员选项将通过JavaScript动态填充 -->
                                 </select>
                                 <div id="assignMemberHint" class="form-hint" style="margin-top:8px;color:#ffd93d;"></div>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">闅惧害璇勭骇</label>
+                                <label class="form-label">难度评级</label>
                                 <select id="assignDifficulty" class="form-select" required>
-                                    <option value="">璇烽€夋嫨闅惧害</option>
-                                    <option value="浣庡嵄" ${task.difficulty === '浣庡嵄' ? 'selected' : ''}>浣庡嵄</option>
-                                    <option value="涓嵄" ${task.difficulty === '涓嵄' ? 'selected' : ''}>涓嵄</option>
-                                    <option value="楂樺嵄" ${task.difficulty === '楂樺嵄' ? 'selected' : ''}>楂樺嵄</option>
-                                    <option value="鏋侀珮鍗? ${task.difficulty === '鏋侀珮鍗? ? 'selected' : ''}>鏋侀珮鍗?/option>
-                                    <option value="鐏鹃毦" ${task.difficulty === '鐏鹃毦' ? 'selected' : ''}>鐏鹃毦</option>
+                                    <option value="">请选择难度</option>
+                                    <option value="低危" ${task.difficulty === '低危' ? 'selected' : ''}>低危</option>
+                                    <option value="中危" ${task.difficulty === '中危' ? 'selected' : ''}>中危</option>
+                                    <option value="高危" ${task.difficulty === '高危' ? 'selected' : ''}>高危</option>
+                                    <option value="极高危" ${task.difficulty === '极高危' ? 'selected' : ''}>极高危</option>
+                                    <option value="灾难" ${task.difficulty === '灾难' ? 'selected' : ''}>灾难</option>
                                 </select>
                             </div>
                             
                             <div class="assign-actions">
-                                <button type="button" class="btn" onclick="updateTaskStatus('${task.id}', '宸叉帴鍙?)">鏍囪涓哄凡鎺ュ彇</button>
-                                <button type="submit" id="assignSubmitBtn" class="btn-submit">纭鍒嗛厤</button>
-                                <button type="button" class="btn" onclick="updateTaskDifficultyOnly('${task.id}')">鍙缃毦搴︼紙涓嶅垎閰嶄汉鍛橈級</button>
+                                <button type="button" class="btn" onclick="updateTaskStatus('${task.id}', '已接取')">标记为已接取</button>
+                                <button type="submit" id="assignSubmitBtn" class="btn-submit">确认分配</button>
+                                <button type="button" class="btn" onclick="updateTaskDifficultyOnly('${task.id}')">只设置难度（不分配人员）</button>
                             </div>
                         </form>
                     </div>
                     
                     <div class="detail-section">
-                        <h3><i class="fas fa-cog"></i> 浠诲姟鎿嶄綔</h3>
+                        <h3><i class="fas fa-cog"></i> 任务操作</h3>
                         <div class="assign-actions">
                             <button type="button" class="btn btn-danger" onclick="deleteTask('${task.id}')">
-                                <i class="fas fa-trash"></i> 鍒犻櫎浠诲姟
+                                <i class="fas fa-trash"></i> 删除任务
                             </button>
-                            <button type="button" class="btn" onclick="updateTaskStatus('${task.id}', '宸插畬鎴?)">
-                                <i class="fas fa-check-circle"></i> 鏍囪涓哄凡瀹屾垚
+                            <button type="button" class="btn" onclick="updateTaskStatus('${task.id}', '已完成')">
+                                <i class="fas fa-check-circle"></i> 标记为已完成
                             </button>
                         </div>
                     </div>
                 `;
             } else {
-                // 浠诲姟宸插畬鎴愭椂鍙樉绀烘搷浣滄寜閽?
+                // 任务已完成时只显示操作按钮
                 detailHTML += `
                     <div class="detail-section">
-                        <h3><i class="fas fa-cog"></i> 浠诲姟鎿嶄綔</h3>
+                        <h3><i class="fas fa-cog"></i> 任务操作</h3>
                         <div class="assign-actions">
-                            <button type="button" class="btn" onclick="updateTaskStatus('${task.id}', '宸叉帴鍙?)">
-                                <i class="fas fa-undo"></i> 閲嶆柊婵€娲?
+                            <button type="button" class="btn" onclick="updateTaskStatus('${task.id}', '已接取')">
+                                <i class="fas fa-undo"></i> 重新激活
                             </button>
                             <button type="button" class="btn btn-danger" onclick="deleteTask('${task.id}')">
-                                <i class="fas fa-trash"></i> 鍒犻櫎浠诲姟
+                                <i class="fas fa-trash"></i> 删除任务
                             </button>
                         </div>
                     </div>
@@ -1606,22 +1606,22 @@
             
             document.getElementById('taskDetailContent').innerHTML = detailHTML;
             
-            // 鍒濆鍖栧垎閰嶈〃鍗曚簨浠?
+            // 初始化分配表单事件
             if (document.getElementById('assignmentForm')) {
                 document.getElementById('assignmentForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     handleAssignTask(taskId);
                 });
                 
-                // 闃熶紞閫夋嫨鍙樺寲鏃舵洿鏂颁汉鍛樺垪琛?
+                // 队伍选择变化时更新人员列表
                 document.getElementById('assignTeam').addEventListener('change', updateMemberOptions);
                 
-                // 鍒濆鍖栦汉鍛樺垪琛?
+                // 初始化人员列表
                 updateMemberOptions();
             }
         }
         
-        // 鏇存柊浜哄憳閫夐」
+        // 更新人员选项
         function updateMemberOptions() {
             const teamSelect = document.getElementById('assignTeam');
             const memberSelect = document.getElementById('assignMember');
@@ -1632,12 +1632,12 @@
             
             const selectedTeamId = teamSelect.value;
             
-            // 娓呯┖鐜版湁閫夐」锛堜繚鐣欑涓€涓€夐」锛?
+            // 清空现有选项（保留第一个选项）
             while (memberSelect.options.length > 0) {
                 memberSelect.remove(0);
             }
 
-            // 淇濈暀涔嬪墠澶氶槦浼嶉€夋嫨鐘舵€侊紙濡傛灉瀛樺湪锛夛紝鐒跺悗绉婚櫎瀹瑰櫒
+            // 保留之前多队伍选择状态（如果存在），然后移除容器
             let previousCheckedTeams = null;
             const existingMulti = document.getElementById('teamMultiContainer');
             if (existingMulti) {
@@ -1647,7 +1647,7 @@
                 existingMulti.remove();
             }
 
-            // 娓呯悊鈥滃浜烘墽琛屸€濇垚鍛樺閫夋瀹瑰櫒锛堝鏈夛級
+            // 清理“多人执行”成员复选框容器（如有）
             let previousCheckedMembers = null;
             const existingMemberMulti = document.getElementById('memberMultiContainer');
             if (existingMemberMulti) {
@@ -1657,15 +1657,15 @@
                 existingMemberMulti.remove();
             }
 
-            // 甯姪鍑芥暟锛氳幏鍙栨墍鏈夋垚鍛橈紙浠巘eams鑱氬悎锛?
+            // 帮助函数：获取所有成员（从teams聚合）
             function getAllMembers() {
                 const all = [];
                 teams.forEach(team => all.push(...team.members));
                 return [...new Set(all)];
             }
 
-            if (selectedTeamId === '澶氶槦浼嶈仈鍚堟墽琛?) {
-                // 鍒涘缓涓€涓闃熶紞閫夋嫨鍣紙澶嶉€夋锛?
+            if (selectedTeamId === '多队伍联合执行') {
+                // 创建一个多队伍选择器（复选框）
                 const container = document.createElement('div');
                 container.id = 'teamMultiContainer';
                 container.style.margin = '8px 0 12px 0';
@@ -1679,7 +1679,7 @@
                     chk.id = id;
                     chk.name = 'multiTeamChk';
                     chk.value = tname;
-                    // 濡傛灉涔嬪墠鏈夐€夋嫨鐘舵€佸垯浣跨敤涔嬶紝鍚﹀垯榛樿閫変腑
+                    // 如果之前有选择状态则使用之，否则默认选中
                     chk.checked = previousCheckedTeams ? previousCheckedTeams.includes(tname) : true;
                     chk.addEventListener('change', () => updateMemberOptions());
                     label.appendChild(chk);
@@ -1688,11 +1688,11 @@
                     container.appendChild(label);
                 });
 
-                // 灏嗗鍣ㄦ彃鍏ュ埌闃熶紞閫夋嫨涔嬪悗锛堝湪鍚屼竴form-group鍚庨潰锛?
+                // 将容器插入到队伍选择之后（在同一form-group后面）
                 const teamFormGroup = teamSelect.parentElement;
                 teamFormGroup.parentElement.insertBefore(container, teamFormGroup.nextSibling);
 
-                // 鑱氬悎琚€変腑闃熶紞鐨勬墍鏈夋垚鍛?
+                // 聚合被选中队伍的所有成员
                 const checkedTeams = Array.from(document.getElementsByName('multiTeamChk')).filter(c => c.checked).map(c => c.value);
                 const members = [];
                 checkedTeams.forEach(tn => {
@@ -1705,7 +1705,7 @@
                     const option = document.createElement('option');
                     option.value = member;
                     option.textContent = member;
-                    option.selected = true; // 榛樿鍏ㄩ儴鍙備笌
+                    option.selected = true; // 默认全部参与
                     memberSelect.appendChild(option);
                 });
 
@@ -1718,11 +1718,11 @@
                 if (hintEl) hintEl.textContent = '';
                 if (submitBtn) submitBtn.disabled = false;
 
-            } else if (selectedTeamId === '澶氫汉鎵ц') {
-                // 澶氫汉鎵ц锛氬彲澶氶€夛紝鏈€澶?浜?
+            } else if (selectedTeamId === '多人执行') {
+                // 多人执行：可多选，最多5人
                 const members = getAllMembers();
 
-                // 闅愯棌鍘熶笅鎷夋锛屾敼鐢ㄥ閫夋鍒楄〃浠ヤ究鐩磋澶氶€?
+                // 隐藏原下拉框，改用复选框列表以便直观多选
                 memberSelect.style.display = 'none';
                 memberSelect.disabled = true;
                 memberSelect.required = false;
@@ -1748,12 +1748,12 @@
                     chk.value = member;
                     chk.checked = previousCheckedMembers ? previousCheckedMembers.includes(member) : false;
                     chk.addEventListener('change', () => {
-                        // 闄愬埗鏈€澶?浜?
+                        // 限制最多5人
                         const checked = Array.from(document.getElementsByName('multiMemberChk')).filter(c => c.checked);
                         if (checked.length > 5) {
                             chk.checked = false;
                         }
-                        // 鏇存柊鏍￠獙涓庢彁浜ゆ寜閽姸鎬?
+                        // 更新校验与提交按钮状态
                         validateAssigneeSelection();
                         const submitBtnLocal = document.getElementById('assignSubmitBtn');
                         if (submitBtnLocal) {
@@ -1767,20 +1767,20 @@
                     container.appendChild(wrap);
                 });
 
-                // 鎻掑叆鍒版垚鍛橀€夋嫨妗嗗悗闈?
+                // 插入到成员选择框后面
                 const memberFormGroup = memberSelect.parentElement;
                 memberFormGroup.insertBefore(container, document.getElementById('assignMemberHint'));
 
-                if (hintEl) hintEl.textContent = '澶氫汉鎵ц锛氳閫夋嫨 2-5 鍚嶄汉鍛?;
+                if (hintEl) hintEl.textContent = '多人执行：请选择 2-5 名人员';
                 validateAssigneeSelection();
 
-            } else if (selectedTeamId === '鍗曠嫭鎸囨淳') {
-                // 鍗曠嫭鎸囨淳锛氫粎鑳介€変竴浜?
+            } else if (selectedTeamId === '单独指派') {
+                // 单独指派：仅能选一人
                 const members = getAllMembers();
-                // 娣诲姞涓€涓彁绀洪」
+                // 添加一个提示项
                 const placeholder = document.createElement('option');
                 placeholder.value = '';
-                placeholder.textContent = '璇烽€夋嫨浜哄憳锛堝彧鑳介€夋嫨涓€鍚嶏級';
+                placeholder.textContent = '请选择人员（只能选择一名）';
                 memberSelect.appendChild(placeholder);
 
                 members.forEach(member => {
@@ -1799,10 +1799,10 @@
                 if (submitBtn) submitBtn.disabled = false;
 
             } else if (selectedTeamId) {
-                // 閫夋嫨鍏蜂綋闃熶紞锛堜緥濡傦細缁煎悎绠＄悊缁勭瓑锛夛紝榛樿璇ラ槦鍏ㄤ綋鍙備笌锛氶殣钘忔垚鍛橀€夋嫨妗嗭紝鎻愮ず宸查粯璁ゅ垎閰嶅叏闃?
+                // 选择具体队伍（例如：综合管理组等），默认该队全体参与：隐藏成员选择框，提示已默认分配全队
                 const selectedTeam = teams.find(team => team.id === selectedTeamId || team.name === selectedTeamId);
                 if (selectedTeam) {
-                    // 濉厖浣嗕笉鏄剧ず鎴愬憳涓嬫媺锛堜繚鐣欐暟鎹潵婧愶級锛屽墠绔棤闇€鎵嬪姩閫夋嫨
+                    // 填充但不显示成员下拉（保留数据来源），前端无需手动选择
                     selectedTeam.members.forEach(member => {
                         const option = document.createElement('option');
                         option.value = member;
@@ -1819,15 +1819,15 @@
                 memberSelect.disabled = true;
                 memberSelect.required = false;
                 if (hintEl) hintEl.textContent = (selectedTeam && selectedTeam.members.length)
-                    ? `宸查粯璁ゅ垎閰嶈闃熷叏閮ㄦ垚鍛橈紙${selectedTeam.members.length} 浜猴級`
-                    : '宸查粯璁ゅ垎閰嶈闃熷叏閮ㄦ垚鍛?;
+                    ? `已默认分配该队全部成员（${selectedTeam.members.length} 人）`
+                    : '已默认分配该队全部成员';
                 if (submitBtn) submitBtn.disabled = false;
 
             } else {
-                // 鏈€夋嫨闃熶紞锛屾竻绌哄苟璁剧疆涓哄崟閫夊崰浣?
+                // 未选择队伍，清空并设置为单选占位
                 const placeholder = document.createElement('option');
                 placeholder.value = '';
-                placeholder.textContent = '璇烽€夋嫨浜哄憳';
+                placeholder.textContent = '请选择人员';
                 memberSelect.appendChild(placeholder);
                 memberSelect.multiple = false;
                 memberSelect.size = 1;
@@ -1839,7 +1839,7 @@
             }
         }
 
-        // 鏍￠獙鈥滃浜烘墽琛屸€濈殑浜哄憳閫夋嫨锛屾帶鍒舵彁绀轰笌鎻愪氦鎸夐挳鐘舵€?
+        // 校验“多人执行”的人员选择，控制提示与提交按钮状态
         function validateAssigneeSelection() {
             const teamSelect = document.getElementById('assignTeam');
             const memberSelect = document.getElementById('assignMember');
@@ -1847,27 +1847,27 @@
             const submitBtn = document.getElementById('assignSubmitBtn');
             if (!teamSelect || !memberSelect || !submitBtn) return;
 
-            // 濡傛灉閫夋嫨鐨勬槸鍏蜂綋鏌愪釜闃熶紞锛屽垯榛樿鍏ㄥ憳鎺ュ彇锛屾棤闇€閫夋嫨浜哄憳
+            // 如果选择的是具体某个队伍，则默认全员接取，无需选择人员
             if (TEAM_NAMES.includes(teamSelect.value)) {
                 const selTeam = teams.find(t => t.name === teamSelect.value || t.id === teamSelect.value);
                 const cnt = selTeam ? selTeam.members.length : 0;
-                if (hint) hint.textContent = cnt ? `宸查粯璁ゅ垎閰嶈闃熷叏閮ㄦ垚鍛橈紙${cnt} 浜猴級` : '宸查粯璁ゅ垎閰嶈闃熷叏閮ㄦ垚鍛?;
+                if (hint) hint.textContent = cnt ? `已默认分配该队全部成员（${cnt} 人）` : '已默认分配该队全部成员';
                 submitBtn.disabled = false;
                 return;
             }
 
-            if (teamSelect.value === '澶氫汉鎵ц') {
+            if (teamSelect.value === '多人执行') {
                 const count = document.getElementById('memberMultiContainer')
                     ? Array.from(document.getElementsByName('multiMemberChk')).filter(c => c.checked).length
                     : Array.from(memberSelect.selectedOptions).length;
                 if (count < 2) {
-                    if (hint) hint.textContent = '澶氫汉鎵ц锛氳鑷冲皯閫夋嫨2鍚嶄汉鍛?;
+                    if (hint) hint.textContent = '多人执行：请至少选择2名人员';
                     submitBtn.disabled = true;
                 } else if (count > 5) {
-                    if (hint) hint.textContent = '澶氫汉鎵ц锛氭渶澶氬彲閫夋嫨5鍚嶄汉鍛?;
+                    if (hint) hint.textContent = '多人执行：最多可选择5名人员';
                     submitBtn.disabled = true;
                 } else {
-                    if (hint) hint.textContent = `宸查€夋嫨 ${count} 鍚嶄汉鍛橈紙闇€2-5浜猴級`;
+                    if (hint) hint.textContent = `已选择 ${count} 名人员（需2-5人）`;
                     submitBtn.disabled = false;
                 }
             } else {
@@ -1876,48 +1876,48 @@
             }
         }
         
-        // 娓呴櫎浠诲姟璇︽儏
+        // 清除任务详情
         function clearTaskDetail() {
             document.getElementById('taskDetailContent').innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-tasks"></i>
-                    <h3>閫夋嫨浠诲姟鏌ョ湅璇︽儏</h3>
-                    <p>鐐瑰嚮宸︿晶鍒楄〃涓殑浠诲姟浠ユ煡鐪嬭缁嗕俊鎭?/p>
+                    <h3>选择任务查看详情</h3>
+                    <p>点击左侧列表中的任务以查看详细信息</p>
                 </div>
             `;
         }
         
-        // 澶勭悊浠诲姟鍒嗛厤锛堝悓姝ヤ簯绔級
+        // 处理任务分配（同步云端）
         async function handleAssignTask(taskId) {
             const teamSelect = document.getElementById('assignTeam');
             const memberSelect = document.getElementById('assignMember');
             const difficultySelect = document.getElementById('assignDifficulty');
             
             if (!teamSelect || !memberSelect || !difficultySelect) {
-                showError('鍒嗛厤琛ㄥ崟鏈壘鍒?);
+                showError('分配表单未找到');
                 return;
             }
             
-            // 璁＄畻琚垎閰嶇殑闃熶紞涓庝汉鍛橈紙浜哄憳鍙互涓哄閫夛級
-            let assignedTeam = teamSelect.value || '鏈垎閰?;
+            // 计算被分配的队伍与人员（人员可以为多选）
+            let assignedTeam = teamSelect.value || '未分配';
             let assignedMembers = [];
 
-            if (assignedTeam === '澶氶槦浼嶈仈鍚堟墽琛?) {
+            if (assignedTeam === '多队伍联合执行') {
                 const checked = Array.from(document.getElementsByName('multiTeamChk')).filter(c => c.checked).map(c => c.value);
                 if (checked.length === 0) {
-                    showError('璇烽€夋嫨鑷冲皯涓€涓槦浼嶈繘琛岃仈鍚堟墽琛?);
+                    showError('请选择至少一个队伍进行联合执行');
                     return;
                 }
-                assignedTeam = '澶氶槦浼嶈仈鍚堟墽琛? ' + checked.join(',');
+                assignedTeam = '多队伍联合执行: ' + checked.join(',');
                 assignedMembers = Array.from(memberSelect.selectedOptions).map(o => o.value);
-            } else if (assignedTeam === '鍗曠嫭鎸囨淳') {
+            } else if (assignedTeam === '单独指派') {
                 assignedMembers = memberSelect.value ? [memberSelect.value] : [];
             } else if (TEAM_NAMES.includes(assignedTeam)) {
-                // 濡傛灉鏄€夋嫨鐨勫叿浣撻槦浼嶏紝榛樿鍒嗛厤璇ラ槦鍏ㄩ儴鎴愬憳
+                // 如果是选择的具体队伍，默认分配该队全部成员
                 const selTeam = teams.find(t => t.name === assignedTeam || t.id === assignedTeam);
                 assignedMembers = selTeam ? selTeam.members.slice() : [];
             } else {
-                // 瀵逛簬澶氫汉鎵ц鎴栧叾浠栧鏉傛儏鍐?
+                // 对于多人执行或其他复杂情况
                 const memberMultiContainer = document.getElementById('memberMultiContainer');
                 if (memberMultiContainer) {
                     assignedMembers = Array.from(document.getElementsByName('multiMemberChk'))
@@ -1933,40 +1933,40 @@
             const difficulty = difficultySelect.value;
             
             if (!assignedMembers || assignedMembers.length === 0 || !difficulty) {
-                showError('璇峰～鍐欏畬鏁寸殑鍒嗛厤淇℃伅锛堝寘鎷汉鍛樹笌闅惧害锛?);
+                showError('请填写完整的分配信息（包括人员与难度）');
                 return;
             }
 
-            // 鏍￠獙浜烘暟闄愬埗
-            if (teamSelect.value === '澶氫汉鎵ц') {
+            // 校验人数限制
+            if (teamSelect.value === '多人执行') {
                 if (assignedMembers.length > 5) {
-                    showError('澶氫汉鎵ц鏈€澶氬彲閫夋嫨5浜?);
+                    showError('多人执行最多可选择5人');
                     return;
                 }
                 if (assignedMembers.length < 2) {
-                    showError('澶氫汉鎵ц鑷冲皯闇€閫夋嫨2浜?);
+                    showError('多人执行至少需选择2人');
                     return;
                 }
             }
 
-            if (teamSelect.value === '鍗曠嫭鎸囨淳' && assignedMembers.length !== 1) {
-                showError('鍗曠嫭鎸囨淳璇蜂粎閫夋嫨涓€鍚嶄汉鍛?);
+            if (teamSelect.value === '单独指派' && assignedMembers.length !== 1) {
+                showError('单独指派请仅选择一名人员');
                 return;
             }
             
-            showLoading('姝ｅ湪鍒嗛厤浠诲姟...');
+            showLoading('正在分配任务...');
             
             try {
-                // 鏇存柊浠诲姟鏁版嵁
+                // 更新任务数据
                 const taskIndex = allTasks.findIndex(task => task.id === taskId);
                 if (taskIndex !== -1) {
                     allTasks[taskIndex].assigned_team = assignedTeam;
                     allTasks[taskIndex].assigned_member = assignedMembers.join(',');
                     allTasks[taskIndex].difficulty = difficulty;
-                    allTasks[taskIndex].status = '宸叉帴鍙?;
+                    allTasks[taskIndex].status = '已接取';
                     allTasks[taskIndex].updated_at = new Date().toISOString();
                     
-                    // 淇濆瓨鍒版湰鍦板瓨鍌?
+                    // 保存到本地存储
                     const isAdminTask = taskId.includes('ADMIN-TASK');
                     const storageKey = isAdminTask ? 'admin_tasks' : 'guest_tasks';
                     const tasks = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -1977,7 +1977,7 @@
                         localStorage.setItem(storageKey, JSON.stringify(tasks));
                     }
 
-                    // 鍚屾鍒颁簯绔暟鎹簱
+                    // 同步到云端数据库
                     if (supabaseClient) {
                         try {
                             const { data: updated, error } = await supabaseClient
@@ -1986,22 +1986,22 @@
                                     assigned_team: assignedTeam,
                                     assigned_member: assignedMembers.join(','),
                                     difficulty: difficulty,
-                                    status: '宸叉帴鍙?,
+                                    status: '已接取',
                                     updated_at: new Date().toISOString()
                                 })
                                 .eq('id', taskId)
                                 .select();
 
                             if (error) {
-                                console.warn('浜戠鍚屾鍒嗛厤澶辫触锛?, error);
-                                showError('浜戠鍚屾鍒嗛厤澶辫触锛? + (error.message || JSON.stringify(error)));
+                                console.warn('云端同步分配失败：', error);
+                                showError('云端同步分配失败：' + (error.message || JSON.stringify(error)));
                             } else if (updated && updated.length > 0) {
-                                // 濡傛灉浜戠杩斿洖浜嗘洿鏂板悗鐨勮褰曪紝浣跨敤浜戠鏈€鏂版暟鎹鐩栨湰鍦帮紙鎸夐渶锛?
+                                // 如果云端返回了更新后的记录，使用云端最新数据覆盖本地（按需）
                                 const ret = updated[0];
                                 const idx = allTasks.findIndex(t => t.id === taskId);
                                 if (idx !== -1) {
                                     allTasks[idx] = Object.assign({}, allTasks[idx], ret);
-                                    // 鏇存柊鏈湴瀛樺偍
+                                    // 更新本地存储
                                     const tasksLocal = JSON.parse(localStorage.getItem(storageKey) || '[]');
                                     const li = tasksLocal.findIndex(t => t.id === taskId);
                                     if (li !== -1) {
@@ -2011,62 +2011,62 @@
                                 }
                             }
                         } catch (err) {
-                            console.error('浜戠鍚屾鍒嗛厤寮傚父锛?, err);
-                            showError('浜戠鍚屾鍒嗛厤寮傚父锛? + (err.message || err));
+                            console.error('云端同步分配异常：', err);
+                            showError('云端同步分配异常：' + (err.message || err));
                         }
                     }
                     
-                    // 鏇存柊鏄剧ず
+                    // 更新显示
                     renderTaskTable(allTasks);
                     showTaskDetail(taskId);
                     
-                    showSuccess(`浠诲姟宸插垎閰嶇粰 ${assignedMembers.join(', ')}锛?{assignedTeam}锛塦);
+                    showSuccess(`任务已分配给 ${assignedMembers.join(', ')}（${assignedTeam}）`);
                 } else {
-                    showError('鏈壘鍒颁换鍔℃暟鎹?);
+                    showError('未找到任务数据');
                 }
             } catch (error) {
-                console.error('鍒嗛厤浠诲姟澶辫触:', error);
-                showError('鍒嗛厤浠诲姟澶辫触锛岃閲嶈瘯');
+                console.error('分配任务失败:', error);
+                showError('分配任务失败，请重试');
             } finally {
                 hideLoading();
             }
         }
 
-        // 鍙缃毦搴﹀苟淇濇寔浠诲姟鏈垎閰嶏紙鍏佽鎴愬憳鍦ㄦ垚鍛樼晫闈㈡帴鍙栵級
+        // 只设置难度并保持任务未分配（允许成员在成员界面接取）
         async function updateTaskDifficultyOnly(taskId) {
-            if (!confirm('纭畾鍙洿鏂颁换鍔￠毦搴﹀苟淇濇寔浠诲姟鏈垎閰嶅悧锛熸垚鍛樺皢鍙互鍦ㄦ垚鍛樼晫闈㈡帴鍙栬浠诲姟銆?)) {
+            if (!confirm('确定只更新任务难度并保持任务未分配吗？成员将可以在成员界面接取该任务。')) {
                 return;
             }
 
             const difficultySelect = document.getElementById('assignDifficulty');
             if (!difficultySelect) {
-                showError('鏈壘鍒伴毦搴﹂€夋嫨鎺т欢');
+                showError('未找到难度选择控件');
                 return;
             }
 
             const difficulty = difficultySelect.value;
             if (!difficulty) {
-                showError('璇烽€夋嫨闅惧害璇勭骇');
+                showError('请选择难度评级');
                 return;
             }
 
-            showLoading('姝ｅ湪淇濆瓨闅惧害...');
+            showLoading('正在保存难度...');
 
             try {
                 const taskIndex = allTasks.findIndex(t => t.id === taskId);
                 if (taskIndex === -1) {
-                    showError('鏈壘鍒颁换鍔℃暟鎹?);
+                    showError('未找到任务数据');
                     return;
                 }
 
-                // 鏇存柊鏈湴鏁版嵁锛氬彧淇敼闅惧害骞舵竻绌哄垎閰嶄俊鎭紝璁剧疆涓烘湭鎺ュ彇浠ヤ緵鎴愬憳鎺ュ彇
+                // 更新本地数据：只修改难度并清空分配信息，设置为未接取以供成员接取
                 allTasks[taskIndex].difficulty = difficulty;
-                allTasks[taskIndex].assigned_team = '鏈垎閰?;
-                allTasks[taskIndex].assigned_member = '鏈垎閰?;
-                allTasks[taskIndex].status = '鏈帴鍙?;
+                allTasks[taskIndex].assigned_team = '未分配';
+                allTasks[taskIndex].assigned_member = '未分配';
+                allTasks[taskIndex].status = '未接取';
                 allTasks[taskIndex].updated_at = new Date().toISOString();
 
-                // 淇濆瓨鍒版湰鍦板瓨鍌?
+                // 保存到本地存储
                 const isAdminTask = taskId.includes('ADMIN-TASK');
                 const storageKey = isAdminTask ? 'admin_tasks' : 'guest_tasks';
                 const tasks = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -2076,26 +2076,26 @@
                     localStorage.setItem(storageKey, JSON.stringify(tasks));
                 }
 
-                // 鍚屾鍒颁簯绔暟鎹簱锛堝鍙敤锛?
+                // 同步到云端数据库（如可用）
                 if (supabaseClient) {
                     try {
                         const { data: updated, error } = await supabaseClient
                             .from('tasks')
                             .update({
                                 difficulty: difficulty,
-                                assigned_team: '鏈垎閰?,
-                                assigned_member: '鏈垎閰?,
-                                status: '鏈帴鍙?,
+                                assigned_team: '未分配',
+                                assigned_member: '未分配',
+                                status: '未接取',
                                 updated_at: allTasks[taskIndex].updated_at
                             })
                             .eq('id', taskId)
                             .select();
 
                         if (error) {
-                            console.warn('浜戠鍚屾闅惧害澶辫触锛?, error);
-                            showError('浜戠鍚屾闅惧害澶辫触锛? + (error.message || JSON.stringify(error)));
+                            console.warn('云端同步难度失败：', error);
+                            showError('云端同步难度失败：' + (error.message || JSON.stringify(error)));
                         } else if (updated && updated.length > 0) {
-                            // 浣跨敤浜戠杩斿洖鐨勮褰曡鐩栨湰鍦?
+                            // 使用云端返回的记录覆盖本地
                             allTasks[taskIndex] = Object.assign({}, allTasks[taskIndex], updated[0]);
                             const tasksLocal = JSON.parse(localStorage.getItem(storageKey) || '[]');
                             const li = tasksLocal.findIndex(t => t.id === taskId);
@@ -2105,40 +2105,40 @@
                             }
                         }
                     } catch (err) {
-                        console.error('浜戠鍚屾闅惧害寮傚父锛?, err);
-                        showError('浜戠鍚屾闅惧害寮傚父锛? + (err.message || err));
+                        console.error('云端同步难度异常：', err);
+                        showError('云端同步难度异常：' + (err.message || err));
                     }
                 }
 
-                // 鏇存柊鐣岄潰
+                // 更新界面
                 renderTaskTable(allTasks);
                 showTaskDetail(taskId);
 
-                showSuccess('宸蹭繚瀛橀毦搴︼紝浠诲姟淇濇寔鏈垎閰嶏紝鎴愬憳鍙湪鎴愬憳鐣岄潰鎺ュ彇');
+                showSuccess('已保存难度，任务保持未分配，成员可在成员界面接取');
             } catch (error) {
-                console.error('鏇存柊闅惧害澶辫触:', error);
-                showError('鏇存柊闅惧害澶辫触锛岃閲嶈瘯');
+                console.error('更新难度失败:', error);
+                showError('更新难度失败，请重试');
             } finally {
                 hideLoading();
             }
         }
         
-        // 鏇存柊浠诲姟鐘舵€侊紙鍚屾浜戠锛?
+        // 更新任务状态（同步云端）
         async function updateTaskStatus(taskId, newStatus) {
-            if (!confirm(`纭畾瑕佸皢浠诲姟鐘舵€佹洿鏀逛负"${newStatus}"鍚楋紵`)) {
+            if (!confirm(`确定要将任务状态更改为"${newStatus}"吗？`)) {
                 return;
             }
             
-            showLoading('姝ｅ湪鏇存柊浠诲姟鐘舵€?..');
+            showLoading('正在更新任务状态...');
             
             try {
-                // 鏇存柊浠诲姟鏁版嵁
+                // 更新任务数据
                 const taskIndex = allTasks.findIndex(task => task.id === taskId);
                 if (taskIndex !== -1) {
                     allTasks[taskIndex].status = newStatus;
                     allTasks[taskIndex].updated_at = new Date().toISOString();
                     
-                    // 淇濆瓨鍒版湰鍦板瓨鍌?
+                    // 保存到本地存储
                     const isAdminTask = taskId.includes('ADMIN-TASK');
                     const storageKey = isAdminTask ? 'admin_tasks' : 'guest_tasks';
                     const tasks = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -2149,7 +2149,7 @@
                         localStorage.setItem(storageKey, JSON.stringify(tasks));
                     }
 
-                    // 鍚屾鍒颁簯绔暟鎹簱
+                    // 同步到云端数据库
                     if (supabaseClient) {
                         try {
                             const { data: updated, error } = await supabaseClient
@@ -2162,10 +2162,10 @@
                                 .select();
 
                             if (error) {
-                                console.warn('浜戠鍚屾鐘舵€佸け璐ワ細', error);
-                                showError('浜戠鍚屾鐘舵€佸け璐ワ細' + (error.message || JSON.stringify(error)));
+                                console.warn('云端同步状态失败：', error);
+                                showError('云端同步状态失败：' + (error.message || JSON.stringify(error)));
                             } else if (updated && updated.length > 0) {
-                                // 浣跨敤浜戠杩斿洖鐨勬渶鏂拌褰曡鐩栨湰鍦?
+                                // 使用云端返回的最新记录覆盖本地
                                 const ret = updated[0];
                                 allTasks[taskIndex] = Object.assign({}, allTasks[taskIndex], ret);
                                 const tasksLocal = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -2176,47 +2176,47 @@
                                 }
                             }
                         } catch (err) {
-                            console.error('浜戠鍚屾鐘舵€佸紓甯革細', err);
-                            showError('浜戠鍚屾鐘舵€佸紓甯革細' + (err.message || err));
+                            console.error('云端同步状态异常：', err);
+                            showError('云端同步状态异常：' + (err.message || err));
                         }
                     }
                     
-                    // 鏇存柊鏄剧ず
+                    // 更新显示
                     renderTaskTable(allTasks);
                     showTaskDetail(taskId);
                     
-                    showSuccess(`浠诲姟鐘舵€佸凡鏇存柊涓?${newStatus}"`);
+                    showSuccess(`任务状态已更新为"${newStatus}"`);
                 } else {
-                    showError('鏈壘鍒颁换鍔℃暟鎹?);
+                    showError('未找到任务数据');
                 }
             } catch (error) {
-                console.error('鏇存柊浠诲姟鐘舵€佸け璐?', error);
-                showError('鏇存柊浠诲姟鐘舵€佸け璐ワ紝璇烽噸璇?);
+                console.error('更新任务状态失败:', error);
+                showError('更新任务状态失败，请重试');
             } finally {
                 hideLoading();
             }
         }
         
-        // 鍒犻櫎浠诲姟锛堝悓姝ヤ簯绔級
+        // 删除任务（同步云端）
         async function deleteTask(taskId) {
-            if (!confirm('纭畾瑕佸垹闄ゆ浠诲姟鍚楋紵姝ゆ搷浣滀笉鍙挙閿€銆?)) {
+            if (!confirm('确定要删除此任务吗？此操作不可撤销。')) {
                 return;
             }
             
-            showLoading('姝ｅ湪鍒犻櫎浠诲姟...');
+            showLoading('正在删除任务...');
             
             try {
-                // 浠庝换鍔″垪琛ㄤ腑绉婚櫎
+                // 从任务列表中移除
                 allTasks = allTasks.filter(task => task.id !== taskId);
                 
-                // 浠庢湰鍦板瓨鍌ㄤ腑鍒犻櫎
+                // 从本地存储中删除
                 const isAdminTask = taskId.includes('ADMIN-TASK');
                 const storageKey = isAdminTask ? 'admin_tasks' : 'guest_tasks';
                 const tasks = JSON.parse(localStorage.getItem(storageKey) || '[]');
                 const filteredTasks = tasks.filter(task => task.id !== taskId);
                 localStorage.setItem(storageKey, JSON.stringify(filteredTasks));
 
-                // 浠庝簯绔垹闄?
+                // 从云端删除
                 if (supabaseClient) {
                     try {
                         const { data: deleted, error } = await supabaseClient
@@ -2225,58 +2225,58 @@
                             .eq('id', taskId)
                             .select();
                         if (error) {
-                            console.warn('浜戠鍒犻櫎浠诲姟澶辫触锛?, error);
-                            showError('浜戠鍒犻櫎浠诲姟澶辫触锛? + (error.message || JSON.stringify(error)));
+                            console.warn('云端删除任务失败：', error);
+                            showError('云端删除任务失败：' + (error.message || JSON.stringify(error)));
                         }
                     } catch (err) {
-                        console.error('浜戠鍒犻櫎浠诲姟寮傚父锛?, err);
-                        showError('浜戠鍒犻櫎浠诲姟寮傚父锛? + (err.message || err));
+                        console.error('云端删除任务异常：', err);
+                        showError('云端删除任务异常：' + (err.message || err));
                     }
                 }
                 
-                // 鏇存柊鏄剧ず
+                // 更新显示
                 renderTaskTable(allTasks);
                 clearTaskDetail();
                 selectedTaskId = null;
                 
-                showSuccess('浠诲姟宸插垹闄?);
+                showSuccess('任务已删除');
             } catch (error) {
-                console.error('鍒犻櫎浠诲姟澶辫触:', error);
-                showError('鍒犻櫎浠诲姟澶辫触锛岃閲嶈瘯');
+                console.error('删除任务失败:', error);
+                showError('删除任务失败，请重试');
             } finally {
                 hideLoading();
             }
         }
         
-        // 鎵撳紑鍙戝竷浠诲姟妯℃€佹
+        // 打开发布任务模态框
         function openPublishModal() {
             document.getElementById('publishForm').reset();
             showModal('publishModal');
         }
         
-        // 澶勭悊鍙戝竷浠诲姟锛堝悓姝ヤ簯绔級
+        // 处理发布任务（同步云端）
         async function handlePublishTask(e) {
             e.preventDefault();
             
-            // 鑾峰彇琛ㄥ崟鏁版嵁
+            // 获取表单数据
             const taskName = document.getElementById('publishTaskName').value.trim();
             const taskType = document.getElementById('publishTaskType').value;
             const taskDifficulty = document.getElementById('publishTaskDifficulty').value;
             const timeLimit = parseInt(document.getElementById('publishTimeLimit').value);
             const taskDescription = document.getElementById('publishTaskDescription').value.trim();
             
-            // 楠岃瘉鏁版嵁
+            // 验证数据
             if (!taskName || !taskType || !taskDifficulty || !timeLimit || !taskDescription) {
-                showError('璇峰～鍐欐墍鏈夊瓧娈?);
+                showError('请填写所有字段');
                 return;
             }
             
             if (timeLimit < 1 || timeLimit > 365) {
-                showError('鏃堕檺瑕佹眰鍦?-365澶╀箣闂?);
+                showError('时限要求在1-365天之间');
                 return;
             }
             
-            // 鐢熸垚浠诲姟鏁版嵁
+            // 生成任务数据
             const taskId = generateTaskId();
             const taskData = {
                 id: taskId,
@@ -2285,26 +2285,26 @@
                 time_limit: timeLimit,
                 description: taskDescription,
                 difficulty: taskDifficulty,
-                status: '鏈帴鍙?,
-                created_by: '绠＄悊鍛?,
-                assigned_team: '鏈垎閰?,
-                assigned_member: '鏈垎閰?,
+                status: '未接取',
+                created_by: '管理员',
+                assigned_team: '未分配',
+                assigned_member: '未分配',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
             };
             
-            showLoading('姝ｅ湪鍙戝竷浠诲姟...');
+            showLoading('正在发布任务...');
             
             try {
-                // 淇濆瓨鍒版湰鍦板瓨鍌?
+                // 保存到本地存储
                 const adminTasks = JSON.parse(localStorage.getItem('admin_tasks') || '[]');
                 adminTasks.push(taskData);
                 localStorage.setItem('admin_tasks', JSON.stringify(adminTasks));
                 
-                // 淇濆瓨鍒颁簯绔?
+                // 保存到云端
                 if (supabaseClient) {
                     try {
-                        // 鐩存帴浣跨敤鍓嶇鐢熸垚鐨?id 鎻掑叆锛堜笌浣犳彁渚涚殑琛ㄥ畾涔夊吋瀹癸級
+                        // 直接使用前端生成的 id 插入（与你提供的表定义兼容）
                         const insertPayload = Object.assign({}, taskData);
 
                         const { data: insertedData, error } = await supabaseClient
@@ -2313,17 +2313,17 @@
                             .select();
 
                         if (error) {
-                            console.warn('浜戠鍙戝竷浠诲姟澶辫触锛?, error);
-                            showError('浜戠鍙戝竷浠诲姟澶辫触锛? + (error.message || JSON.stringify(error)));
+                            console.warn('云端发布任务失败：', error);
+                            showError('云端发布任务失败：' + (error.message || JSON.stringify(error)));
                         } else if (insertedData && insertedData.length > 0) {
-                            // 濡傛灉浜戠杩斿洖浜嗚褰曪紙鍖呭惈鐢熸垚鐨刬d锛夛紝浣跨敤浜戠id瑕嗙洊鏈湴璁板綍鐨刬d
+                            // 如果云端返回了记录（包含生成的id），使用云端id覆盖本地记录的id
                             const returned = insertedData[0];
                             if (returned.id && returned.id !== taskData.id) {
-                                // 鏇存柊鏈湴浠诲姟鐨?id
+                                // 更新本地任务的 id
                                 const idx = allTasks.findIndex(t => t.id === taskId);
                                 if (idx !== -1) {
                                     allTasks[idx].id = returned.id;
-                                    // 鏇存柊鏈湴瀛樺偍涓殑璁板綍
+                                    // 更新本地存储中的记录
                                     const adminTasks = JSON.parse(localStorage.getItem('admin_tasks') || '[]');
                                     const i = adminTasks.findIndex(t => t.id === taskId);
                                     if (i !== -1) {
@@ -2334,33 +2334,33 @@
                             }
                         }
                     } catch (err) {
-                        console.error('浜戠鍙戝竷浠诲姟寮傚父锛?, err);
-                        showError('浜戠鍙戝竷浠诲姟寮傚父锛? + (err.message || err));
+                        console.error('云端发布任务异常：', err);
+                        showError('云端发布任务异常：' + (err.message || err));
                     }
                 }
                 
-                // 娣诲姞鍒板綋鍓嶄换鍔″垪琛?
+                // 添加到当前任务列表
                 allTasks.push(taskData);
                 
-                // 鍏抽棴妯℃€佹
+                // 关闭模态框
                 closeModal('publishModal');
                 
-                // 鏇存柊鏄剧ず
+                // 更新显示
                 renderTaskTable(allTasks);
                 
-                showSuccess(`浠诲姟 "${taskName}" 宸叉垚鍔熷彂甯僠);
+                showSuccess(`任务 "${taskName}" 已成功发布`);
                 
             } catch (error) {
-                console.error('鍙戝竷浠诲姟澶辫触:', error);
-                showError('鍙戝竷浠诲姟澶辫触锛岃閲嶈瘯');
+                console.error('发布任务失败:', error);
+                showError('发布任务失败，请重试');
             } finally {
                 hideLoading();
             }
         }
         
-        // 杩斿洖
+        // 返回
         function goBack() {
-            if (!confirm('纭畾瑕佽繑鍥炲悧锛熸湭淇濆瓨鐨勬洿鏀瑰彲鑳戒細涓㈠け銆?)) return;
+            if (!confirm('确定要返回吗？未保存的更改可能会丢失。')) return;
 
             try {
                 if (getUserIsManagement()) {
@@ -2369,12 +2369,12 @@
                     window.location.href = 'admin.html';
                 }
             } catch (e) {
-                // 鍏滃簳鍒扮鐞嗗憳鎺у埗鍙?
+                // 兜底到管理员控制台
                 window.location.href = 'admin.html';
             }
         }
         
-        // 椤甸潰鍔犺浇瀹屾垚鍚庡垵濮嬪寲
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>

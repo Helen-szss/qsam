@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>瀹為獙浣撴。妗?- 绠＄悊灞€璧勬枡搴?/title>
+    <title>实验体档案 - 管理局资料库</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -33,7 +33,7 @@
             font-family: 'ZhengQingKeShuMaTi', 'Microsoft YaHei', sans-serif;
         }
 
-        /* 椤堕儴鐘舵€佹爮 */
+        /* 顶部状态栏 */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -64,7 +64,7 @@
         .logout-btn, .back-btn { background: rgba(0,60,120,0.7); border:1px solid rgba(0,150,255,0.3); color:var(--muted-color); padding:8px 16px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; text-decoration:none; }
         .logout-btn:hover, .back-btn:hover { background: rgba(0,100,200,0.85); transform: translateY(-1px); }
 
-        /* 涓诲唴瀹瑰尯鍩? map .container to monsters' .main-content layout */
+        /* 主内容区域: map .container to monsters' .main-content layout */
         .container, .main-content { padding: 110px 30px 30px; max-width:1400px; margin:0 auto; }
 
         .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; flex-wrap:wrap; gap:20px; }
@@ -160,11 +160,11 @@
         </style>
     </head>
     <body>
-    <!-- 椤堕儴鐘舵€佹爮 -->
+    <!-- 顶部状态栏 -->
     <div class="status-bar">
         <div class="system-info">
-            <img src="qsamlogo.png" alt="绯荤粺鏍囧織" class="system-logo">
-            <div class="system-name">绠＄悊灞€ - 瀹為獙浣撴。妗?/div>
+            <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+            <div class="system-name">管理局 - 实验体档案</div>
         </div>
         
         <div class="user-info">
@@ -173,101 +173,101 @@
                 <i class="fas fa-user"></i>
             </div>
             <div>
-                <div style="color: #4fc3ff;" id="userDisplayName">鍔犺浇涓?..</div>
+                <div style="color: #4fc3ff;" id="userDisplayName">加载中...</div>
                 <div style="font-size: 0.8rem; color: #a3d5ff;" id="userRole"></div>
             </div>
             <button class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i> 杩斿洖
+                <i class="fas fa-arrow-left"></i> 返回
             </button>
         </div>
     </div>
     
-    <!-- 鍔犺浇鍔ㄧ敾 -->
+    <!-- 加载动画 -->
     <div class="loading-overlay" id="loadingOverlay">
         <div>
             <div class="loading-spinner"></div>
-            <div class="loading-text" id="loadingText">姝ｅ湪鍔犺浇...</div>
+            <div class="loading-text" id="loadingText">正在加载...</div>
         </div>
     </div>
     
-    <!-- 璇︽儏妯℃€佹 -->
+    <!-- 详情模态框 -->
     <div class="modal" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="modalTitle">瀹為獙浣撹鎯?/div>
+                <div class="modal-title" id="modalTitle">实验体详情</div>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body" id="modalBody">
-                <!-- 璇︽儏鍐呭灏嗛€氳繃JS鍔ㄦ€佸～鍏?-->
+                <!-- 详情内容将通过JS动态填充 -->
             </div>
         </div>
     </div>
     
     <main class="main-content container">
-        <!-- 椤甸潰鏍囬 -->
+        <!-- 页面标题 -->
         <div class="page-header">
             <div class="page-title">
-                <h1><i class="fas fa-flask"></i> 宸叉敹褰曞疄楠屼綋</h1>
-                <p>娴忚绠＄悊灞€宸叉敹褰曠殑鎵€鏈夊疄楠屼綋妗ｆ</p>
+                <h1><i class="fas fa-flask"></i> 已收录实验体</h1>
+                <p>浏览管理局已收录的所有实验体档案</p>
             </div>
         </div>
         
-        <!-- 缁熻鍗＄墖 -->
+        <!-- 统计卡片 -->
         <div class="stats-card" id="statsCard">
-            <!-- 缁熻鏁版嵁灏嗛€氳繃JS鍔ㄦ€佸～鍏?-->
+            <!-- 统计数据将通过JS动态填充 -->
         </div>
         
-        <!-- 绛涢€夊拰鎼滅储鏍?-->
+        <!-- 筛选和搜索栏 -->
         <div class="filter-bar">
             <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="鎼滅储瀹為獙浣撶紪鍙枫€佸悕绉版垨鎻忚堪...">
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索实验体编号、名称或描述...">
                 <i class="fas fa-search search-icon"></i>
             </div>
             <select class="filter-select" id="filterStatus">
-                <option value="">鎵€鏈夌姸鎬?/option>
-                <option value="active">娲昏穬涓?/option>
-                <option value="safe">宸叉敹瀹?/option>
-                <option value="neutralized">宸叉竻鍓?/option>
+                <option value="">所有状态</option>
+                <option value="active">活跃中</option>
+                <option value="safe">已收容</option>
+                <option value="neutralized">已清剿</option>
             </select>
             <select class="filter-select" id="filterDanger">
-                <option value="">鎵€鏈夊嵄闄╃瓑绾?/option>
-                <option value="safe">宸叉敹瀹?/option>
-                <option value="euclid">璀︽垝</option>
-                <option value="keter">涓ラ噸璀︽垝</option>
-                <option value="neutralized">宸叉竻鍓?/option>
+                <option value="">所有危险等级</option>
+                <option value="safe">已收容</option>
+                <option value="euclid">警戒</option>
+                <option value="keter">严重警戒</option>
+                <option value="neutralized">已清剿</option>
             </select>
             <select class="filter-select" id="filterSort">
-                <option value="newest">鏈€鏂版坊鍔?/option>
-                <option value="oldest">鏈€鏃╂坊鍔?/option>
-                <option value="name">鍚嶇О A-Z</option>
-                <option value="danger">鍗遍櫓绛夌骇</option>
+                <option value="newest">最新添加</option>
+                <option value="oldest">最早添加</option>
+                <option value="name">名称 A-Z</option>
+                <option value="danger">危险等级</option>
             </select>
         </div>
         
-        <!-- 瀹為獙浣撶綉鏍?-->
+        <!-- 实验体网格 -->
         <div class="subjects-grid" id="subjectsGrid">
-            <!-- 瀹為獙浣撳崱鐗囧皢閫氳繃JS鍔ㄦ€佸～鍏?-->
+            <!-- 实验体卡片将通过JS动态填充 -->
         </div>
         
-        <!-- 绌虹姸鎬?-->
+        <!-- 空状态 -->
         <div class="empty-state" id="emptyState" style="display: none;">
             <i class="fas fa-flask"></i>
-            <h3>鏆傛棤瀹為獙浣撴暟鎹?/h3>
-            <p>娌℃湁鎵惧埌鍖归厤鐨勫疄楠屼綋璁板綍</p>
+            <h3>暂无实验体数据</h3>
+            <p>没有找到匹配的实验体记录</p>
         </div>
         
-        <!-- 鍒嗛〉 -->
+        <!-- 分页 -->
         <div class="pagination" id="pagination" style="display: none;">
-            <!-- 鍒嗛〉鎸夐挳灏嗛€氳繃JS鍔ㄦ€佺敓鎴?-->
+            <!-- 分页按钮将通过JS动态生成 -->
         </div>
     </main>
     
     <script>
-        // Supabase閰嶇疆
+        // Supabase配置
         const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
         
-        // 鍒濆鍖栧彉閲?
+        // 初始化变量
         let supabaseClient = null;
         let currentUser = null;
         let currentRole = null;
@@ -276,118 +276,118 @@
         let currentPage = 1;
         const itemsPerPage = 12;
         
-        // 鍗遍櫓绛夌骇鏄犲皠
+        // 危险等级映射
         const dangerMap = {
-            'safe': { text: '宸叉敹瀹?, class: 'danger-safe' },
-            'euclid': { text: '璀︽垝', class: 'danger-euclid' },
-            'keter': { text: '涓ラ噸璀︽垝', class: 'danger-keter' },
-            'neutralized': { text: '宸叉竻鍓?, class: 'danger-neutralized' }
+            'safe': { text: '已收容', class: 'danger-safe' },
+            'euclid': { text: '警戒', class: 'danger-euclid' },
+            'keter': { text: '严重警戒', class: 'danger-keter' },
+            'neutralized': { text: '已清剿', class: 'danger-neutralized' }
         };
         
-        // 鐘舵€佹槧灏勶紙UI 浠モ€滄椿璺冧腑 / 宸叉敹瀹?/ 宸叉竻鍓库€濅负涓昏涓夋€侊級
+        // 状态映射（UI 以“活跃中 / 已收容 / 已清剿”为主要三态）
         const statusMap = {
-            'active': { text: '娲昏穬涓?, class: 'status-active' },
-            // 浠ヤ笅涓ら」浣滀负鏄犲皠鍗犱綅锛堝疄闄呪€滃凡鏀跺 / 宸叉竻鍓库€濆皢鏍规嵁 details.danger_level 鍐冲畾锛?
-            'safe': { text: '宸叉敹瀹?, class: 'status-contained' },
-            'neutralized': { text: '宸叉竻鍓?, class: 'status-neutralized' }
+            'active': { text: '活跃中', class: 'status-active' },
+            // 以下两项作为映射占位（实际“已收容 / 已清剿”将根据 details.danger_level 决定）
+            'safe': { text: '已收容', class: 'status-contained' },
+            'neutralized': { text: '已清剿', class: 'status-neutralized' }
         };
         
-        // 瀹為獙浣撶紪鍙疯В鏋愭槧灏勶紙涓庣櫥璁伴〉闈竴鑷达級
+        // 实验体编号解析映射（与登记页面一致）
         const generationMap = {
-            '0': '绗竴浠?, '1': '绗簩浠?, '2': '绗笁浠?, '3': '绗洓浠?,
-            '4': '绗簲浠?, '5': '绗叚浠?, '6': '绗竷浠?, '7': '绗叓浠?,
-            '8': '绗節浠?, '9': '绗崄浠?
+            '0': '第一代', '1': '第二代', '2': '第三代', '3': '第四代',
+            '4': '第五代', '5': '第六代', '6': '第七代', '7': '第八代',
+            '8': '第九代', '9': '第十代'
         };
         
         const basisMap = {
-            '0': '鍘熸湰鐗╃涓嶅彉',
-            '1': '瑁傞殭鎬墿',
-            '2': '鐜板疄涓瓨鍦ㄧ殑鍔ㄧ墿',
-            '3': '鐜板疄涓瓨鍦ㄧ殑妞嶇墿',
-            '4': '鐜板疄涓瓨鍦ㄧ殑鏄嗚櫕',
-            '5': '涓滄柟骞绘兂鐢熺墿',
-            '6': '瑗挎柟骞绘兂鐢熺墿',
-            '7': '鏃犵敓鍛藉疄浣?,
-            '8': '鏃犲疄浣撶敓鐗?
+            '0': '原本物种不变',
+            '1': '裂隙怪物',
+            '2': '现实中存在的动物',
+            '3': '现实中存在的植物',
+            '4': '现实中存在的昆虫',
+            '5': '东方幻想生物',
+            '6': '西方幻想生物',
+            '7': '无生命实体',
+            '8': '无实体生物'
         };
         
         const memeMap = {
-            '0': '鏃舵暎',
-            '1': '铏氱晫',
-            '2': '鐏靛櫖',
-            '3': '閽㈤瓊',
-            '4': '鏈簮',
-            '5': '褰辩嫨',
-            '6': '鐢熼摼',
-            '7': '姊扮伒',
-            '8': '骞诲'
+            '0': '时散',
+            '1': '虚界',
+            '2': '灵噬',
+            '3': '钢魂',
+            '4': '本源',
+            '5': '影狩',
+            '6': '生链',
+            '7': '械灵',
+            '8': '幻奏'
         };
         
         const attributeMap = {
-            '0': '鐏?,
-            '1': '鍐?,
-            '2': '闆?,
-            '3': '宀?,
-            '4': '椋?,
-            '5': '鍏?,
-            '6': '鐢熷懡',
-            '7': '閲嶅姏',
-            '8': '铻嶅悎',
-            '9': '鐗╃悊'
+            '0': '火',
+            '1': '冰',
+            '2': '雷',
+            '3': '岩',
+            '4': '风',
+            '5': '光',
+            '6': '生命',
+            '7': '重力',
+            '8': '融合',
+            '9': '物理'
         };
         
-        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
             initApp();
         });
         
-        // 鍒濆鍖栧簲鐢?
+        // 初始化应用
         async function initApp() {
-            showLoading('姝ｅ湪鍒濆鍖?..');
+            showLoading('正在初始化...');
             
-            // 妫€鏌ョ櫥褰曠姸鎬?
+            // 检查登录状态
             currentRole = localStorage.getItem('auth_role');
             currentUser = localStorage.getItem('auth_user');
             
             if (!currentRole || !currentUser) {
-                alert('璇峰厛鐧诲綍锛?);
+                alert('请先登录！');
                 window.location.href = 'index.html';
                 return;
             }
             
-            // 鏄剧ず鐢ㄦ埛淇℃伅
+            // 显示用户信息
             document.getElementById('userDisplayName').textContent = currentUser;
             document.getElementById('userRole').textContent = 
-                currentRole === 'admin' ? '绠＄悊鍛? : '鏅€氭垚鍛?;
+                currentRole === 'admin' ? '管理员' : '普通成员';
             
-            // 鍒濆鍖朣upabase瀹㈡埛绔?
+            // 初始化Supabase客户端
             try {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('Supabase瀹㈡埛绔凡鍒濆鍖?);
+                console.log('Supabase客户端已初始化');
             } catch (e) {
-                console.error('Supabase鍒濆鍖栧け璐?', e);
-                showError('浜戠杩炴帴澶辫触锛岃妫€鏌ョ綉缁?);
+                console.error('Supabase初始化失败:', e);
+                showError('云端连接失败，请检查网络');
                 hideLoading();
                 return;
             }
             
-            // 鍔犺浇瀹為獙浣撴暟鎹?
+            // 加载实验体数据
             await loadSubjects();
             
-            // 璁剧疆鎼滅储鍜岀瓫閫変簨浠剁洃鍚?
+            // 设置搜索和筛选事件监听
             document.getElementById('searchInput').addEventListener('input', filterSubjects);
             document.getElementById('filterStatus').addEventListener('change', filterSubjects);
             document.getElementById('filterDanger').addEventListener('change', filterSubjects);
             document.getElementById('filterSort').addEventListener('change', filterSubjects);
             
-            // 鏇存柊鏃堕棿鏄剧ず
+            // 更新时间显示
             updateTime();
             setInterval(updateTime, 1000);
             
             hideLoading();
         }
         
-        // 鏇存柊鏃堕棿鏄剧ず
+        // 更新时间显示
         function updateTime() {
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
@@ -396,12 +396,12 @@
             document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
         }
         
-        // 鍔犺浇瀹為獙浣撴暟鎹?
+        // 加载实验体数据
         async function loadSubjects() {
-            showLoading('姝ｅ湪浠庝簯绔姞杞芥暟鎹?..');
+            showLoading('正在从云端加载数据...');
             
             try {
-                // 浠嶴upabase鍔犺浇瀹為獙浣撴暟鎹?
+                // 从Supabase加载实验体数据
                 const { data: subjects, error } = await supabaseClient
                     .from('subjects')
                     .select(`
@@ -415,19 +415,19 @@
                 allSubjects = subjects || [];
                 filteredSubjects = [...allSubjects];
                 
-                // 鏇存柊缁熻鏁版嵁
+                // 更新统计数据
                 updateStats();
                 
-                // 娓叉煋瀹為獙浣撳垪琛?
+                // 渲染实验体列表
                 renderSubjects();
                 
-                console.log(`鎴愬姛鍔犺浇 ${allSubjects.length} 涓疄楠屼綋`);
+                console.log(`成功加载 ${allSubjects.length} 个实验体`);
                 
             } catch (error) {
-                console.error('鍔犺浇瀹為獙浣撴暟鎹け璐?', error);
-                showError('鏁版嵁鍔犺浇澶辫触: ' + error.message);
+                console.error('加载实验体数据失败:', error);
+                showError('数据加载失败: ' + error.message);
                 
-                // 鏄剧ず绌虹姸鎬?
+                // 显示空状态
                 document.getElementById('emptyState').style.display = 'block';
                 document.getElementById('subjectsGrid').innerHTML = '';
                 document.getElementById('statsCard').innerHTML = '';
@@ -437,57 +437,57 @@
             }
         }
         
-        // 鏇存柊缁熻鏁版嵁
+        // 更新统计数据
         function updateStats() {
             const statsCard = document.getElementById('statsCard');
 
             const total = allSubjects.length;
             const active = allSubjects.filter(s => s.status === 'active').length;
-            // 鏍规嵁 details.danger_level 缁熻宸叉敹瀹?/ 宸叉竻鍓?
+            // 根据 details.danger_level 统计已收容 / 已清剿
             const contained = allSubjects.filter(s => (s.subject_details?.[0]?.danger_level || 'safe') === 'safe').length;
             const neutralized = allSubjects.filter(s => (s.subject_details?.[0]?.danger_level) === 'neutralized').length;
 
             statsCard.innerHTML = `
                 <div class="stat-item">
                     <div class="stat-value">${total}</div>
-                    <div class="stat-label">鎬诲疄楠屼綋鏁?/div>
+                    <div class="stat-label">总实验体数</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" style="color: #6bffb8;">${active}</div>
-                    <div class="stat-label">娲昏穬涓?/div>
+                    <div class="stat-label">活跃中</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" style="color: #ffd93d;">${contained}</div>
-                    <div class="stat-label">宸叉敹瀹?/div>
+                    <div class="stat-label">已收容</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" style="color: #ff6b6b;">${neutralized}</div>
-                    <div class="stat-label">宸叉竻鍓?/div>
+                    <div class="stat-label">已清剿</div>
                 </div>
             `;
         }
         
-        // 绛涢€夊疄楠屼綋
+        // 筛选实验体
         function filterSubjects() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('filterStatus').value;
             const dangerFilter = document.getElementById('filterDanger').value;
             const sortBy = document.getElementById('filterSort').value;
             
-                // 绛涢€?
+                // 筛选
                 filteredSubjects = allSubjects.filter(subject => {
-                    // 鎼滅储鏉′欢
+                    // 搜索条件
                     const matchesSearch = !searchTerm || 
                         (subject.subject_code && subject.subject_code.toLowerCase().includes(searchTerm)) ||
                         (subject.subject_name && subject.subject_name.toLowerCase().includes(searchTerm)) ||
                         (subject.description && subject.description.toLowerCase().includes(searchTerm));
 
-                    // 鍗遍櫓绛夌骇绛涢€夛紙闇€瑕佷粠details涓幏鍙栵級
+                    // 危险等级筛选（需要从details中获取）
                     const details = subject.subject_details?.[0];
                     const dangerLevel = details?.danger_level || 'safe';
                     const matchesDanger = !dangerFilter || dangerLevel === dangerFilter;
 
-                    // 鐘舵€佺瓫閫夛細'active'鍩轰簬subject.status锛屽惁鍒欏熀浜巇etails.danger_level
+                    // 状态筛选：'active'基于subject.status，否则基于details.danger_level
                     let matchesStatus = true;
                     if (statusFilter) {
                         if (statusFilter === 'active') {
@@ -501,7 +501,7 @@
                     return matchesSearch && matchesStatus && matchesDanger;
                 });
             
-            // 鎺掑簭
+            // 排序
             filteredSubjects.sort((a, b) => {
                 const detailsA = a.subject_details?.[0];
                 const detailsB = b.subject_details?.[0];
@@ -516,7 +516,7 @@
                     case 'name':
                         return (a.subject_name || '').localeCompare(b.subject_name || '');
                     case 'danger':
-                        // 鍗遍櫓绛夌骇鎺掑簭锛歬eter > euclid > safe > neutralized
+                        // 危险等级排序：keter > euclid > safe > neutralized
                         const dangerOrder = { 'keter': 0, 'euclid': 1, 'safe': 2, 'neutralized': 3 };
                         return (dangerOrder[dangerA] || 4) - (dangerOrder[dangerB] || 4);
                     default:
@@ -528,7 +528,7 @@
             renderSubjects();
         }
         
-        // 娓叉煋瀹為獙浣撳垪琛?
+        // 渲染实验体列表
         function renderSubjects() {
             const subjectsGrid = document.getElementById('subjectsGrid');
             const emptyState = document.getElementById('emptyState');
@@ -543,21 +543,21 @@
             
             emptyState.style.display = 'none';
             
-            // 璁＄畻鍒嗛〉
+            // 计算分页
             const totalPages = Math.ceil(filteredSubjects.length / itemsPerPage);
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
             const pageSubjects = filteredSubjects.slice(startIndex, endIndex);
             
-            // 娓叉煋瀹為獙浣撳崱鐗?
+            // 渲染实验体卡片
             let html = '';
             pageSubjects.forEach(subject => {
                 const details = subject.subject_details?.[0] || {};
                 const dangerLevel = details.danger_level || 'safe';
                 const dangerInfo = dangerMap[dangerLevel] || dangerMap.safe;
                 const statusInfo = statusMap[subject.status] || statusMap.active;
-                // 璁＄畻鍗＄墖鏄剧ず鐨勭姸鎬佹枃妗堜笌鏍峰紡锛堜紭鍏堟椿璺冿紝鍚﹀垯鏍规嵁 dangerLevel 鏄剧ず宸叉敹瀹?宸叉竻鍓匡級
-                let statusText = statusInfo.text || '鏈煡';
+                // 计算卡片显示的状态文案与样式（优先活跃，否则根据 dangerLevel 显示已收容/已清剿）
+                let statusText = statusInfo.text || '未知';
                 let statusClass = statusInfo.class || '';
                 if (subject.status === 'active') {
                     statusText = statusMap['active'].text;
@@ -570,32 +570,32 @@
                     statusClass = statusMap['neutralized']?.class || 'status-neutralized';
                 }
                 
-                // 瑙ｆ瀽缂栧彿
+                // 解析编号
                 const code = subject.subject_code || '';
-                const gen = code[0] ? generationMap[code[0]] || '鏈煡浠ｆ' : '鏈煡';
+                const gen = code[0] ? generationMap[code[0]] || '未知代次' : '未知';
                 
-                // 鎴柇鎻忚堪
-                const desc = subject.description || '鏆傛棤鎻忚堪';
+                // 截断描述
+                const desc = subject.description || '暂无描述';
                 const shortDesc = desc.length > 100 ? desc.substring(0, 100) + '...' : desc;
                 
                 html += `
                 <div class="subject-card" onclick="viewSubject('${subject.id}')">
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
                         <div>
-                            <div class="subject-name">${subject.subject_name || '鏈懡鍚?}</div>
+                            <div class="subject-name">${subject.subject_name || '未命名'}</div>
                             <div class="subject-code">CF-${subject.subject_code}</div>
                         </div>
                             <div style="text-align:right;">
                                 <div class="danger-${dangerLevel}">${dangerInfo.text}</div>
                             </div>
                     </div>
-                    <div class="info-item"><div class="info-label">浠ｆ锛?/div><div class="info-value">${gen}</div></div>
-                    <div class="info-item"><div class="info-label">渚濇嵁锛?/div><div class="info-value">${subject.creation_basis || '鏈煡'}</div></div>
-                    <div class="info-item"><div class="info-label">鎻忚堪锛?/div><div class="info-value">${shortDesc}</div></div>
+                    <div class="info-item"><div class="info-label">代次：</div><div class="info-value">${gen}</div></div>
+                    <div class="info-item"><div class="info-label">依据：</div><div class="info-value">${subject.creation_basis || '未知'}</div></div>
+                    <div class="info-item"><div class="info-label">描述：</div><div class="info-value">${shortDesc}</div></div>
                     <div style="margin-top:12px; display:flex; gap:10px; align-items:center; justify-content:space-between;">
                         <div class="subject-status ${statusClass}" style="color:inherit">${statusText}</div>
                         <button class="view-details-btn" onclick="event.stopPropagation(); viewSubject('${subject.id}')">
-                            <i class="fas fa-eye"></i> 鏌ョ湅璇︽儏
+                            <i class="fas fa-eye"></i> 查看详情
                         </button>
                     </div>
                 </div>
@@ -604,12 +604,12 @@
             
             subjectsGrid.innerHTML = html;
             
-            // 娓叉煋鍒嗛〉
+            // 渲染分页
             if (totalPages > 1) {
                 let paginationHtml = '';
                 
                 if (currentPage > 1) {
-                    paginationHtml += `<button class="page-btn" onclick="goToPage(${currentPage - 1})">涓婁竴椤?/button>`;
+                    paginationHtml += `<button class="page-btn" onclick="goToPage(${currentPage - 1})">上一页</button>`;
                 }
                 
                 for (let i = 1; i <= totalPages; i++) {
@@ -621,7 +621,7 @@
                 }
                 
                 if (currentPage < totalPages) {
-                    paginationHtml += `<button class="page-btn" onclick="goToPage(${currentPage + 1})">涓嬩竴椤?/button>`;
+                    paginationHtml += `<button class="page-btn" onclick="goToPage(${currentPage + 1})">下一页</button>`;
                 }
                 
                 pagination.innerHTML = paginationHtml;
@@ -631,19 +631,19 @@
             }
         }
         
-        // 璺宠浆鍒版寚瀹氶〉闈?
+        // 跳转到指定页面
         function goToPage(page) {
             currentPage = page;
             renderSubjects();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
-        // 鏌ョ湅瀹為獙浣撹鎯?
+        // 查看实验体详情
         async function viewSubject(subjectId) {
-            showLoading('姝ｅ湪鍔犺浇璇︽儏...');
+            showLoading('正在加载详情...');
             
             try {
-                // 浠嶴upabase鍔犺浇瀹為獙浣撹鎯?
+                // 从Supabase加载实验体详情
                 const { data: subject, error } = await supabaseClient
                     .from('subjects')
                     .select(`
@@ -659,13 +659,13 @@
                 const dangerLevel = details.danger_level || 'safe';
                 const dangerInfo = dangerMap[dangerLevel] || dangerMap.safe;
                 
-                // 瑙ｆ瀽缂栧彿
+                // 解析编号
                 const code = subject.subject_code || '';
-                const gen = code[0] ? generationMap[code[0]] : '鏈煡';
-                const basis = code[1] ? basisMap[code[1]] : '鏈煡';
-                const meme = code[2] ? memeMap[code[2]] : '鏈煡';
-                const attr = code[3] ? attributeMap[code[3]] : '鏈煡';
-                // 鐘舵€佹枃鏈笌鏍峰紡锛氫紭鍏堟椿璺冿紝鍏舵鐢卞嵄闄╃瓑绾у喅瀹?
+                const gen = code[0] ? generationMap[code[0]] : '未知';
+                const basis = code[1] ? basisMap[code[1]] : '未知';
+                const meme = code[2] ? memeMap[code[2]] : '未知';
+                const attr = code[3] ? attributeMap[code[3]] : '未知';
+                // 状态文本与样式：优先活跃，其次由危险等级决定
                 let statusText, statusClass;
                 if (subject.status === 'active') {
                     statusText = statusMap['active'].text;
@@ -677,16 +677,16 @@
                     statusText = dangerInfo.text;
                     statusClass = statusMap['neutralized']?.class || 'status-neutralized';
                 } else {
-                    statusText = statusMap[subject.status]?.text || '鏈煡';
+                    statusText = statusMap[subject.status]?.text || '未知';
                     statusClass = statusMap[subject.status]?.class || '';
                 }
                 
-                // 鏋勫缓璇︽儏HTML锛堝垎闂ㄥ埆绫汇€侀啋鐩睍绀猴級
+                // 构建详情HTML（分门别类、醒目展示）
                 let html = `
                     <div style="line-height:1.6;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
                             <div>
-                                <div style="font-size:1.6rem;font-weight:bold;color:#ffa93d;">${subject.subject_name || '鏈懡鍚?}</div>
+                                <div style="font-size:1.6rem;font-weight:bold;color:#ffa93d;">${subject.subject_name || '未命名'}</div>
                                 <div style="color:#a3d5ff;margin-top:4px;">CF-${subject.subject_code}</div>
                             </div>
                             <div style="text-align:right;">
@@ -696,44 +696,44 @@
                         </div>
 
                         <div class="detail-section">
-                            <h3>鍩烘湰淇℃伅</h3>
-                            <div class="detail-row"><div class="detail-label">缂栧彿锛?/div><div class="detail-value">CF-${subject.subject_code}</div></div>
-                            <div class="detail-row"><div class="detail-label">鍚嶇О锛?/div><div class="detail-value">${subject.subject_name || '鏈懡鍚?}</div></div>
-                            <div class="detail-row"><div class="detail-label">鍒涘缓鑰咃細</div><div class="detail-value">${subject.created_by || '鏈煡'}</div></div>
-                            <div class="detail-row"><div class="detail-label">鍒涘缓鏃堕棿锛?/div><div class="detail-value">${new Date(subject.created_at).toLocaleString()}</div></div>
+                            <h3>基本信息</h3>
+                            <div class="detail-row"><div class="detail-label">编号：</div><div class="detail-value">CF-${subject.subject_code}</div></div>
+                            <div class="detail-row"><div class="detail-label">名称：</div><div class="detail-value">${subject.subject_name || '未命名'}</div></div>
+                            <div class="detail-row"><div class="detail-label">创建者：</div><div class="detail-value">${subject.created_by || '未知'}</div></div>
+                            <div class="detail-row"><div class="detail-label">创建时间：</div><div class="detail-value">${new Date(subject.created_at).toLocaleString()}</div></div>
                         </div>
 
                         <div class="detail-section">
-                            <h3>鐘舵€佷笌浣嶇疆</h3>
-                            <div class="detail-row"><div class="detail-label">鐘舵€侊細</div><div class="detail-value"><strong style="color:#6bffb8;">${statusText}</strong></div></div>
-                            <div class="detail-row"><div class="detail-label">鍗遍櫓绛夌骇锛?/div><div class="detail-value">${dangerInfo.text}</div></div>
-                            <div class="detail-row"><div class="detail-label">褰撳墠浣嶇疆锛?/div><div class="detail-value">${details.location || '鏈褰?}</div></div>
+                            <h3>状态与位置</h3>
+                            <div class="detail-row"><div class="detail-label">状态：</div><div class="detail-value"><strong style="color:#6bffb8;">${statusText}</strong></div></div>
+                            <div class="detail-row"><div class="detail-label">危险等级：</div><div class="detail-value">${dangerInfo.text}</div></div>
+                            <div class="detail-row"><div class="detail-label">当前位置：</div><div class="detail-value">${details.location || '未记录'}</div></div>
                         </div>
 
                         <div class="detail-section">
-                            <h3>鏋勬垚淇℃伅</h3>
-                            <div class="detail-row"><div class="detail-label">浠ｆ锛?/div><div class="detail-value">${gen}</div></div>
-                            <div class="detail-row"><div class="detail-label">渚濇嵁锛?/div><div class="detail-value">${basis}</div></div>
-                            <div class="detail-row"><div class="detail-label">妯″洜锛?/div><div class="detail-value">${meme}</div></div>
-                            <div class="detail-row"><div class="detail-label">灞炴€э細</div><div class="detail-value">${attr}</div></div>
+                            <h3>构成信息</h3>
+                            <div class="detail-row"><div class="detail-label">代次：</div><div class="detail-value">${gen}</div></div>
+                            <div class="detail-row"><div class="detail-label">依据：</div><div class="detail-value">${basis}</div></div>
+                            <div class="detail-row"><div class="detail-label">模因：</div><div class="detail-value">${meme}</div></div>
+                            <div class="detail-row"><div class="detail-label">属性：</div><div class="detail-value">${attr}</div></div>
                         </div>
 
                         <div class="detail-section">
-                            <h3>鎻忚堪</h3>
-                            <div class="detail-value" style="white-space:pre-wrap;">${subject.description || '鏆傛棤鎻忚堪'}</div>
+                            <h3>描述</h3>
+                            <div class="detail-value" style="white-space:pre-wrap;">${subject.description || '暂无描述'}</div>
                         </div>
 
                         <div class="detail-section">
-                            <h3>澶栬矊 / 鑳藉姏 / 寮辩偣</h3>
-                            <div class="detail-row"><div class="detail-label">澶栬矊锛?/div><div class="detail-value">${details.appearance || '鏈褰?}</div></div>
-                            <div class="detail-row"><div class="detail-label">鑳藉姏锛?/div><div class="detail-value">${details.abilities || '鏈褰?}</div></div>
-                            <div class="detail-row"><div class="detail-label">寮辩偣锛?/div><div class="detail-value">${details.weaknesses || '鏈褰?}</div></div>
+                            <h3>外貌 / 能力 / 弱点</h3>
+                            <div class="detail-row"><div class="detail-label">外貌：</div><div class="detail-value">${details.appearance || '未记录'}</div></div>
+                            <div class="detail-row"><div class="detail-label">能力：</div><div class="detail-value">${details.abilities || '未记录'}</div></div>
+                            <div class="detail-row"><div class="detail-label">弱点：</div><div class="detail-value">${details.weaknesses || '未记录'}</div></div>
                         </div>
 
                         <div class="detail-section">
-                            <h3>鏀跺鎺柦 / 澶囨敞</h3>
-                            <div class="detail-row"><div class="detail-label">鏀跺锛?/div><div class="detail-value">${details.containment_procedures || '鏈褰?}</div></div>
-                            <div class="detail-row"><div class="detail-label">澶囨敞锛?/div><div class="detail-value">${details.notes || '鏃?}</div></div>
+                            <h3>收容措施 / 备注</h3>
+                            <div class="detail-row"><div class="detail-label">收容：</div><div class="detail-value">${details.containment_procedures || '未记录'}</div></div>
+                            <div class="detail-row"><div class="detail-label">备注：</div><div class="detail-value">${details.notes || '无'}</div></div>
                         </div>
                     </div>
                 `;
@@ -743,40 +743,40 @@
                 openModal();
                 
             } catch (error) {
-                console.error('鍔犺浇瀹為獙浣撹鎯呭け璐?', error);
-                alert('鍔犺浇璇︽儏澶辫触: ' + error.message);
+                console.error('加载实验体详情失败:', error);
+                alert('加载详情失败: ' + error.message);
             } finally {
                 hideLoading();
             }
         }
         
-        // 鎵撳紑妯℃€佹
+        // 打开模态框
         function openModal() {
             document.getElementById('detailModal').classList.add('active');
         }
         
-        // 鍏抽棴妯℃€佹
+        // 关闭模态框
         function closeModal() {
             document.getElementById('detailModal').classList.remove('active');
         }
         
-        // 鏄剧ず鍔犺浇鍔ㄧ敾
-        function showLoading(message = '姝ｅ湪澶勭悊...') {
+        // 显示加载动画
+        function showLoading(message = '正在处理...') {
             document.getElementById('loadingText').textContent = message;
             document.getElementById('loadingOverlay').style.display = 'flex';
         }
         
-        // 闅愯棌鍔犺浇鍔ㄧ敾
+        // 隐藏加载动画
         function hideLoading() {
             document.getElementById('loadingOverlay').style.display = 'none';
         }
         
-        // 鏄剧ず閿欒娑堟伅
+        // 显示错误消息
         function showError(message) {
             alert(message);
         }
         
-        // 杩斿洖涓婁竴椤?
+        // 返回上一页
         function goBack() {
             if (currentRole === 'admin') {
                 window.location.href = 'admin.html';
@@ -785,7 +785,7 @@
             }
         }
         
-        // 妯℃€佹鐐瑰嚮澶栭儴鍏抽棴
+        // 模态框点击外部关闭
         window.onclick = function(event) {
             const modal = document.getElementById('detailModal');
             if (event.target === modal) {
@@ -793,7 +793,7 @@
             }
         };
         
-        // 妯℃€佹ESC閿叧闂?
+        // 模态框ESC键关闭
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeModal();

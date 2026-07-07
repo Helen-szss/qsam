@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鐧昏瀹為獙浣?- 鐮旂┒澶勮瀵熷憳</title>
+    <title>登记实验体 - 研究处观察员</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -436,98 +436,98 @@
     </style>
 </head>
 <body>
-    <!-- 鍔犺浇鍔ㄧ敾 -->
+    <!-- 加载动画 -->
     <div class="loading-overlay" id="loadingOverlay">
         <div>
             <div class="loading-spinner"></div>
-            <div class="loading-text" id="loadingText">姝ｅ湪鍔犺浇...</div>
+            <div class="loading-text" id="loadingText">正在加载...</div>
         </div>
     </div>
     
-    <!-- 鏌ョ湅璇︽儏妯℃€佹 -->
+    <!-- 查看详情模态框 -->
     <div class="modal" id="viewModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>瀹為獙浣撹鎯?/h2>
+                <h2>实验体详情</h2>
                 <button class="close-btn" onclick="closeModal('viewModal')">&times;</button>
             </div>
             <div id="viewContent"></div>
         </div>
     </div>
     
-    <!-- 缂栬緫妯℃€佹 -->
+    <!-- 编辑模态框 -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>缂栬緫瀹為獙浣?/h2>
+                <h2>编辑实验体</h2>
                 <button class="close-btn" onclick="closeModal('editModal')">&times;</button>
             </div>
             <form id="editForm">
                 <input type="hidden" id="editId">
                 <div class="form-row">
                 <div class="form-group">
-                        <label for="editCode">瀹為獙浣撶紪鍙?* <small style="color: var(--text-secondary);">(鍓嶇紑 <strong>CF-</strong> 鍥哄畾)</small></label>
+                        <label for="editCode">实验体编号 * <small style="color: var(--text-secondary);">(前缀 <strong>CF-</strong> 固定)</small></label>
                         <input type="text" id="editCode" class="form-control" required maxlength="4" pattern="[0-9]{4}">
-                        <small style="color: var(--text-secondary);">璇疯緭鍏?浣嶆暟瀛楃紪鍙?/small>
+                        <small style="color: var(--text-secondary);">请输入4位数字编号</small>
                     </div>
                     <div class="form-group">
-                        <label for="editName">瀹為獙浣撳悕绉?*</label>
+                        <label for="editName">实验体名称 *</label>
                         <input type="text" id="editName" class="form-control" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="editDescription">鎻忚堪</label>
+                    <label for="editDescription">描述</label>
                     <textarea id="editDescription" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editStatus">鐘舵€?/label>
+                        <label for="editStatus">状态</label>
                         <select id="editStatus" class="form-control">
-                            <option value="active">娲昏穬</option>
-                            <option value="inactive">浼戠湢</option>
-                            <option value="destroyed">宸查攢姣?/option>
+                            <option value="active">活跃</option>
+                            <option value="inactive">休眠</option>
+                            <option value="destroyed">已销毁</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="editDangerLevel">鍗遍櫓绛夌骇</label>
+                        <label for="editDangerLevel">危险等级</label>
                         <select id="editDangerLevel" class="form-control">
-                            <option value="safe">宸叉敹瀹?/option>
-                            <option value="euclid">璀︽垝</option>
-                            <option value="keter">涓ラ噸璀︽垝</option>
-                            <option value="neutralized">宸叉竻鍓?/option>
+                            <option value="safe">已收容</option>
+                            <option value="euclid">警戒</option>
+                            <option value="keter">严重警戒</option>
+                            <option value="neutralized">已清剿</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="editLocation">褰撳墠浣嶇疆</label>
+                    <label for="editLocation">当前位置</label>
                     <input type="text" id="editLocation" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="editAppearance">澶栬矊鐗瑰緛</label>
+                    <label for="editAppearance">外貌特征</label>
                     <textarea id="editAppearance" class="form-control" rows="2"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="editAbilities">鑳藉姏鎻忚堪</label>
+                    <label for="editAbilities">能力描述</label>
                     <textarea id="editAbilities" class="form-control" rows="2"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="editWeaknesses">寮辩偣</label>
+                    <label for="editWeaknesses">弱点</label>
                     <textarea id="editWeaknesses" class="form-control" rows="2"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="editContainment">鏀跺鎺柦</label>
+                    <label for="editContainment">收容措施</label>
                     <textarea id="editContainment" class="form-control" rows="2"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="editNotes">澶囨敞</label>
+                    <label for="editNotes">备注</label>
                     <textarea id="editNotes" class="form-control" rows="2"></textarea>
                 </div>
                 <div style="display: flex; gap: 15px; margin-top: 25px;">
                     <button type="submit" class="btn btn-primary" style="flex: 1;">
-                        <i class="fas fa-save"></i> 淇濆瓨鏇存敼
+                        <i class="fas fa-save"></i> 保存更改
                     </button>
                     <button type="button" class="btn btn-danger" onclick="closeModal('editModal')" style="flex: 1;">
-                        <i class="fas fa-times"></i> 鍙栨秷
+                        <i class="fas fa-times"></i> 取消
                     </button>
                 </div>
             </form>
@@ -535,136 +535,136 @@
     </div>
     
     <div class="container">
-        <!-- 澶撮儴 -->
+        <!-- 头部 -->
         <div class="header">
-            <h1><i class="fas fa-flask"></i> 瀹為獙浣撶櫥璁扮郴缁?- 鐮旂┒澶?/h1>
+            <h1><i class="fas fa-flask"></i> 实验体登记系统 - 研究处</h1>
             <div class="user-info">
                 <div class="user-avatar">
                     <i class="fas fa-user-tie"></i>
                 </div>
                 <div>
-                    <div style="color: var(--success-color);" id="userDisplayName">瑙傚療鍛?/div>
-                    <div style="font-size: 0.9rem; color: var(--text-secondary);">鐮旂┒澶勮瀵熷憳</div>
+                    <div style="color: var(--success-color);" id="userDisplayName">观察员</div>
+                    <div style="font-size: 0.9rem; color: var(--text-secondary);">研究处观察员</div>
                 </div>
                 <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> 閫€鍑?
+                    <i class="fas fa-sign-out-alt"></i> 退出
                 </button>
             </div>
         </div>
         
-        <!-- 娑堟伅鎻愮ず -->
+        <!-- 消息提示 -->
         <div class="alert" id="messageAlert"></div>
         
-        <!-- 涓昏鍐呭 -->
+        <!-- 主要内容 -->
         <div class="main-content">
-            <!-- 宸︿晶锛氱櫥璁拌〃鍗?-->
+            <!-- 左侧：登记表单 -->
             <div>
                 <div class="card">
                     <div class="card-title">
                         <i class="fas fa-plus-circle"></i>
-                        <span>鐧昏鏂板疄楠屼綋</span>
+                        <span>登记新实验体</span>
                     </div>
                     
                     <form id="subjectForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="subjectCode">瀹為獙浣撶紪鍙?* <small style="color: var(--text-secondary);">(鍓嶇紑 <strong>CF-</strong> 鍥哄畾)</small></label>
+                                <label for="subjectCode">实验体编号 * <small style="color: var(--text-secondary);">(前缀 <strong>CF-</strong> 固定)</small></label>
                                 <div style="position: relative; display: flex; align-items: center;">
                                     <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-weight: bold;">CF-</span>
                                     <input type="text" id="subjectCode" class="form-control" 
                                            required maxlength="4" pattern="[0-9]{4}"
-                                           placeholder="杈撳叆4浣嶆暟瀛楃紪鍙? 
+                                           placeholder="输入4位数字编号" 
                                            oninput="parseSubjectCode(this.value)"
                                            style="padding-left: 52px;">
                                 </div>
-                                <small style="color: var(--text-secondary);">鏍煎紡锛欳F-XXXX锛堜粎杈撳叆鍙充晶4浣嶆暟瀛楋級</small>
+                                <small style="color: var(--text-secondary);">格式：CF-XXXX（仅输入右侧4位数字）</small>
                             </div>
                             <div class="form-group">
-                                <label for="subjectName">瀹為獙浣撳悕绉?*</label>
+                                <label for="subjectName">实验体名称 *</label>
                                 <input type="text" id="subjectName" class="form-control" required>
                             </div>
                         </div>
                         
-                        <!-- 缂栧彿瑙ｆ瀽棰勮 -->
+                        <!-- 编号解析预览 -->
                         <div id="codePreview" style="display: none;">
                             <div style="margin-bottom: 10px; color: var(--text-secondary);">
-                                <i class="fas fa-info-circle"></i> 缂栧彿瑙ｆ瀽锛?
+                                <i class="fas fa-info-circle"></i> 编号解析：
                             </div>
                             <div class="code-preview">
-                                <span class="code-segment segment-0" id="segmentGen">绗?浠?/span>
-                                <span class="code-segment segment-1" id="segmentBasis">鍩虹</span>
-                                <span class="code-segment segment-2" id="segmentMeme">妯″洜</span>
-                                <span class="code-segment segment-3" id="segmentAttr">灞炴€?/span>
+                                <span class="code-segment segment-0" id="segmentGen">第0代</span>
+                                <span class="code-segment segment-1" id="segmentBasis">基础</span>
+                                <span class="code-segment segment-2" id="segmentMeme">模因</span>
+                                <span class="code-segment segment-3" id="segmentAttr">属性</span>
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="subjectDescription">鎻忚堪</label>
+                            <label for="subjectDescription">描述</label>
                             <textarea id="subjectDescription" class="form-control" rows="3"></textarea>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="dangerLevel">鍗遍櫓绛夌骇</label>
+                                <label for="dangerLevel">危险等级</label>
                                 <select id="dangerLevel" class="form-control">
-                                            <option value="safe">宸叉敹瀹?/option>
-                                            <option value="euclid">璀︽垝</option>
-                                            <option value="keter">涓ラ噸璀︽垝</option>
-                                            <option value="neutralized">宸叉竻鍓?/option>
+                                            <option value="safe">已收容</option>
+                                            <option value="euclid">警戒</option>
+                                            <option value="keter">严重警戒</option>
+                                            <option value="neutralized">已清剿</option>
                                         </select>
                             </div>
                             <div class="form-group">
-                                <label for="location">褰撳墠浣嶇疆</label>
-                                <input type="text" id="location" class="form-control" placeholder="濡傦細Site-17锛孉鍖烘敹瀹瑰">
+                                <label for="location">当前位置</label>
+                                <input type="text" id="location" class="form-control" placeholder="如：Site-17，A区收容室">
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="appearance">澶栬矊鐗瑰緛</label>
+                            <label for="appearance">外貌特征</label>
                             <textarea id="appearance" class="form-control" rows="2"></textarea>
                         </div>
                         
                         <div class="form-group">
-                            <label for="abilities">鑳藉姏鎻忚堪</label>
+                            <label for="abilities">能力描述</label>
                             <textarea id="abilities" class="form-control" rows="2"></textarea>
                         </div>
                         
                         <div class="form-group">
-                            <label for="weaknesses">寮辩偣</label>
+                            <label for="weaknesses">弱点</label>
                             <textarea id="weaknesses" class="form-control" rows="2"></textarea>
                         </div>
                         
                         <div class="form-group">
-                            <label for="containment">鏀跺鎺柦</label>
+                            <label for="containment">收容措施</label>
                             <textarea id="containment" class="form-control" rows="2"></textarea>
                         </div>
                         
                         <div class="form-group">
-                            <label for="notes">澶囨敞</label>
+                            <label for="notes">备注</label>
                             <textarea id="notes" class="form-control" rows="2"></textarea>
                         </div>
                         
                         <div style="display: flex; gap: 15px; margin-top: 25px;">
                             <button type="submit" class="btn btn-primary" style="flex: 1;">
-                                <i class="fas fa-save"></i> 淇濆瓨鍒颁簯绔?
+                                <i class="fas fa-save"></i> 保存到云端
                             </button>
                             <button type="button" class="btn btn-warning" onclick="clearForm()" style="flex: 1;">
-                                <i class="fas fa-redo"></i> 娓呯┖琛ㄥ崟
+                                <i class="fas fa-redo"></i> 清空表单
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
             
-            <!-- 鍙充晶锛氬疄楠屼綋鍒楄〃 -->
+            <!-- 右侧：实验体列表 -->
             <div>
                 <div class="card">
                     <div class="card-title">
                         <i class="fas fa-list"></i>
-                        <span>瀹為獙浣撳垪琛?/span>
+                        <span>实验体列表</span>
                         <div style="margin-left: auto;">
                             <button class="btn btn-primary" onclick="loadSubjects()">
-                                <i class="fas fa-sync-alt"></i> 鍒锋柊
+                                <i class="fas fa-sync-alt"></i> 刷新
                             </button>
                         </div>
                     </div>
@@ -673,52 +673,52 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>缂栧彿</th>
-                                    <th>鍚嶇О</th>
-                                    <th>浠ｆ</th>
-                                    <th>鐘舵€?/th>
-                                    <th>鎿嶄綔</th>
+                                    <th>编号</th>
+                                    <th>名称</th>
+                                    <th>代次</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody id="subjectTableBody">
-                                <!-- 鏁版嵁灏嗛€氳繃JS鍔ㄦ€佸姞杞?-->
+                                <!-- 数据将通过JS动态加载 -->
                             </tbody>
                         </table>
                         <div id="emptyState" class="empty-state" style="display: none;">
                             <i class="fas fa-flask"></i>
-                            <h3>鏆傛棤瀹為獙浣撴暟鎹?/h3>
-                            <p>璇风櫥璁扮涓€涓疄楠屼綋</p>
+                            <h3>暂无实验体数据</h3>
+                            <p>请登记第一个实验体</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 缂栧彿瑙勫垯璇存槑 -->
+                <!-- 编号规则说明 -->
                 <div class="card">
                     <div class="card-title">
                         <i class="fas fa-book"></i>
-                        <span>瀹為獙浣撶紪鍙疯鍒?/span>
+                        <span>实验体编号规则</span>
                     </div>
                     <div style="color: var(--text-secondary); line-height: 1.6;">
-                        <p><strong>绗竴浣嶏細绗嚑浠ｅ疄楠屼綋</strong><br>
-                        0: 绗竴浠ｏ紝1: 绗簩浠ｏ紝2: 绗笁浠ｏ紝浠ユ绫绘帹</p>
+                        <p><strong>第一位：第几代实验体</strong><br>
+                        0: 第一代，1: 第二代，2: 第三代，以此类推</p>
                         
-                        <p><strong>绗簩浣嶏細鍒涢€犱緷鎹?/strong><br>
-                        0: 鍘熸湰鐗╃涓嶅彉锛?: 瑁傞殭鎬墿锛?: 鐜板疄涓瓨鍦ㄧ殑鍔ㄧ墿<br>
-                        3: 鐜板疄涓瓨鍦ㄧ殑妞嶇墿锛?: 鐜板疄涓瓨鍦ㄧ殑鏄嗚櫕<br>
-                        5: 涓滄柟骞绘兂鐢熺墿锛?: 瑗挎柟骞绘兂鐢熺墿<br>
-                        7: 鏃犵敓鍛藉疄浣擄紝8: 鏃犲疄浣撶敓鐗?/p>
+                        <p><strong>第二位：创造依据</strong><br>
+                        0: 原本物种不变，1: 裂隙怪物，2: 现实中存在的动物<br>
+                        3: 现实中存在的植物，4: 现实中存在的昆虫<br>
+                        5: 东方幻想生物，6: 西方幻想生物<br>
+                        7: 无生命实体，8: 无实体生物</p>
                         
-                        <p><strong>绗笁浣嶏細鎰熸煋鐨勬ā鍥?/strong><br>
-                        0: 鏃舵暎锛?: 铏氱晫锛?: 鐏靛櫖锛?: 閽㈤瓊<br>
-                        4: 鏈簮锛?: 褰辩嫨锛?: 鐢熼摼锛?: 姊扮伒锛?: 骞诲</p>
+                        <p><strong>第三位：感染的模因</strong><br>
+                        0: 时散，1: 虚界，2: 灵噬，3: 钢魂<br>
+                        4: 本源，5: 影狩，6: 生链，7: 械灵，8: 幻奏</p>
                         
-                        <p><strong>绗洓浣嶏細灞炴€?/strong><br>
-                        0: 鐏紝1: 鍐帮紝2: 闆凤紝3: 宀╋紝4: 椋?br>
-                        5: 鍏夛紝6: 鐢熷懡锛?: 閲嶅姏锛?: 铻嶅悎锛?: 鐗╃悊</p>
+                        <p><strong>第四位：属性</strong><br>
+                        0: 火，1: 冰，2: 雷，3: 岩，4: 风<br>
+                        5: 光，6: 生命，7: 重力，8: 融合，9: 物理</p>
                         
-                        <p><strong>绀轰緥锛?/strong><br>
-                        4366: 绗簲浠ｅ疄楠屼綋(4+1)锛屾鐗?3)锛岀敓閾炬ā鍥?6)锛岀墿鐞嗗睘鎬?6)<br>
-                        5123: 绗叚浠ｅ疄楠屼綋(5+1)锛屼笢鏂瑰够鎯崇敓鐗?1)锛屽奖鐙╂ā鍥?2)锛屽博灞炴€?3)</p>
+                        <p><strong>示例：</strong><br>
+                        4366: 第五代实验体(4+1)，植物(3)，生链模因(6)，物理属性(6)<br>
+                        5123: 第六代实验体(5+1)，东方幻想生物(1)，影狩模因(2)，岩属性(3)</p>
                     </div>
                 </div>
             </div>
@@ -726,7 +726,7 @@
     </div>
 
     <script>
-        // Supabase閰嶇疆 - 璇锋浛鎹负鎮ㄧ殑瀹為檯閰嶇疆
+        // Supabase配置 - 请替换为您的实际配置
         const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
         
@@ -734,94 +734,94 @@
         var supabase = (typeof window !== 'undefined' && window.supabase && typeof window.supabase.from === 'function') ? window.supabase : (typeof window !== 'undefined' ? window.supabase : null);
         let currentUser = null;
         
-        // 瀹為獙浣撶紪鍙锋槧灏勮〃
+        // 实验体编号映射表
         const generationMap = {
-            '0': '绗竴浠?, '1': '绗簩浠?, '2': '绗笁浠?, '3': '绗洓浠?,
-            '4': '绗簲浠?, '5': '绗叚浠?, '6': '绗竷浠?, '7': '绗叓浠?,
-            '8': '绗節浠?, '9': '绗崄浠?
+            '0': '第一代', '1': '第二代', '2': '第三代', '3': '第四代',
+            '4': '第五代', '5': '第六代', '6': '第七代', '7': '第八代',
+            '8': '第九代', '9': '第十代'
         };
         
         const basisMap = {
-            '0': '鍘熸湰鐗╃涓嶅彉',
-            '1': '瑁傞殭鎬墿',
-            '2': '鐜板疄涓瓨鍦ㄧ殑鍔ㄧ墿',
-            '3': '鐜板疄涓瓨鍦ㄧ殑妞嶇墿',
-            '4': '鐜板疄涓瓨鍦ㄧ殑鏄嗚櫕',
-            '5': '涓滄柟骞绘兂鐢熺墿',
-            '6': '瑗挎柟骞绘兂鐢熺墿',
-            '7': '鏃犵敓鍛藉疄浣?,
-            '8': '鏃犲疄浣撶敓鐗?
+            '0': '原本物种不变',
+            '1': '裂隙怪物',
+            '2': '现实中存在的动物',
+            '3': '现实中存在的植物',
+            '4': '现实中存在的昆虫',
+            '5': '东方幻想生物',
+            '6': '西方幻想生物',
+            '7': '无生命实体',
+            '8': '无实体生物'
         };
         
         const memeMap = {
-            '0': '鏃舵暎',
-            '1': '铏氱晫',
-            '2': '鐏靛櫖',
-            '3': '閽㈤瓊',
-            '4': '鏈簮',
-            '5': '褰辩嫨',
-            '6': '鐢熼摼',
-            '7': '姊扮伒',
-            '8': '骞诲'
+            '0': '时散',
+            '1': '虚界',
+            '2': '灵噬',
+            '3': '钢魂',
+            '4': '本源',
+            '5': '影狩',
+            '6': '生链',
+            '7': '械灵',
+            '8': '幻奏'
         };
         
         const attributeMap = {
-            '0': '鐏?,
-            '1': '鍐?,
-            '2': '闆?,
-            '3': '宀?,
-            '4': '椋?,
-            '5': '鍏?,
-            '6': '鐢熷懡',
-            '7': '閲嶅姏',
-            '8': '铻嶅悎',
-            '9': '鐗╃悊'
+            '0': '火',
+            '1': '冰',
+            '2': '雷',
+            '3': '岩',
+            '4': '风',
+            '5': '光',
+            '6': '生命',
+            '7': '重力',
+            '8': '融合',
+            '9': '物理'
         };
         
-        // 鍒濆鍖?
+        // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             initApp();
         });
         
-        // 鍒濆鍖栧簲鐢?
+        // 初始化应用
         async function initApp() {
-            showLoading('鍒濆鍖栫郴缁?..');
+            showLoading('初始化系统...');
             
-            // 妫€鏌ョ櫥褰曠姸鎬?
+            // 检查登录状态
             const role = localStorage.getItem('auth_role');
             currentUser = localStorage.getItem('auth_user');
             
             if (role !== 'viewer') {
-                alert('璇峰厛浠ヨ瀵熷憳韬唤鐧诲綍锛?);
+                alert('请先以观察员身份登录！');
                 window.location.href = 'index.html';
                 return;
             }
             
-            // 鏄剧ず鐢ㄦ埛淇℃伅
-            document.getElementById('userDisplayName').textContent = currentUser || '瑙傚療鍛?;
+            // 显示用户信息
+            document.getElementById('userDisplayName').textContent = currentUser || '观察员';
             
-            // 鍒濆鍖朣upabase
+            // 初始化Supabase
             try {
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('Supabase瀹㈡埛绔凡鍒濆鍖?);
+                console.log('Supabase客户端已初始化');
             } catch (e) {
-                showError('Supabase鍒濆鍖栧け璐ワ紝璇锋鏌ラ厤缃?);
-                console.error('Supabase鍒濆鍖栧け璐?', e);
+                showError('Supabase初始化失败，请检查配置');
+                console.error('Supabase初始化失败:', e);
                 hideLoading();
                 return;
             }
             
-            // 鍔犺浇瀹為獙浣撴暟鎹?
+            // 加载实验体数据
             await loadSubjects();
             
             hideLoading();
             
-            // 璁剧疆琛ㄥ崟鎻愪氦浜嬩欢
+            // 设置表单提交事件
             document.getElementById('subjectForm').addEventListener('submit', handleSubmit);
             document.getElementById('editForm').addEventListener('submit', handleEditSubmit);
         }
         
-        // 瑙ｆ瀽瀹為獙浣撶紪鍙?
+        // 解析实验体编号
         function parseSubjectCode(code) {
             const preview = document.getElementById('codePreview');
             
@@ -831,11 +831,11 @@
                 const meme = code[2];
                 const attr = code[3];
                 
-                // 鏇存柊棰勮
-                document.getElementById('segmentGen').textContent = generationMap[gen] || '鏈煡浠ｆ';
-                document.getElementById('segmentBasis').textContent = basisMap[basis] || '鏈煡渚濇嵁';
-                document.getElementById('segmentMeme').textContent = memeMap[meme] || '鏈煡妯″洜';
-                document.getElementById('segmentAttr').textContent = attributeMap[attr] || '鏈煡灞炴€?;
+                // 更新预览
+                document.getElementById('segmentGen').textContent = generationMap[gen] || '未知代次';
+                document.getElementById('segmentBasis').textContent = basisMap[basis] || '未知依据';
+                document.getElementById('segmentMeme').textContent = memeMap[meme] || '未知模因';
+                document.getElementById('segmentAttr').textContent = attributeMap[attr] || '未知属性';
                 
                 preview.style.display = 'block';
             } else {
@@ -843,9 +843,9 @@
             }
         }
         
-        // 鍔犺浇瀹為獙浣撴暟鎹?
+        // 加载实验体数据
         async function loadSubjects() {
-            showLoading('鍔犺浇瀹為獙浣撴暟鎹?..');
+            showLoading('加载实验体数据...');
             
             try {
                 const { data: subjects, error } = await supabase
@@ -862,13 +862,13 @@
                 hideLoading();
                 
             } catch (error) {
-                console.error('鍔犺浇瀹為獙浣撴暟鎹け璐?', error);
-                showError('鍔犺浇鏁版嵁澶辫触: ' + error.message);
+                console.error('加载实验体数据失败:', error);
+                showError('加载数据失败: ' + error.message);
                 hideLoading();
             }
         }
         
-        // 娓叉煋瀹為獙浣撹〃鏍?
+        // 渲染实验体表格
         function renderSubjectsTable(subjects) {
             const tbody = document.getElementById('subjectTableBody');
             const emptyState = document.getElementById('emptyState');
@@ -885,15 +885,15 @@
             subjects.forEach(subject => {
                 const details = subject.subject_details?.[0] || {};
                 
-                // 瑙ｆ瀽缂栧彿
+                // 解析编号
                 const code = subject.subject_code;
-                const gen = generationMap[code?.[0]] || '鏈煡';
-                const basis = basisMap[code?.[1]] || '鏈煡';
+                const gen = generationMap[code?.[0]] || '未知';
+                const basis = basisMap[code?.[1]] || '未知';
                 
-                // 鐘舵€佹爣绛?
+                // 状态标签
                 const statusClass = `status-${subject.status}`;
-                const statusText = subject.status === 'active' ? '娲昏穬' :
-                                  subject.status === 'inactive' ? '浼戠湢' : '宸查攢姣?;
+                const statusText = subject.status === 'active' ? '活跃' :
+                                  subject.status === 'inactive' ? '休眠' : '已销毁';
                 
                 html += `
                 <tr>
@@ -902,13 +902,13 @@
                     <td>${gen}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td class="actions">
-                        <button class="action-btn action-view" onclick="viewSubject('${subject.id}')" title="鏌ョ湅璇︽儏">
+                        <button class="action-btn action-view" onclick="viewSubject('${subject.id}')" title="查看详情">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="action-btn action-edit" onclick="editSubject('${subject.id}')" title="缂栬緫">
+                        <button class="action-btn action-edit" onclick="editSubject('${subject.id}')" title="编辑">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="action-btn action-delete" onclick="deleteSubject('${subject.id}')" title="鍒犻櫎">
+                        <button class="action-btn action-delete" onclick="deleteSubject('${subject.id}')" title="删除">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -919,7 +919,7 @@
             tbody.innerHTML = html;
         }
         
-        // 鎻愪氦鏂板疄楠屼綋
+        // 提交新实验体
         async function handleSubmit(e) {
             e.preventDefault();
             
@@ -927,19 +927,19 @@
             const name = document.getElementById('subjectName').value.trim();
             
             if (code.length !== 4 || !/^\d{4}$/.test(code)) {
-                showError('璇疯緭鍏ユ湁鏁堢殑4浣嶆暟瀛楃紪鍙?);
+                showError('请输入有效的4位数字编号');
                 return;
             }
             
             if (!name) {
-                showError('璇疯緭鍏ュ疄楠屼綋鍚嶇О');
+                showError('请输入实验体名称');
                 return;
             }
             
-            showLoading('姝ｅ湪淇濆瓨鍒颁簯绔?..');
+            showLoading('正在保存到云端...');
             
             try {
-                // 妫€鏌ョ紪鍙锋槸鍚﹀凡瀛樺湪
+                // 检查编号是否已存在
                 const { data: existing } = await supabase
                     .from('subjects')
                     .select('id')
@@ -947,25 +947,25 @@
                     .single();
                 
                 if (existing) {
-                    throw new Error('璇ュ疄楠屼綋缂栧彿宸插瓨鍦?);
+                    throw new Error('该实验体编号已存在');
                 }
                 
-                // 瑙ｆ瀽缂栧彿
+                // 解析编号
                 const gen = parseInt(code[0]);
                 const basis = code[1];
                 const meme = code[2];
                 const attr = code[3];
                 
-                // 淇濆瓨瀹為獙浣?
+                // 保存实验体
                 const { data: subject, error: subjectError } = await supabase
                     .from('subjects')
                     .insert([{
                         subject_code: code,
                         subject_name: name,
                         generation: gen,
-                        creation_basis: basisMap[basis] || '鏈煡',
-                        meme_type: memeMap[meme] || '鏈煡',
-                        attribute: attributeMap[attr] || '鏈煡',
+                        creation_basis: basisMap[basis] || '未知',
+                        meme_type: memeMap[meme] || '未知',
+                        attribute: attributeMap[attr] || '未知',
                         description: document.getElementById('subjectDescription').value,
                         status: 'active',
                         created_by: currentUser
@@ -975,7 +975,7 @@
                 
                 if (subjectError) throw subjectError;
                 
-                // 淇濆瓨璇︾粏淇℃伅
+                // 保存详细信息
                 const details = {
                     subject_id: subject.id,
                     appearance: document.getElementById('appearance').value,
@@ -993,21 +993,21 @@
                 
                 if (detailsError) throw detailsError;
                 
-                showSuccess('瀹為獙浣撳凡鎴愬姛淇濆瓨鍒颁簯绔?);
+                showSuccess('实验体已成功保存到云端');
                 clearForm();
                 await loadSubjects();
                 
             } catch (error) {
-                console.error('淇濆瓨澶辫触:', error);
-                showError('淇濆瓨澶辫触: ' + error.message);
+                console.error('保存失败:', error);
+                showError('保存失败: ' + error.message);
             } finally {
                 hideLoading();
             }
         }
         
-        // 鏌ョ湅瀹為獙浣撹鎯?
+        // 查看实验体详情
         async function viewSubject(subjectId) {
-            showLoading('鍔犺浇璇︽儏...');
+            showLoading('加载详情...');
             
             try {
                 const { data: subject, error } = await supabase
@@ -1023,25 +1023,25 @@
                 
                 const details = subject.subject_details?.[0] || {};
                 
-                // 瑙ｆ瀽缂栧彿
+                // 解析编号
                 const code = subject.subject_code;
-                const gen = generationMap[code?.[0]] || '鏈煡';
-                const basis = basisMap[code?.[1]] || '鏈煡';
-                const meme = memeMap[code?.[2]] || '鏈煡';
-                const attr = attributeMap[code?.[3]] || '鏈煡';
+                const gen = generationMap[code?.[0]] || '未知';
+                const basis = basisMap[code?.[1]] || '未知';
+                const meme = memeMap[code?.[2]] || '未知';
+                const attr = attributeMap[code?.[3]] || '未知';
                 
-                // 鍗遍櫓绛夌骇鏄犲皠锛堜粎浣跨敤鍥涚灞曠ず鏂囨湰锛屼笌涓嬫媺閫夐」涓€鑷达級
+                // 危险等级映射（仅使用四种展示文本，与下拉选项一致）
                 const dangerMap = {
-                    'safe': '宸叉敹瀹?,
-                    'euclid': '璀︽垝',
-                    'keter': '涓ラ噸璀︽垝',
-                    'neutralized': '宸叉竻鍓?
+                    'safe': '已收容',
+                    'euclid': '警戒',
+                    'keter': '严重警戒',
+                    'neutralized': '已清剿'
                 };
 
                 const dangerKey = details.danger_level || 'safe';
                 const dangerText = dangerMap[dangerKey] || dangerKey;
 
-                // 鏋勫缓璇︽儏HTML
+                // 构建详情HTML
                 let html = `
                     <div style="line-height: 1.6;">
                         <div style="margin-bottom: 20px;">
@@ -1049,73 +1049,73 @@
                                 CF-${subject.subject_code} - ${subject.subject_name}
                             </div>
                             <div style="color: var(--text-secondary);">
-                                鍒涘缓鑰? ${subject.created_by} | 鍒涘缓鏃堕棿: ${new Date(subject.created_at).toLocaleString()}
+                                创建者: ${subject.created_by} | 创建时间: ${new Date(subject.created_at).toLocaleString()}
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label>鍗遍櫓绛夌骇</label>
+                            <label>危险等级</label>
                             <select class="form-control" disabled>
-                                <option value="safe" ${dangerKey === 'safe' ? 'selected' : ''}>宸叉敹瀹?/option>
-                                <option value="euclid" ${dangerKey === 'euclid' ? 'selected' : ''}>璀︽垝</option>
-                                <option value="keter" ${dangerKey === 'keter' ? 'selected' : ''}>涓ラ噸璀︽垝</option>
-                                <option value="neutralized" ${dangerKey === 'neutralized' ? 'selected' : ''}>宸叉竻鍓?/option>
+                                <option value="safe" ${dangerKey === 'safe' ? 'selected' : ''}>已收容</option>
+                                <option value="euclid" ${dangerKey === 'euclid' ? 'selected' : ''}>警戒</option>
+                                <option value="keter" ${dangerKey === 'keter' ? 'selected' : ''}>严重警戒</option>
+                                <option value="neutralized" ${dangerKey === 'neutralized' ? 'selected' : ''}>已清剿</option>
                             </select>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group">
-                                <label>妯″洜绫诲瀷</label>
+                                <label>模因类型</label>
                                 <div class="form-control" style="background: transparent; border: none; padding: 0;">${meme}</div>
                             </div>
                             <div class="form-group">
-                                <label>灞炴€?/label>
+                                <label>属性</label>
                                 <div class="form-control" style="background: transparent; border: none; padding: 0;">${attr}</div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>鎻忚堪</label>
-                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${subject.description || '鏆傛棤鎻忚堪'}</div>
+                            <label>描述</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${subject.description || '暂无描述'}</div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label>鐘舵€?/label>
+                                <label>状态</label>
                                 <div class="status-badge status-${subject.status}" style="display: inline-block;">
-                                    ${subject.status === 'active' ? '娲昏穬' : subject.status === 'inactive' ? '浼戠湢' : '宸查攢姣?}
+                                    ${subject.status === 'active' ? '活跃' : subject.status === 'inactive' ? '休眠' : '已销毁'}
                                 </div>
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label>褰撳墠浣嶇疆</label>
-                            <div class="form-control" style="background: transparent; border: none; padding: 0;">${details.location || '鏈褰?}</div>
+                            <label>当前位置</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0;">${details.location || '未记录'}</div>
                         </div>
                         
                         <div class="form-group">
-                            <label>澶栬矊鐗瑰緛</label>
-                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.appearance || '鏈褰?}</div>
+                            <label>外貌特征</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.appearance || '未记录'}</div>
                         </div>
                         
                         <div class="form-group">
-                            <label>鑳藉姏鎻忚堪</label>
-                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.abilities || '鏈褰?}</div>
+                            <label>能力描述</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.abilities || '未记录'}</div>
                         </div>
                         
                         <div class="form-group">
-                            <label>寮辩偣</label>
-                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.weaknesses || '鏈褰?}</div>
+                            <label>弱点</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.weaknesses || '未记录'}</div>
                         </div>
                         
                         <div class="form-group">
-                            <label>鏀跺鎺柦</label>
-                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.containment_procedures || '鏈褰?}</div>
+                            <label>收容措施</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.containment_procedures || '未记录'}</div>
                         </div>
                         
                         <div class="form-group">
-                            <label>澶囨敞</label>
-                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.notes || '鏃?}</div>
+                            <label>备注</label>
+                            <div class="form-control" style="background: transparent; border: none; padding: 0; min-height: auto;">${details.notes || '无'}</div>
                         </div>
                     </div>
                 `;
@@ -1124,16 +1124,16 @@
                 openModal('viewModal');
                 
             } catch (error) {
-                console.error('鍔犺浇璇︽儏澶辫触:', error);
-                showError('鍔犺浇璇︽儏澶辫触: ' + error.message);
+                console.error('加载详情失败:', error);
+                showError('加载详情失败: ' + error.message);
             } finally {
                 hideLoading();
             }
         }
         
-        // 缂栬緫瀹為獙浣?
+        // 编辑实验体
         async function editSubject(subjectId) {
-            showLoading('鍔犺浇缂栬緫鏁版嵁...');
+            showLoading('加载编辑数据...');
             
             try {
                 const { data: subject, error } = await supabase
@@ -1149,7 +1149,7 @@
                 
                 const details = subject.subject_details?.[0] || {};
                 
-                // 濉厖琛ㄥ崟
+                // 填充表单
                 document.getElementById('editId').value = subjectId;
                 document.getElementById('editCode').value = subject.subject_code;
                 document.getElementById('editName').value = subject.subject_name;
@@ -1163,20 +1163,20 @@
                 document.getElementById('editContainment').value = details.containment_procedures || '';
                 document.getElementById('editNotes').value = details.notes || '';
                 
-                // 瑙ｆ瀽骞舵樉绀虹紪鍙烽瑙?
+                // 解析并显示编号预览
                 parseSubjectCode(subject.subject_code);
                 
                 openModal('editModal');
                 
             } catch (error) {
-                console.error('鍔犺浇缂栬緫鏁版嵁澶辫触:', error);
-                showError('鍔犺浇缂栬緫鏁版嵁澶辫触: ' + error.message);
+                console.error('加载编辑数据失败:', error);
+                showError('加载编辑数据失败: ' + error.message);
             } finally {
                 hideLoading();
             }
         }
         
-        // 鎻愪氦缂栬緫
+        // 提交编辑
         async function handleEditSubmit(e) {
             e.preventDefault();
             
@@ -1185,29 +1185,29 @@
             const name = document.getElementById('editName').value.trim();
             
             if (!code || !name) {
-                showError('璇峰～鍐欏繀濉瓧娈?);
+                showError('请填写必填字段');
                 return;
             }
             
-            showLoading('姝ｅ湪鏇存柊...');
+            showLoading('正在更新...');
             
             try {
-                // 瑙ｆ瀽缂栧彿
+                // 解析编号
                 const gen = parseInt(code[0]);
                 const basis = code[1];
                 const meme = code[2];
                 const attr = code[3];
                 
-                // 鏇存柊瀹為獙浣?
+                // 更新实验体
                 const { error: subjectError } = await supabase
                     .from('subjects')
                     .update({
                         subject_code: code,
                         subject_name: name,
                         generation: gen,
-                        creation_basis: basisMap[basis] || '鏈煡',
-                        meme_type: memeMap[meme] || '鏈煡',
-                        attribute: attributeMap[attr] || '鏈煡',
+                        creation_basis: basisMap[basis] || '未知',
+                        meme_type: memeMap[meme] || '未知',
+                        attribute: attributeMap[attr] || '未知',
                         description: document.getElementById('editDescription').value,
                         status: document.getElementById('editStatus').value
                     })
@@ -1215,7 +1215,7 @@
                 
                 if (subjectError) throw subjectError;
                 
-                // 妫€鏌ユ槸鍚﹀瓨鍦ㄨ缁嗕俊鎭?
+                // 检查是否存在详细信息
                 const { data: existingDetails } = await supabase
                     .from('subject_details')
                     .select('id')
@@ -1234,7 +1234,7 @@
                 };
                 
                 if (existingDetails) {
-                    // 鏇存柊鐜版湁璁板綍
+                    // 更新现有记录
                     const { error: detailsError } = await supabase
                         .from('subject_details')
                         .update(detailsData)
@@ -1242,7 +1242,7 @@
                     
                     if (detailsError) throw detailsError;
                 } else {
-                    // 鎻掑叆鏂拌褰?
+                    // 插入新记录
                     const { error: detailsError } = await supabase
                         .from('subject_details')
                         .insert([detailsData]);
@@ -1250,25 +1250,25 @@
                     if (detailsError) throw detailsError;
                 }
                 
-                showSuccess('瀹為獙浣撳凡鎴愬姛鏇存柊');
+                showSuccess('实验体已成功更新');
                 closeModal('editModal');
                 await loadSubjects();
                 
             } catch (error) {
-                console.error('鏇存柊澶辫触:', error);
-                showError('鏇存柊澶辫触: ' + error.message);
+                console.error('更新失败:', error);
+                showError('更新失败: ' + error.message);
             } finally {
                 hideLoading();
             }
         }
         
-        // 鍒犻櫎瀹為獙浣?
+        // 删除实验体
         async function deleteSubject(subjectId) {
-            if (!confirm('纭畾瑕佸垹闄よ繖涓疄楠屼綋鍚楋紵姝ゆ搷浣滀笉鍙仮澶嶃€?)) {
+            if (!confirm('确定要删除这个实验体吗？此操作不可恢复。')) {
                 return;
             }
             
-            showLoading('姝ｅ湪鍒犻櫎...');
+            showLoading('正在删除...');
             
             try {
                 const { error } = await supabase
@@ -1278,25 +1278,25 @@
                 
                 if (error) throw error;
                 
-                showSuccess('瀹為獙浣撳凡鎴愬姛鍒犻櫎');
+                showSuccess('实验体已成功删除');
                 await loadSubjects();
                 
             } catch (error) {
-                console.error('鍒犻櫎澶辫触:', error);
-                showError('鍒犻櫎澶辫触: ' + error.message);
+                console.error('删除失败:', error);
+                showError('删除失败: ' + error.message);
             } finally {
                 hideLoading();
             }
         }
         
-        // 娓呯┖琛ㄥ崟
+        // 清空表单
         function clearForm() {
             document.getElementById('subjectForm').reset();
             document.getElementById('codePreview').style.display = 'none';
-            showMessage('琛ㄥ崟宸叉竻绌?, 'warning');
+            showMessage('表单已清空', 'warning');
         }
         
-        // 鏄剧ず娑堟伅
+        // 显示消息
         function showMessage(message, type = 'success') {
             const alert = document.getElementById('messageAlert');
             alert.textContent = message;
@@ -1320,30 +1320,30 @@
             showMessage(message, 'warning');
         }
         
-        // 鎵撳紑妯℃€佹
+        // 打开模态框
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
         }
         
-        // 鍏抽棴妯℃€佹
+        // 关闭模态框
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
         
-        // 鏄剧ず鍔犺浇鍔ㄧ敾
-        function showLoading(message = '姝ｅ湪澶勭悊...') {
+        // 显示加载动画
+        function showLoading(message = '正在处理...') {
             document.getElementById('loadingText').textContent = message;
             document.getElementById('loadingOverlay').style.display = 'flex';
         }
         
-        // 闅愯棌鍔犺浇鍔ㄧ敾
+        // 隐藏加载动画
         function hideLoading() {
             document.getElementById('loadingOverlay').style.display = 'none';
         }
         
-        // 閫€鍑虹櫥褰?
+        // 退出登录
         function logout() {
-            if (confirm('纭畾瑕侀€€鍑虹櫥褰曞悧锛?)) {
+            if (confirm('确定要退出登录吗？')) {
                 localStorage.removeItem('auth_user');
                 localStorage.removeItem('auth_role');
                 localStorage.removeItem('auth_time');
@@ -1351,9 +1351,9 @@
             }
         }
         
-        // 椤甸潰鍗歌浇鏃舵彁绀?
+        // 页面卸载时提示
         window.addEventListener('beforeunload', function(e) {
-            // 鍙互娣诲姞淇濆瓨鑽夌鐨勯€昏緫
+            // 可以添加保存草稿的逻辑
         });
     </script>
 </body>

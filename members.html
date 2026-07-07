@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>绠＄悊鎴愬憳 - 绠＄悊灞€鎺у埗鍙?/title>
+    <title>管理成员 - 管理局控制台</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 娣诲姞 Supabase 瀹㈡埛绔簱 -->
+    <!-- 添加 Supabase 客户端库 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
-        /* 鍏ㄥ眬鏍峰紡 - 纭繚鍏ㄥ睆 */
+        /* 全局样式 - 确保全屏 */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +21,7 @@
             overflow: auto;
         }
         
-        /* 鎺у埗鍙版牱寮?- 鍏ㄥ睆 */
+        /* 控制台样式 - 全屏 */
         .desktop {
             min-height: 100vh;
             width: 100%;
@@ -31,7 +31,7 @@
             overflow: visible;
         }
         
-        /* 椤堕儴鐘舵€佹爮 - 鍥哄畾 */
+        /* 顶部状态栏 - 固定 */
         .status-bar {
             position: sticky;
             top: 0;
@@ -53,7 +53,7 @@
             flex-wrap: nowrap;
         }
         
-        /* 杩斿洖鎸夐挳鏍峰紡 */
+        /* 返回按钮样式 */
         .back-btn {
             background: rgba(0, 150, 255, 0.2);
             border: 1px solid rgba(0, 150, 255, 0.5);
@@ -118,7 +118,7 @@
             letter-spacing: 1px;
         }
         
-        /* 涓昏鍐呭鍖哄煙 - 鍏ㄥ睆 */
+        /* 主要内容区域 - 全屏 */
         .main-content {
             width: 100%;
             min-height: calc(100vh - 80px);
@@ -126,14 +126,14 @@
             overflow: auto;
         }
         
-        /* 鍐呭瀹瑰櫒 */
+        /* 内容容器 */
         .content-wrapper {
             max-width: 1400px;
             margin: 0 auto;
             width: 100%;
         }
         
-        /* 缁熻鍗＄墖缃戞牸 */
+        /* 统计卡片网格 */
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -174,7 +174,7 @@
             letter-spacing: 1px;
         }
         
-        /* 蹇€熸搷浣?*/
+        /* 快速操作 */
         .quick-actions {
             display: flex;
             gap: 15px;
@@ -216,7 +216,7 @@
             box-shadow: 0 8px 20px rgba(0, 150, 255, 0.3);
         }
         
-        /* 鎴愬憳鍒楄〃鍗＄墖 - 鍏ㄥ */
+        /* 成员列表卡片 - 全宽 */
         .card-container {
             background: rgba(10, 36, 99, 0.7);
             border: 1px solid rgba(0, 150, 255, 0.3);
@@ -244,7 +244,7 @@
             letter-spacing: 1px;
         }
         
-        /* 鎼滅储妗?*/
+        /* 搜索框 */
         .search-container {
             position: relative;
             width: 100%;
@@ -278,7 +278,7 @@
             font-size: 1.2rem;
         }
         
-        /* 鎴愬憳缃戞牸 */
+        /* 成员网格 */
         .members-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -342,7 +342,7 @@
             margin-bottom: 5px;
         }
         
-        /* 鎴愬憳璇︾粏淇℃伅 */
+        /* 成员详细信息 */
         .member-details {
             flex: 1;
             margin-bottom: 20px;
@@ -425,7 +425,7 @@
             border: 1px solid rgba(76, 175, 80, 0.5);
         }
         
-        /* 鎴愬憳鎿嶄綔鍖哄煙 */
+        /* 成员操作区域 */
         .member-actions {
             display: flex;
             gap: 10px;
@@ -478,7 +478,7 @@
             transform: translateY(-2px);
         }
         
-        /* 寮圭獥鏍峰紡 */
+        /* 弹窗样式 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -528,7 +528,7 @@
             padding: 5px;
         }
         
-        /* 琛ㄥ崟鏍峰紡 */
+        /* 表单样式 */
         .form-group {
             margin-bottom: 20px;
         }
@@ -621,7 +621,7 @@
             transform: translateY(-2px);
         }
         
-        /* 绌虹姸鎬?*/
+        /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -635,7 +635,7 @@
             color: rgba(0, 150, 255, 0.3);
         }
         
-        /* 鍝嶅簲寮忚璁?*/
+        /* 响应式设计 */
         @media (max-width: 1200px) {
             .members-grid {
                 grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -676,7 +676,7 @@
                 justify-content: center;
             }
             
-            /* 鍝嶅簲寮忎笅鐨勮繑鍥炴寜閽?*/
+            /* 响应式下的返回按钮 */
             .back-btn {
                 margin-right: 10px;
                 padding: 6px 12px;
@@ -684,7 +684,7 @@
             }
             
             .back-btn span {
-                display: none; /* 鍦ㄥ皬灞忓箷涓婇殣钘?杩斿洖"鏂囧瓧 */
+                display: none; /* 在小屏幕上隐藏"返回"文字 */
             }
             
             .back-btn i {
@@ -693,7 +693,7 @@
             }
         }
         
-        /* 閫€鍑烘寜閽?*/
+        /* 退出按钮 */
         .logout-btn {
             background: rgba(255, 107, 107, 0.2);
             border: 1px solid rgba(255, 107, 107, 0.5);
@@ -715,19 +715,19 @@
     </style>
 </head>
 <body>
-    <!-- 鎺у埗鍙扮晫闈?-->
+    <!-- 控制台界面 -->
     <div class="desktop">
-        <!-- 椤堕儴鐘舵€佹爮 -->
+        <!-- 顶部状态栏 -->
         <div class="status-bar">
             <div class="system-info">
-                <!-- 杩斿洖鎸夐挳 -->
-                <button class="back-btn" onclick="goBackToAdmin()" title="杩斿洖">
+                <!-- 返回按钮 -->
+                <button class="back-btn" onclick="goBackToAdmin()" title="返回">
                     <i class="fas fa-chevron-left"></i>
-                    <span>杩斿洖</span>
+                    <span>返回</span>
                 </button>
                 
-                <img src="qsamlogo.png" alt="绯荤粺鏍囧織" class="system-logo">
-                <div class="system-name">鎴愬憳绠＄悊鎺у埗鍙?/div>
+                <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+                <div class="system-name">成员管理控制台</div>
             </div>
             
             <div class="user-info">
@@ -736,106 +736,106 @@
                     <i class="fas fa-user-shield"></i>
                 </div>
                 <div>
-                    <div id="userDisplayName" style="color: #ffd93d;">璁垮</div>
+                    <div id="userDisplayName" style="color: #ffd93d;">访客</div>
                     <div id="userRoleText" style="font-size: 0.8rem; color: #a3d5ff;">-</div>
                 </div>
                 <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> 閫€鍑?
+                    <i class="fas fa-sign-out-alt"></i> 退出
                 </button>
             </div>
         </div>
         
-        <!-- 涓昏鍐呭鍖哄煙 -->
+        <!-- 主要内容区域 -->
         <div class="main-content">
             <div class="content-wrapper">
-                <!-- 缁熻鍗＄墖 -->
+                <!-- 统计卡片 -->
                 <div class="stats-cards">
                     <div class="stat-card">
-                        <div class="stat-label">鎬绘垚鍛樻暟</div>
+                        <div class="stat-label">总成员数</div>
                         <div class="stat-value" id="totalMembers">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">鎴樻枟缃叉垚鍛?/div>
+                        <div class="stat-label">战斗署成员</div>
                         <div class="stat-value" id="combatMembers">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">绠＄悊鍛?/div>
+                        <div class="stat-label">管理员</div>
                         <div class="stat-value" id="adminCount">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">浠婃棩鏂板</div>
+                        <div class="stat-label">今日新增</div>
                         <div class="stat-value" id="todayNew">0</div>
                     </div>
                 </div>
                 
-                <!-- 蹇€熸搷浣?-->
+                <!-- 快速操作 -->
                 <div class="quick-actions">
                     <button class="action-btn primary" onclick="showAddModal()">
-                        <i class="fas fa-plus"></i> 娣诲姞鏂版垚鍛?
+                        <i class="fas fa-plus"></i> 添加新成员
                     </button>
                     <button class="action-btn" onclick="refreshMembers()">
-                        <i class="fas fa-sync-alt"></i> 鍒锋柊鍒楄〃
+                        <i class="fas fa-sync-alt"></i> 刷新列表
                     </button>
                     <button class="action-btn" onclick="exportMembers()">
-                        <i class="fas fa-download"></i> 瀵煎嚭鏁版嵁
+                        <i class="fas fa-download"></i> 导出数据
                     </button>
-                    <button class="action-btn" onclick="syncToCloud()" title="鍚屾鏁版嵁鍒颁簯绔?>
-                        <i class="fas fa-cloud-upload-alt"></i> 鍚屾鍒颁簯绔?
+                    <button class="action-btn" onclick="syncToCloud()" title="同步数据到云端">
+                        <i class="fas fa-cloud-upload-alt"></i> 同步到云端
                     </button>
                 </div>
                 
-                <!-- 浜戠鐘舵€佹寚绀哄櫒 -->
+                <!-- 云端状态指示器 -->
                 <div id="cloudStatus" style="margin-bottom: 20px; display: none;">
                     <div style="background: rgba(0, 60, 120, 0.5); padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(0, 150, 255, 0.3);">
                         <span id="cloudStatusText" style="color: #a3d5ff;">
-                            <i class="fas fa-cloud"></i> 姝ｅ湪妫€鏌ヤ簯绔繛鎺?..
+                            <i class="fas fa-cloud"></i> 正在检查云端连接...
                         </span>
                     </div>
                 </div>
                 
-                <!-- 鎴愬憳鍒楄〃鍗＄墖 -->
+                <!-- 成员列表卡片 -->
                 <div class="card-container">
                     <div class="card-header">
-                        <h2 class="card-title">鎴愬憳鍒楄〃</h2>
+                        <h2 class="card-title">成员列表</h2>
                         <div class="search-container">
                             <i class="fas fa-search search-icon"></i>
-                            <input type="text" class="search-input" placeholder="鎼滅储鎴愬憳濮撳悕鎴栫敤鎴峰悕..." id="searchInput" onkeyup="searchMembers()">
+                            <input type="text" class="search-input" placeholder="搜索成员姓名或用户名..." id="searchInput" onkeyup="searchMembers()">
                         </div>
                     </div>
                     
                     <div class="members-grid" id="membersContainer">
-                        <!-- 鎴愬憳鍒楄〃浼氶€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                        <!-- 成员列表会通过JavaScript动态生成 -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- 娣诲姞/缂栬緫鎴愬憳寮圭獥 -->
+    <!-- 添加/编辑成员弹窗 -->
     <div class="modal-overlay" id="memberModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">娣诲姞鏂版垚鍛?/h2>
+                <h2 class="modal-title" id="modalTitle">添加新成员</h2>
                 <button class="close-btn" onclick="hideModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <form id="memberForm">
                 <div class="form-group">
-                    <label class="form-label">濮撳悕 *</label>
+                    <label class="form-label">姓名 *</label>
                     <input type="text" class="form-input" id="name" name="name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">鐧诲綍鐢ㄦ埛鍚?*</label>
+                    <label class="form-label">登录用户名 *</label>
                     <input type="text" class="form-input" id="username" name="username" required>
                     <div style="font-size: 0.8rem; color: #a3d5ff; margin-top: 5px;">
-                        鐢ㄤ簬鐧诲綍绯荤粺鐨勫敮涓€鐢ㄦ埛鍚?
+                        用于登录系统的唯一用户名
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">鐧诲綍瀵嗙爜 *</label>
+                    <label class="form-label">登录密码 *</label>
                     <div class="password-wrapper">
                         <input type="password" class="form-input" id="password" name="password" required>
                         <button type="button" class="toggle-password" onclick="togglePassword('password')">
@@ -843,12 +843,12 @@
                         </button>
                     </div>
                     <div style="font-size: 0.8rem; color: #a3d5ff; margin-top: 5px;">
-                        瀵嗙爜鑷冲皯6浣嶅瓧绗?
+                        密码至少6位字符
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">纭瀵嗙爜 *</label>
+                    <label class="form-label">确认密码 *</label>
                     <div class="password-wrapper">
                         <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" required>
                         <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
@@ -858,119 +858,119 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">瑙掕壊鏉冮檺 *</label>
+                    <label class="form-label">角色权限 *</label>
                     <select class="form-select" id="role" name="role" required>
-                        <option value="user">鏅€氭垚鍛?/option>
-                        <option value="admin">绠＄悊鍛?/option>
-                        <option value="viewer">瑙傚療鍛?/option>
+                        <option value="user">普通成员</option>
+                        <option value="admin">管理员</option>
+                        <option value="viewer">观察员</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">鎵€灞為儴闂?*</label>
+                    <label class="form-label">所属部门 *</label>
                     <select class="form-select" id="department" name="department" required onchange="toggleTeamFields()">
-                        <option value="鏈垎閰?>鏈垎閰?/option>
-                        <option value="绠＄悊灞?>绠＄悊灞?/option>
-                        <option value="鐮旂┒澶?>鐮旂┒澶?/option>
-                        <option value="鍚庡嫟閮?>鍚庡嫟閮?/option>
-                        <option value="鎴樻枟缃?>鎴樻枟缃?/option>
+                        <option value="未分配">未分配</option>
+                        <option value="管理层">管理层</option>
+                        <option value="研究处">研究处</option>
+                        <option value="后勤部">后勤部</option>
+                        <option value="战斗署">战斗署</option>
                     </select>
                 </div>
                 
                 <div class="form-group" id="teamGroup" style="display: none;">
-                    <label class="form-label">鎵€灞為槦浼?*</label>
+                    <label class="form-label">所属队伍 *</label>
                     <select class="form-select" id="team" name="team">
-                        <option value="">璇烽€夋嫨闃熶紞</option>
-                        <option value="瑁傞殭搴斿缁?>瑁傞殭搴斿缁?/option>
-                        <option value="鍩庡競搴旀€ョ粍">鍩庡競搴旀€ョ粍</option>
-                        <option value="鐗规畩鏀跺缁?>鐗规畩鏀跺缁?/option>
-                        <option value="404鐗归仯闃?>404鐗归仯闃?/option>
-                        <option value="缁煎悎绠＄悊缁?>缁煎悎绠＄悊缁?/option>
+                        <option value="">请选择队伍</option>
+                        <option value="裂隙应对组">裂隙应对组</option>
+                        <option value="城市应急组">城市应急组</option>
+                        <option value="特殊收容组">特殊收容组</option>
+                        <option value="404特遣队">404特遣队</option>
+                        <option value="综合管理组">综合管理组</option>
                     </select>
                 </div>
                 
                 <div class="form-group" id="positionGroup" style="display: none;">
-                    <label class="form-label">缁勫唴鑱屼綅 *</label>
+                    <label class="form-label">组内职位 *</label>
                     <select class="form-select" id="position" name="position">
-                        <option value="">璇烽€夋嫨鑱屼綅</option>
-                        <option value="闃熷憳">闃熷憳</option>
-                        <option value="闃熼暱">闃熼暱</option>
+                        <option value="">请选择职位</option>
+                        <option value="队员">队员</option>
+                        <option value="队长">队长</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">鐘舵€?*</label>
+                    <label class="form-label">状态 *</label>
                     <select class="form-select" id="status" name="status" required>
-                        <option value="active">娲昏穬</option>
-                        <option value="inactive">鏈縺娲?/option>
-                        <option value="pending">寰呭鏍?/option>
+                        <option value="active">活跃</option>
+                        <option value="inactive">未激活</option>
+                        <option value="pending">待审核</option>
                     </select>
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-cancel" onclick="hideModal()">鍙栨秷</button>
-                    <button type="submit" class="btn btn-save" id="submitBtn">淇濆瓨</button>
+                    <button type="button" class="btn btn-cancel" onclick="hideModal()">取消</button>
+                    <button type="submit" class="btn btn-save" id="submitBtn">保存</button>
                 </div>
             </form>
         </div>
     </div>
     
-    <!-- 鍒犻櫎纭寮圭獥 -->
+    <!-- 删除确认弹窗 -->
     <div class="modal-overlay" id="deleteModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">纭鍒犻櫎</h2>
+                <h2 class="modal-title">确认删除</h2>
                 <button class="close-btn" onclick="hideDeleteModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div style="color: #e0f7ff; line-height: 1.6; margin-bottom: 30px;">
-                <p>纭畾瑕佸垹闄ゆ垚鍛?<span id="deleteMemberName" style="color: #ff6b6b; font-weight: bold;"></span> 鍚楋紵</p>
+                <p>确定要删除成员 <span id="deleteMemberName" style="color: #ff6b6b; font-weight: bold;"></span> 吗？</p>
                 <p style="color: #ffd93d; margin-top: 15px;">
-                    <i class="fas fa-exclamation-triangle"></i> 姝ゆ搷浣滀笉鍙€嗭紝灏嗘案涔呭垹闄よ鎴愬憳鐨勬墍鏈夋暟鎹€?
+                    <i class="fas fa-exclamation-triangle"></i> 此操作不可逆，将永久删除该成员的所有数据。
                 </p>
             </div>
             <div class="form-actions">
-                <button class="btn btn-cancel" onclick="hideDeleteModal()">鍙栨秷</button>
-                <button class="btn" style="background: rgba(255, 107, 107, 0.8);" onclick="confirmDelete()">纭鍒犻櫎</button>
+                <button class="btn btn-cancel" onclick="hideDeleteModal()">取消</button>
+                <button class="btn" style="background: rgba(255, 107, 107, 0.8);" onclick="confirmDelete()">确认删除</button>
             </div>
         </div>
     </div>
     
     <script>
         // ================================================
-        // 1. SUPABASE 閰嶇疆
+        // 1. SUPABASE 配置
         // ================================================
         const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
         
-        // 鍒涘缓Supabase瀹㈡埛绔紩鐢紙閬垮厤涓庡叏灞€鍚屽悕鍙橀噺鍐茬獊锛?
+        // 创建Supabase客户端引用（避免与全局同名变量冲突）
         let supabaseClient = window.supabase || window.supabaseClient || null;
         let cloudEnabled = false;
         
-        // 淇鍚庣殑鍒濆鍖栧嚱鏁?
+        // 修复后的初始化函数
         async function initSupabase() {
             try {
-                console.log('寮€濮嬪垵濮嬪寲Supabase...');
+                console.log('开始初始化Supabase...');
                 
-                // 绛夊緟Supabase搴撳姞杞藉畬鎴?
+                // 等待Supabase库加载完成
                 if (typeof window.supabase === 'undefined') {
-                    console.error('Supabase搴撴湭鍔犺浇锛?);
-                    updateCloudStatus('error', 'Supabase搴撴湭鍔犺浇');
+                    console.error('Supabase库未加载！');
+                    updateCloudStatus('error', 'Supabase库未加载');
                     return false;
                 }
                 
-                // 妫€鏌ラ厤缃槸鍚﹀畬鏁?
+                // 检查配置是否完整
                 if (!SUPABASE_URL || SUPABASE_URL.includes('your-project-id') || 
                     !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes('your-anon-key')) {
-                    console.warn('Supabase閰嶇疆涓嶅畬鏁达紝璇锋鏌RL鍜孉non Key');
-                    updateCloudStatus('disabled', 'Supabase閰嶇疆涓嶅畬鏁?);
+                    console.warn('Supabase配置不完整，请检查URL和Anon Key');
+                    updateCloudStatus('disabled', 'Supabase配置不完整');
                     return false;
                 }
                 
-                console.log('Supabase閰嶇疆妫€鏌ラ€氳繃');
+                console.log('Supabase配置检查通过');
                 
-                // 鍒涘缓Supabase瀹㈡埛绔?
+                // 创建Supabase客户端
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: {
                         persistSession: false,
@@ -979,64 +979,64 @@
                 });
                 
                 cloudEnabled = true;
-                console.log('鉁?Supabase瀹㈡埛绔凡鍒濆鍖?);
+                console.log('✅ Supabase客户端已初始化');
                 
-                // 娴嬭瘯杩炴帴
+                // 测试连接
                 const connected = await testSupabaseConnection();
                 return connected;
                 
             } catch (e) {
-                console.error('Supabase鍒濆鍖栧け璐?', e);
-                updateCloudStatus('error', '鍒濆鍖栧け璐? ' + e.message);
+                console.error('Supabase初始化失败:', e);
+                updateCloudStatus('error', '初始化失败: ' + e.message);
                 return false;
             }
         }
         
-        // 娴嬭瘯杩炴帴
+        // 测试连接
         async function testSupabaseConnection() {
             if (!supabaseClient) return false;
             
             try {
-                console.log('娴嬭瘯Supabase杩炴帴...');
-                updateCloudStatus('connecting', '姝ｅ湪娴嬭瘯浜戠杩炴帴...');
+                console.log('测试Supabase连接...');
+                updateCloudStatus('connecting', '正在测试云端连接...');
                 
-                // 浣跨敤鏇寸畝鍗曠殑娴嬭瘯鏂规硶
+                // 使用更简单的测试方法
                 const { data, error } = await supabaseClient
                     .from('users')
                     .select('id')
                     .limit(1);
                 
                 if (error) {
-                    console.error('鉂?Supabase杩炴帴娴嬭瘯澶辫触:', error);
+                    console.error('❌ Supabase连接测试失败:', error);
                     
-                    // 妫€鏌ユ槸鍚︿负琛ㄤ笉瀛樺湪閿欒
+                    // 检查是否为表不存在错误
                     if (error.code === '42P01' || error.message.includes('does not exist')) {
-                        console.log('users琛ㄥ彲鑳戒笉瀛樺湪锛岄渶瑕佸厛鍦⊿upabase涓垱寤?);
-                        updateCloudStatus('error', 'users琛ㄤ笉瀛樺湪锛岃鍏堝垱寤鸿〃');
+                        console.log('users表可能不存在，需要先在Supabase中创建');
+                        updateCloudStatus('error', 'users表不存在，请先创建表');
                     } else {
-                        updateCloudStatus('error', '杩炴帴澶辫触: ' + error.message);
+                        updateCloudStatus('error', '连接失败: ' + error.message);
                     }
                     return false;
                 }
                 
-                console.log('鉁?Supabase杩炴帴娴嬭瘯鎴愬姛');
-                updateCloudStatus('connected', '浜戠杩炴帴鎴愬姛');
+                console.log('✅ Supabase连接测试成功');
+                updateCloudStatus('connected', '云端连接成功');
                 return true;
             } catch (e) {
-                console.error('杩炴帴娴嬭瘯寮傚父:', e);
-                updateCloudStatus('error', '娴嬭瘯寮傚父: ' + e.message);
+                console.error('连接测试异常:', e);
+                updateCloudStatus('error', '测试异常: ' + e.message);
                 return false;
             }
         }
         
-        // 鏇存柊浜戠鐘舵€佹樉绀?
+        // 更新云端状态显示
         function updateCloudStatus(status, message) {
             try {
                 const statusDiv = document.getElementById('cloudStatus');
                 const statusText = document.getElementById('cloudStatusText');
                 
                 if (!statusDiv || !statusText) {
-                    console.warn('浜戠鐘舵€佸厓绱犳湭鎵惧埌');
+                    console.warn('云端状态元素未找到');
                     return;
                 }
                 
@@ -1061,7 +1061,7 @@
                         break;
                 }
                 
-                // 3绉掑悗鑷姩闅愯棌锛堥櫎闈炴槸杩炴帴鎴愬姛鐘舵€侊級
+                // 3秒后自动隐藏（除非是连接成功状态）
                 if (status === 'error' || status === 'disabled') {
                     setTimeout(() => {
                         if (statusDiv.style.opacity !== '0') {
@@ -1071,12 +1071,12 @@
                     }, 3000);
                 }
             } catch (e) {
-                console.error('鏇存柊浜戠鐘舵€佸け璐?', e);
+                console.error('更新云端状态失败:', e);
             }
         }
         
         // ================================================
-        // 2. 鏁版嵁瀛樺偍閿悕鍜岄粯璁ょ敤鎴?
+        // 2. 数据存储键名和默认用户
         // ================================================
         const USERS_STORAGE_KEY = 'qs_users_data';
         const DEFAULT_USERS = {
@@ -1087,22 +1087,22 @@
                 role: 'admin', 
                 status: 'active', 
                 joinDate: '2023-01-01', 
-                notes: '绯荤粺绠＄悊鍛?,
-                department: '绠＄悊灞?,
+                notes: '系统管理员',
+                department: '管理层',
                 team: '',
                 position: ''
             },
-            '003绔?: { 
+            '003竺': { 
                 id: 2,
-                name: '003绔?, 
+                name: '003竺', 
                 password: 'zhu0902', 
                 role: 'user', 
                 status: 'active', 
                 joinDate: '2023-02-15', 
-                notes: '鏅€氭垚鍛?,
-                department: '鎴樻枟缃?,
-                team: '鐗规畩鏀跺缁?,
-                position: '闃熷憳'
+                notes: '普通成员',
+                department: '战斗署',
+                team: '特殊收容组',
+                position: '队员'
             }
         };
 
@@ -1113,14 +1113,14 @@
         let currentCloudSync = false;
 
         // ================================================
-        // 3. 椤甸潰鍔犺浇鏃跺垵濮嬪寲锛堜慨澶嶇増锛?
+        // 3. 页面加载时初始化（修复版）
         // ================================================
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('椤甸潰鍔犺浇瀹屾垚锛屽紑濮嬪垵濮嬪寲...');
+            console.log('页面加载完成，开始初始化...');
             
-            // 1. 妫€鏌ョ櫥褰曠姸鎬?
+            // 1. 检查登录状态
             const role = localStorage.getItem('auth_role');
-            // 鍏佽 admin 鎴?绠＄悊灞傝闂?
+            // 允许 admin 或 管理层访问
             if (role !== 'admin') {
                 let isMgmt = false;
                 try {
@@ -1134,45 +1134,45 @@
                         if (userInfo) {
                             const lvl = (userInfo.viewer_level || userInfo.level || userInfo.role || '').toString().toLowerCase();
                             const dept = (userInfo.department || '').toString().toLowerCase();
-                            if (lvl === 'management' || lvl === '绠＄悊' || lvl === '绠＄悊灞?) isMgmt = true;
-                            if (dept.includes('绠＄悊') || dept.includes('management')) isMgmt = true;
+                            if (lvl === 'management' || lvl === '管理' || lvl === '管理层') isMgmt = true;
+                            if (dept.includes('管理') || dept.includes('management')) isMgmt = true;
                         }
                     }
                 } catch (e) {
                     console.warn('management detection failed', e);
                 }
                 if (!isMgmt) {
-                    alert('璇峰厛浠ョ鐞嗗憳韬唤鐧诲綍锛?);
+                    alert('请先以管理员身份登录！');
                     window.location.href = 'index.html';
                     return;
                 }
             }
 
-            // 鏄剧ず鍙充笂瑙掔櫥褰曞悕鍜岃鑹叉枃鏈?
+            // 显示右上角登录名和角色文本
             try {
                 const displayNameEl = document.getElementById('userDisplayName');
                 const roleTextEl = document.getElementById('userRoleText');
                 const username = localStorage.getItem('auth_user') || '';
-                const displayName = localStorage.getItem('auth_user_name') || username || '璁垮';
+                const displayName = localStorage.getItem('auth_user_name') || username || '访客';
                 if (displayNameEl) displayNameEl.textContent = displayName;
                 if (roleTextEl) {
-                    if (role === 'admin') roleTextEl.textContent = '鏈€楂樻潈闄愮鐞嗗憳';
-                    else roleTextEl.textContent = '绠＄悊灞傝瀵熷憳';
+                    if (role === 'admin') roleTextEl.textContent = '最高权限管理员';
+                    else roleTextEl.textContent = '管理层观察员';
                 }
             } catch (e) { console.warn('set header user failed', e); }
             
-            // 2. 绔嬪嵆鏇存柊鏃堕棿鏄剧ず
+            // 2. 立即更新时间显示
             updateTime();
             setInterval(updateTime, 1000);
             
-            // 3. 鍒濆鍖朣upabase锛堢瓑寰呭畬鎴愶級
-            updateCloudStatus('connecting', '姝ｅ湪鍒濆鍖栦簯绔繛鎺?..');
+            // 3. 初始化Supabase（等待完成）
+            updateCloudStatus('connecting', '正在初始化云端连接...');
             const supabaseReady = await initSupabase();
             
-            // 4. 鍔犺浇鎴愬憳鏁版嵁
+            // 4. 加载成员数据
             await loadMembers();
             
-            // 5. 娣诲姞ESC閿繑鍥炴敮鎸?
+            // 5. 添加ESC键返回支持
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     goBackToAdmin();
@@ -1180,19 +1180,19 @@
             });
         });
 
-        // 杩斿洖 admin 椤甸潰
+        // 返回 admin 页面
         function goBackToAdmin() {
-            if (confirm('纭畾瑕佽繑鍥炴帶鍒跺彴鍚楋紵')) {
-                // 鏄剧ず鍔犺浇鐘舵€?
+            if (confirm('确定要返回控制台吗？')) {
+                // 显示加载状态
                 const backBtn = document.querySelector('.back-btn');
                 const originalHTML = backBtn.innerHTML;
-                backBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 杩斿洖涓?..`;
+                backBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 返回中...`;
                 backBtn.disabled = true;
                 
-                // 妯℃嫙寤惰繜鍚庤烦杞?
+                // 模拟延迟后跳转
                 setTimeout(() => {
                     try {
-                        // 濡傛灉鏄鐞嗗眰瑙傚療鍛樺垯杩斿洖 viewer 鎺у埗鍙?
+                        // 如果是管理层观察员则返回 viewer 控制台
                         let isMgmt = false;
                         if (localStorage.getItem('viewer_management') === '1') isMgmt = true;
                         if (localStorage.getItem('auth_viewer_level') === 'management') isMgmt = true;
@@ -1204,8 +1204,8 @@
                             if (userInfo) {
                                 const lvl = (userInfo.viewer_level || userInfo.level || userInfo.role || '').toString().toLowerCase();
                                 const dept = (userInfo.department || '').toString().toLowerCase();
-                                if (lvl === 'management' || lvl === '绠＄悊' || lvl === '绠＄悊灞?) isMgmt = true;
-                                if (dept.includes('绠＄悊') || dept.includes('management')) isMgmt = true;
+                                if (lvl === 'management' || lvl === '管理' || lvl === '管理层') isMgmt = true;
+                                if (dept.includes('管理') || dept.includes('management')) isMgmt = true;
                             }
                         }
 
@@ -1218,7 +1218,7 @@
             }
         }
 
-        // 鏇存柊鏃堕棿鏄剧ず锛堜慨澶嶇増锛?
+        // 更新时间显示（修复版）
         function updateTime() {
             try {
                 const now = new Date();
@@ -1231,22 +1231,22 @@
                     timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
                 }
             } catch (e) {
-                console.error('鏇存柊鏃堕棿澶辫触:', e);
+                console.error('更新时间失败:', e);
             }
         }
 
         // ================================================
-        // 4. 浜戠鏁版嵁鎿嶄綔鍑芥暟锛堜慨澶嶇増锛?
+        // 4. 云端数据操作函数（修复版）
         // ================================================
         
-        // 浠嶴upabase鍔犺浇鎵€鏈夌敤鎴锋暟鎹?
+        // 从Supabase加载所有用户数据
         async function loadUsersFromSupabase() {
             if (!cloudEnabled || !supabaseClient) {
-                console.log('浜戠鍔熻兘鏈惎鐢紝浣跨敤鏈湴鏁版嵁');
+                console.log('云端功能未启用，使用本地数据');
                 return null;
             }
 
-            updateCloudStatus('connecting', '姝ｅ湪浠庝簯绔姞杞芥垚鍛樻暟鎹?..');
+            updateCloudStatus('connecting', '正在从云端加载成员数据...');
 
             try {
                 const { data: users, error } = await supabaseClient
@@ -1255,44 +1255,44 @@
                     .order('id', { ascending: true });
                 
                 if (error) {
-                    console.error('浠嶴upabase鍔犺浇鐢ㄦ埛澶辫触:', error);
+                    console.error('从Supabase加载用户失败:', error);
                     
-                    // 妫€鏌ユ槸鍚︿负琛ㄤ笉瀛樺湪閿欒
+                    // 检查是否为表不存在错误
                     if (error.code === '42P01' || error.message.includes('does not exist')) {
-                        console.log('users琛ㄥ彲鑳戒笉瀛樺湪锛岄渶瑕佸厛鍦⊿upabase涓垱寤?);
-                        updateCloudStatus('error', 'users琛ㄤ笉瀛樺湪锛岃鍏堝垱寤鸿〃');
+                        console.log('users表可能不存在，需要先在Supabase中创建');
+                        updateCloudStatus('error', 'users表不存在，请先创建表');
                     } else {
-                        updateCloudStatus('error', '鍔犺浇澶辫触: ' + error.message);
+                        updateCloudStatus('error', '加载失败: ' + error.message);
                     }
                     
                     return null;
                 }
                 
-                console.log(`浠嶴upabase鍔犺浇浜?${users ? users.length : 0} 涓敤鎴穈);
+                console.log(`从Supabase加载了 ${users ? users.length : 0} 个用户`);
                 
                 if (!users || users.length === 0) {
-                    updateCloudStatus('connected', '浜戠鏃犵敤鎴锋暟鎹?);
+                    updateCloudStatus('connected', '云端无用户数据');
                 } else {
-                    updateCloudStatus('connected', `浜戠鍔犺浇瀹屾垚 (${users.length}涓垚鍛?`);
+                    updateCloudStatus('connected', `云端加载完成 (${users.length}个成员)`);
                 }
                 
                 return users;
             } catch (e) {
-                console.error('缃戠粶鎴朣upabase閿欒:', e);
-                updateCloudStatus('error', '缃戠粶閿欒: ' + e.message);
+                console.error('网络或Supabase错误:', e);
+                updateCloudStatus('error', '网络错误: ' + e.message);
                 return null;
             }
         }
         
-        // 娣诲姞鐢ㄦ埛鍒癝upabase
+        // 添加用户到Supabase
         async function addUserToSupabase(userData) {
             if (!cloudEnabled || !supabaseClient) {
-                console.log('浜戠鍔熻兘鏈惎鐢紝浠呬繚瀛樺埌鏈湴');
-                return { success: false, message: '浜戠鍔熻兘鏈惎鐢? };
+                console.log('云端功能未启用，仅保存到本地');
+                return { success: false, message: '云端功能未启用' };
             }
 
             try {
-                // 妫€鏌ョ敤鎴峰悕鏄惁宸插瓨鍦?
+                // 检查用户名是否已存在
                 const { data: existingUser, error: checkError } = await supabaseClient
                     .from('users')
                     .select('username')
@@ -1300,10 +1300,10 @@
                     .single();
                 
                 if (existingUser) {
-                    return { success: false, message: '鐢ㄦ埛鍚嶅凡瀛樺湪浜庝簯绔? };
+                    return { success: false, message: '用户名已存在于云端' };
                 }
                 
-                // 鎻掑叆鏂扮敤鎴?
+                // 插入新用户
                 const { data, error } = await supabaseClient
                     .from('users')
                     .insert([{
@@ -1312,29 +1312,29 @@
                         password: userData.password,
                         role: userData.role,
                         status: userData.status || 'active',
-                        department: userData.department || '鏈垎閰?,
+                        department: userData.department || '未分配',
                         team: userData.team || '',
                         position: userData.position || '',
                         join_date: userData.joinDate || new Date().toISOString().split('T')[0],
-                        notes: userData.notes || '绯荤粺鐢ㄦ埛'
+                        notes: userData.notes || '系统用户'
                     }])
                     .select();
                 
                 if (error) throw error;
                 
-                console.log('鐢ㄦ埛宸叉坊鍔犲埌Supabase:', data[0]);
+                console.log('用户已添加到Supabase:', data[0]);
                 return { success: true, data: data[0] };
             } catch (error) {
-                console.error('娣诲姞鐢ㄦ埛鍒癝upabase澶辫触:', error);
+                console.error('添加用户到Supabase失败:', error);
                 return { success: false, message: error.message };
             }
         }
         
-        // 鏇存柊Supabase涓殑鐢ㄦ埛
+        // 更新Supabase中的用户
         async function updateUserInSupabase(userId, userData) {
             if (!cloudEnabled || !supabaseClient) {
-                console.log('浜戠鍔熻兘鏈惎鐢紝浠呮洿鏂版湰鍦版暟鎹?);
-                return { success: false, message: '浜戠鍔熻兘鏈惎鐢? };
+                console.log('云端功能未启用，仅更新本地数据');
+                return { success: false, message: '云端功能未启用' };
             }
 
             try {
@@ -1349,26 +1349,26 @@
                         department: userData.department,
                         team: userData.team,
                         position: userData.position,
-                        notes: userData.notes || '绯荤粺鐢ㄦ埛'
+                        notes: userData.notes || '系统用户'
                     })
                     .eq('id', userId)
                     .select();
                 
                 if (error) throw error;
                 
-                console.log('鐢ㄦ埛宸插湪Supabase鏇存柊:', data[0]);
+                console.log('用户已在Supabase更新:', data[0]);
                 return { success: true, data: data[0] };
             } catch (error) {
-                console.error('鏇存柊Supabase鐢ㄦ埛澶辫触:', error);
+                console.error('更新Supabase用户失败:', error);
                 return { success: false, message: error.message };
             }
         }
         
-        // 浠嶴upabase鍒犻櫎鐢ㄦ埛
+        // 从Supabase删除用户
         async function deleteUserFromSupabase(userId) {
             if (!cloudEnabled || !supabaseClient) {
-                console.log('浜戠鍔熻兘鏈惎鐢紝浠呭垹闄ゆ湰鍦版暟鎹?);
-                return { success: false, message: '浜戠鍔熻兘鏈惎鐢? };
+                console.log('云端功能未启用，仅删除本地数据');
+                return { success: false, message: '云端功能未启用' };
             }
 
             try {
@@ -1379,27 +1379,27 @@
                 
                 if (error) throw error;
                 
-                console.log('鐢ㄦ埛宸蹭粠Supabase鍒犻櫎:', userId);
+                console.log('用户已从Supabase删除:', userId);
                 return { success: true };
             } catch (error) {
-                console.error('浠嶴upabase鍒犻櫎鐢ㄦ埛澶辫触:', error);
+                console.error('从Supabase删除用户失败:', error);
                 return { success: false, message: error.message };
             }
         }
         
-        // 鍚屾鏈湴鏁版嵁鍒癝upabase
+        // 同步本地数据到Supabase
         async function syncLocalToSupabase() {
             if (!cloudEnabled || !supabaseClient) {
-                alert('浜戠鍔熻兘鏈厤缃垨鍒濆鍖栧け璐?);
+                alert('云端功能未配置或初始化失败');
                 return false;
             }
 
-            updateCloudStatus('connecting', '姝ｅ湪鍚屾鏁版嵁鍒颁簯绔?..');
+            updateCloudStatus('connecting', '正在同步数据到云端...');
             
             const localData = localStorage.getItem(USERS_STORAGE_KEY);
             if (!localData) {
-                alert('鏈湴娌℃湁鏁版嵁鍙悓姝?);
-                updateCloudStatus('connected', '浜戠鏁版嵁宸插悓姝?);
+                alert('本地没有数据可同步');
+                updateCloudStatus('connected', '云端数据已同步');
                 return false;
             }
             
@@ -1407,14 +1407,14 @@
                 const localUsers = JSON.parse(localData);
                 const usernames = Object.keys(localUsers);
                 
-                // 鑾峰彇浜戠鐜版湁鐢ㄦ埛
+                // 获取云端现有用户
                 const { data: cloudUsers } = await supabaseClient
                     .from('users')
                     .select('username');
                 
                 const cloudUsernames = cloudUsers ? cloudUsers.map(u => u.username) : [];
                 
-                // 鎵惧嚭闇€瑕佹坊鍔犵殑鐢ㄦ埛
+                // 找出需要添加的用户
                 const usersToAdd = [];
                 let successCount = 0;
                 
@@ -1427,7 +1427,7 @@
                             password: user.password,
                             role: user.role,
                             status: user.status || 'active',
-                            department: user.department || '鏈垎閰?,
+                            department: user.department || '未分配',
                             team: user.team || '',
                             position: user.position || '',
                             joinDate: user.joinDate,
@@ -1440,44 +1440,44 @@
                     }
                 }
                 
-                updateCloudStatus('connected', `鏁版嵁鍚屾瀹屾垚 (${successCount}涓垚鍛樺凡鍚屾)`);
-                alert(`鏁版嵁鍚屾瀹屾垚锛佹垚鍔熷悓姝ヤ簡 ${successCount} 涓垚鍛樺埌浜戠銆俙);
+                updateCloudStatus('connected', `数据同步完成 (${successCount}个成员已同步)`);
+                alert(`数据同步完成！成功同步了 ${successCount} 个成员到云端。`);
                 currentCloudSync = true;
                 return true;
             } catch (error) {
-                console.error('鍚屾鍒癝upabase澶辫触:', error);
-                updateCloudStatus('error', '鏁版嵁鍚屾澶辫触');
-                alert('鏁版嵁鍚屾澶辫触: ' + error.message);
+                console.error('同步到Supabase失败:', error);
+                updateCloudStatus('error', '数据同步失败');
+                alert('数据同步失败: ' + error.message);
                 return false;
             }
         }
         
         // ================================================
-        // 5. 涓昏鏁版嵁绠＄悊鍑芥暟锛堜簯绔?鏈湴娣峰悎妯″紡锛?
+        // 5. 主要数据管理函数（云端+本地混合模式）
         // ================================================
         
-        // 鍔犺浇鎴愬憳鏁版嵁锛堜簯绔紭鍏堬級- 淇鐗?
+        // 加载成员数据（云端优先）- 修复版
         async function loadMembers() {
-            console.log('寮€濮嬪姞杞芥垚鍛樻暟鎹紙浜戠浼樺厛锛?..');
+            console.log('开始加载成员数据（云端优先）...');
             
-            // 鏄剧ず鍔犺浇鐘舵€?
+            // 显示加载状态
             const membersContainer = document.getElementById('membersContainer');
             if (membersContainer) {
                 membersContainer.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #6b9ccc;">
                         <div style="width: 50px; height: 50px; border: 4px solid rgba(79, 195, 255, 0.3); border-top: 4px solid #4fc3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-                        <div>姝ｅ湪鍔犺浇鎴愬憳鏁版嵁...</div>
+                        <div>正在加载成员数据...</div>
                     </div>
                 `;
             }
             
             try {
-                // 棣栧厛灏濊瘯浠庝簯绔姞杞?
+                // 首先尝试从云端加载
                 const cloudUsers = await loadUsersFromSupabase();
                 
                 if (cloudUsers && cloudUsers.length > 0) {
-                    // 浜戠鏁版嵁鍙敤锛屼娇鐢ㄤ簯绔暟鎹?
-                    console.log('浣跨敤浜戠鏁版嵁');
+                    // 云端数据可用，使用云端数据
+                    console.log('使用云端数据');
                     members = cloudUsers.map(user => ({
                         id: user.id,
                         name: user.name,
@@ -1486,18 +1486,18 @@
                         status: user.status,
                         joinDate: user.join_date,
                         notes: user.notes,
-                        department: user.department || '鏈垎閰?,
+                        department: user.department || '未分配',
                         team: user.team || '',
                         position: user.position || ''
                     }));
                     
-                    // 鍚屾鍒版湰鍦板瓨鍌ㄤ綔涓虹紦瀛?
+                    // 同步到本地存储作为缓存
                     await saveUsersToLocalStorage(cloudUsers);
                     currentCloudSync = true;
                     
                 } else {
-                    // 浜戠涓嶅彲鐢紝浣跨敤鏈湴鏁版嵁
-                    console.log('浜戠鏁版嵁涓嶅彲鐢紝浣跨敤鏈湴鏁版嵁');
+                    // 云端不可用，使用本地数据
+                    console.log('云端数据不可用，使用本地数据');
                     const stored = localStorage.getItem(USERS_STORAGE_KEY);
                     
                     if (stored) {
@@ -1511,12 +1511,12 @@
                                 status: user.status,
                                 joinDate: user.joinDate,
                                 notes: user.notes,
-                                department: user.department || '鏈垎閰?,
+                                department: user.department || '未分配',
                                 team: user.team || '',
                                 position: user.position || ''
                             }));
                         } catch (e) {
-                            console.error('鍔犺浇鐢ㄦ埛鏁版嵁澶辫触:', e);
+                            console.error('加载用户数据失败:', e);
                             loadDefaultMembers();
                         }
                     } else {
@@ -1530,14 +1530,14 @@
                 renderMembers();
                 
             } catch (error) {
-                console.error('鍔犺浇鎴愬憳鏁版嵁澶辫触:', error);
+                console.error('加载成员数据失败:', error);
                 
-                // 鏄剧ず閿欒鐘舵€?
+                // 显示错误状态
                 if (membersContainer) {
                     membersContainer.innerHTML = `
                         <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #ff6b6b;">
                             <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
-                            <h3>鍔犺浇澶辫触</h3>
+                            <h3>加载失败</h3>
                             <p>${error.message}</p>
                             <button onclick="location.reload()" style="
                                 margin-top: 20px;
@@ -1548,7 +1548,7 @@
                                 border-radius: 8px;
                                 cursor: pointer;
                             ">
-                                <i class="fas fa-redo"></i> 閲嶆柊鍔犺浇
+                                <i class="fas fa-redo"></i> 重新加载
                             </button>
                         </div>
                     `;
@@ -1556,7 +1556,7 @@
             }
         }
         
-        // 淇濆瓨鐢ㄦ埛鏁版嵁鍒版湰鍦板瓨鍌?
+        // 保存用户数据到本地存储
         async function saveUsersToLocalStorage(cloudUsers) {
             const usersData = {};
             const loginUsersData = {};
@@ -1570,18 +1570,18 @@
                     status: user.status,
                     joinDate: user.join_date,
                     notes: user.notes,
-                    department: user.department || '鏈垎閰?,
+                    department: user.department || '未分配',
                     team: user.team || '',
                     position: user.position || ''
                 };
                 
-                // 瑙掕壊杞崲锛?user' -> 'member' 鐢ㄤ簬鐧诲綍绯荤粺
+                // 角色转换：'user' -> 'member' 用于登录系统
                 const loginRole = user.role === 'user' ? 'member' : user.role;
                 loginUsersData[user.username] = {
                     password: user.password,
                     role: loginRole,
                     name: user.name,
-                    department: user.department || '鏈垎閰?,
+                    department: user.department || '未分配',
                     team: user.team || '',
                     position: user.position || ''
                 };
@@ -1591,7 +1591,7 @@
             localStorage.setItem('login_users', JSON.stringify(loginUsersData));
         }
         
-        // 鍔犺浇榛樿鎴愬憳鏁版嵁
+        // 加载默认成员数据
         function loadDefaultMembers() {
             const usersData = DEFAULT_USERS;
             members = Object.entries(usersData).map(([username, user]) => ({
@@ -1602,17 +1602,17 @@
                 status: user.status,
                 joinDate: user.joinDate,
                 notes: user.notes,
-                department: user.department || '鏈垎閰?,
+                department: user.department || '未分配',
                 team: user.team || '',
                 position: user.position || ''
             }));
             
-            // 淇濆瓨鍒版湰鍦板瓨鍌?
+            // 保存到本地存储
             localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(usersData));
             updateLoginSystemUsers(usersData);
         }
         
-        // 鏇存柊鐧诲綍绯荤粺鐨勭敤鎴锋暟鎹?
+        // 更新登录系统的用户数据
         function updateLoginSystemUsers(users) {
             const loginUsers = {};
             for (const [username, user] of Object.entries(users)) {
@@ -1621,7 +1621,7 @@
                     password: user.password,
                     role: loginRole,
                     name: user.name,
-                    department: user.department || '鏈垎閰?,
+                    department: user.department || '未分配',
                     team: user.team || '',
                     position: user.position || ''
                 };
@@ -1629,10 +1629,10 @@
             localStorage.setItem('login_users', JSON.stringify(loginUsers));
         }
         
-        // 鏇存柊缁熻鏁版嵁
+        // 更新统计数据
         function updateStats() {
             const total = members.length;
-            const combat = members.filter(m => m.department === '鎴樻枟缃?).length;
+            const combat = members.filter(m => m.department === '战斗署').length;
             const admins = members.filter(m => m.role === 'admin').length;
             const today = new Date().toISOString().split('T')[0];
             const todayNew = members.filter(m => m.joinDate === today).length;
@@ -1644,10 +1644,10 @@
         }
         
         // ================================================
-        // 6. 娓叉煋鍜岀晫闈㈠嚱鏁?
+        // 6. 渲染和界面函数
         // ================================================
         
-        // 娓叉煋鎴愬憳鍒楄〃
+        // 渲染成员列表
         function renderMembers() {
             const container = document.getElementById('membersContainer');
             
@@ -1657,8 +1657,8 @@
                         <div class="empty-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <h3>鏆傛棤鎴愬憳鏁版嵁</h3>
-                        <p>鐐瑰嚮"娣诲姞鏂版垚鍛?鎸夐挳鍒涘缓绗竴涓垚鍛?/p>
+                        <h3>暂无成员数据</h3>
+                        <p>点击"添加新成员"按钮创建第一个成员</p>
                     </div>
                 `;
             } else {
@@ -1671,7 +1671,7 @@
                             <div class="member-title">
                                 <div class="member-name">${member.name}</div>
                                 <div class="member-username">@${member.username}</div>
-                                ${currentCloudSync ? `<div style="font-size: 0.7rem; color: #6bffb8;"><i class="fas fa-cloud"></i> 浜戠</div>` : ''}
+                                ${currentCloudSync ? `<div style="font-size: 0.7rem; color: #6bffb8;"><i class="fas fa-cloud"></i> 云端</div>` : ''}
                             </div>
                         </div>
                         
@@ -1681,54 +1681,54 @@
                                 <span class="detail-value">${member.id}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">瑙掕壊</span>
+                                <span class="detail-label">角色</span>
                                 <span class="detail-value">
                                     <span class="role-badge">${getRoleText(member.role)}</span>
                                 </span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">閮ㄩ棬</span>
+                                <span class="detail-label">部门</span>
                                 <span class="detail-value">
                                     <span class="department-badge">${member.department}</span>
                                 </span>
                             </div>
-                            ${member.department === '鎴樻枟缃? ? `
+                            ${member.department === '战斗署' ? `
                                 <div class="detail-row">
-                                    <span class="detail-label">闃熶紞</span>
+                                    <span class="detail-label">队伍</span>
                                     <span class="detail-value">
                                         <span class="team-badge">${member.team}</span>
                                     </span>
                                 </div>
                                 <div class="detail-row">
-                                    <span class="detail-label">鑱屼綅</span>
+                                    <span class="detail-label">职位</span>
                                     <span class="detail-value">
                                         <span class="position-badge">${member.position}</span>
                                     </span>
                                 </div>
                             ` : ''}
                             <div class="detail-row">
-                                <span class="detail-label">鐘舵€?/span>
+                                <span class="detail-label">状态</span>
                                 <span class="detail-value">
                                     <span class="status-badge status-${member.status}">${getStatusText(member.status)}</span>
                                 </span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">鍔犲叆鏃堕棿</span>
+                                <span class="detail-label">加入时间</span>
                                 <span class="detail-value">${member.joinDate}</span>
                             </div>
                         </div>
                         
                         <div class="member-actions">
                             ${member.role === 'user' ? `
-                                <button class="action-icon action-view" onclick="viewMemberDetail(${member.id})" title="鏌ョ湅璇︽儏">
-                                    <i class="fas fa-eye"></i> 璇︽儏
+                                <button class="action-icon action-view" onclick="viewMemberDetail(${member.id})" title="查看详情">
+                                    <i class="fas fa-eye"></i> 详情
                                 </button>
                             ` : ''}
-                            <button class="action-icon action-edit" onclick="editMember(${member.id})" title="缂栬緫鎴愬憳">
-                                <i class="fas fa-edit"></i> 缂栬緫
+                            <button class="action-icon action-edit" onclick="editMember(${member.id})" title="编辑成员">
+                                <i class="fas fa-edit"></i> 编辑
                             </button>
-                            <button class="action-icon action-delete" onclick="showDeleteModal(${member.id})" title="鍒犻櫎鎴愬憳">
-                                <i class="fas fa-trash-alt"></i> 鍒犻櫎
+                            <button class="action-icon action-delete" onclick="showDeleteModal(${member.id})" title="删除成员">
+                                <i class="fas fa-trash-alt"></i> 删除
                             </button>
                         </div>
                     </div>
@@ -1736,40 +1736,40 @@
             }
         }
         
-        // 鏌ョ湅鎴愬憳璇︽儏
+        // 查看成员详情
         function viewMemberDetail(memberId) {
             const member = members.find(m => m.id === memberId);
             if (member) {
-                // 璁板綍鏉ユ簮椤甸潰锛屼緵璇︽儏椤电殑鈥滆繑鍥炩€濇寜閽紭鍏堜娇鐢?
+                // 记录来源页面，供详情页的“返回”按钮优先使用
                 try { sessionStorage.setItem('previousPage', 'members.html'); } catch (e) { /* ignore */ }
-                // 璺宠浆鍒版垚鍛樿鎯呴〉闈?
+                // 跳转到成员详情页面
                 localStorage.setItem('viewing_member_id', memberId);
                 localStorage.setItem('viewing_member_username', member.username);
                 window.location.href = 'member-detail.html';
             }
         }
         
-        // 鑾峰彇鐘舵€佹枃鏈?
+        // 获取状态文本
         function getStatusText(status) {
             const statusMap = {
-                'active': '娲昏穬',
-                'inactive': '鏈縺娲?,
-                'pending': '寰呭鏍?
+                'active': '活跃',
+                'inactive': '未激活',
+                'pending': '待审核'
             };
             return statusMap[status] || status;
         }
         
-        // 鑾峰彇瑙掕壊鏂囨湰
+        // 获取角色文本
         function getRoleText(role) {
             const roleMap = {
-                'admin': '绠＄悊鍛?,
-                'user': '鏅€氭垚鍛?,
-                'viewer': '瑙傚療鍛?
+                'admin': '管理员',
+                'user': '普通成员',
+                'viewer': '观察员'
             };
             return roleMap[role] || role;
         }
         
-        // 鎼滅储鎴愬憳
+        // 搜索成员
         function searchMembers() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             
@@ -1785,20 +1785,20 @@
         }
         
         // ================================================
-        // 7. 鎴愬憳鎿嶄綔鍑芥暟锛堟坊鍔?缂栬緫/鍒犻櫎锛?
+        // 7. 成员操作函数（添加/编辑/删除）
         // ================================================
         
-        // 鏄剧ず娣诲姞鎴愬憳寮圭獥
+        // 显示添加成员弹窗
         function showAddModal() {
             editingMemberId = null;
-            document.getElementById('modalTitle').textContent = '娣诲姞鏂版垚鍛?;
-            document.getElementById('submitBtn').textContent = '娣诲姞鎴愬憳';
+            document.getElementById('modalTitle').textContent = '添加新成员';
+            document.getElementById('submitBtn').textContent = '添加成员';
             
             const form = document.getElementById('memberForm');
             form.reset();
             
-            // 閲嶇疆閮ㄩ棬鐩稿叧瀛楁鏄剧ず
-            document.getElementById('department').value = '鏈垎閰?;
+            // 重置部门相关字段显示
+            document.getElementById('department').value = '未分配';
             document.getElementById('teamGroup').style.display = 'none';
             document.getElementById('positionGroup').style.display = 'none';
             document.getElementById('team').value = '';
@@ -1809,17 +1809,17 @@
             document.getElementById('memberModal').style.display = 'flex';
         }
         
-        // 缂栬緫鎴愬憳
+        // 编辑成员
         function editMember(memberId) {
             editingMemberId = memberId;
             const member = members.find(m => m.id === memberId);
             
             if (!member) return;
             
-            document.getElementById('modalTitle').textContent = '缂栬緫鎴愬憳淇℃伅';
-            document.getElementById('submitBtn').textContent = '淇濆瓨淇敼';
+            document.getElementById('modalTitle').textContent = '编辑成员信息';
+            document.getElementById('submitBtn').textContent = '保存修改';
             
-            // 浠庢湰鍦板瓨鍌ㄨ幏鍙栧畬鏁存暟鎹?
+            // 从本地存储获取完整数据
             const usersData = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '{}');
             const userData = usersData[member.username];
             const password = userData ? userData.password : '********';
@@ -1832,10 +1832,10 @@
             document.getElementById('department').value = member.department;
             document.getElementById('status').value = member.status;
             
-            // 鏍规嵁閮ㄩ棬鏄剧ず/闅愯棌闃熶紞鍜岃亴浣嶅瓧娈?
+            // 根据部门显示/隐藏队伍和职位字段
             toggleTeamFields();
             
-            if (member.department === '鎴樻枟缃?) {
+            if (member.department === '战斗署') {
                 document.getElementById('team').value = member.team;
                 document.getElementById('position').value = member.position;
             }
@@ -1846,13 +1846,13 @@
             document.getElementById('memberModal').style.display = 'flex';
         }
         
-        // 鍒囨崲闃熶紞鍜岃亴浣嶅瓧娈电殑鏄剧ず
+        // 切换队伍和职位字段的显示
         function toggleTeamFields() {
             const department = document.getElementById('department').value;
             const teamGroup = document.getElementById('teamGroup');
             const positionGroup = document.getElementById('positionGroup');
             
-            if (department === '鎴樻枟缃?) {
+            if (department === '战斗署') {
                 teamGroup.style.display = 'block';
                 positionGroup.style.display = 'block';
                 document.getElementById('team').required = true;
@@ -1867,7 +1867,7 @@
             }
         }
         
-        // 澶勭悊娣诲姞鎴愬憳
+        // 处理添加成员
         async function handleAddMember(e) {
             e.preventDefault();
             
@@ -1879,41 +1879,41 @@
                 password: document.getElementById('password').value,
                 role: document.getElementById('role').value,
                 department: department,
-                team: department === '鎴樻枟缃? ? document.getElementById('team').value : '',
-                position: department === '鎴樻枟缃? ? document.getElementById('position').value : '',
+                team: department === '战斗署' ? document.getElementById('team').value : '',
+                position: department === '战斗署' ? document.getElementById('position').value : '',
                 status: document.getElementById('status').value,
                 joinDate: new Date().toISOString().split('T')[0],
-                notes: '鏂版坊鍔犵殑鎴愬憳'
+                notes: '新添加的成员'
             };
             
-            // 楠岃瘉鏁版嵁
+            // 验证数据
             if (!validateMemberData(formData, true)) return;
             
-            // 鏄剧ず淇濆瓨涓姸鎬?
+            // 显示保存中状态
             const originalBtnText = document.getElementById('submitBtn').innerHTML;
-            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> 淇濆瓨涓?..';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
             document.getElementById('submitBtn').disabled = true;
             
             try {
-                // 1. 棣栧厛灏濊瘯淇濆瓨鍒颁簯绔?
+                // 1. 首先尝试保存到云端
                 let cloudResult = null;
                 if (cloudEnabled) {
                     cloudResult = await addUserToSupabase(formData);
                 }
                 
-                // 鐢熸垚鏂癐D锛堝鏋滀簯绔繚瀛樺け璐ワ紝浣跨敤鏈湴ID锛?
+                // 生成新ID（如果云端保存失败，使用本地ID）
                 let newId;
                 if (cloudResult && cloudResult.success) {
-                    newId = cloudResult.data.id; // 浣跨敤浜戠杩斿洖鐨処D
+                    newId = cloudResult.data.id; // 使用云端返回的ID
                     formData.id = newId;
-                    console.log('浣跨敤浜戠鐢熸垚鐨処D:', newId);
+                    console.log('使用云端生成的ID:', newId);
                 } else {
                     newId = members.length > 0 ? Math.max(...members.map(m => m.id)) + 1 : 1;
                     formData.id = newId;
-                    console.log('浣跨敤鏈湴鐢熸垚鐨処D:', newId);
+                    console.log('使用本地生成的ID:', newId);
                 }
                 
-                // 2. 娣诲姞鍒版湰鍦版垚鍛樺垪琛?
+                // 2. 添加到本地成员列表
                 members.push({
                     id: formData.id,
                     name: formData.name,
@@ -1927,37 +1927,37 @@
                     notes: formData.notes
                 });
                 
-                // 3. 淇濆瓨鍒版湰鍦板瓨鍌?
+                // 3. 保存到本地存储
                 saveMemberData(formData.username, formData);
                 
-                // 4. 鏇存柊鏄剧ず
+                // 4. 更新显示
                 filteredMembers = [...members];
                 hideModal();
                 updateStats();
                 renderMembers();
                 
-                // 5. 鏄剧ず鎴愬姛娑堟伅
-                let successMsg = `鎴愬憳 "${formData.name}" 娣诲姞鎴愬姛锛乗n鐢ㄦ埛鍚? ${formData.username}\n瀵嗙爜: ${formData.password}`;
+                // 5. 显示成功消息
+                let successMsg = `成员 "${formData.name}" 添加成功！\n用户名: ${formData.username}\n密码: ${formData.password}`;
                 if (cloudResult && cloudResult.success) {
-                    successMsg += '\n\n鉁?宸插悓姝ュ埌浜戠';
+                    successMsg += '\n\n✅ 已同步到云端';
                     currentCloudSync = true;
                 } else if (cloudEnabled) {
-                    successMsg += '\n\n鈿狅笍 浜戠淇濆瓨澶辫触锛屼粎淇濆瓨鍒版湰鍦?;
+                    successMsg += '\n\n⚠️ 云端保存失败，仅保存到本地';
                 }
                 
                 alert(successMsg);
                 
             } catch (error) {
-                console.error('娣诲姞鎴愬憳澶辫触:', error);
-                alert('娣诲姞鎴愬憳澶辫触: ' + error.message);
+                console.error('添加成员失败:', error);
+                alert('添加成员失败: ' + error.message);
             } finally {
-                // 鎭㈠鎸夐挳鐘舵€?
+                // 恢复按钮状态
                 document.getElementById('submitBtn').innerHTML = originalBtnText;
                 document.getElementById('submitBtn').disabled = false;
             }
         }
         
-        // 澶勭悊缂栬緫鎴愬憳
+        // 处理编辑成员
         async function handleEditMember(e) {
             e.preventDefault();
             
@@ -1975,21 +1975,21 @@
                 password: document.getElementById('password').value,
                 role: document.getElementById('role').value,
                 department: department,
-                team: department === '鎴樻枟缃? ? document.getElementById('team').value : '',
-                position: department === '鎴樻枟缃? ? document.getElementById('position').value : '',
+                team: department === '战斗署' ? document.getElementById('team').value : '',
+                position: department === '战斗署' ? document.getElementById('position').value : '',
                 status: document.getElementById('status').value
             };
             
-            // 楠岃瘉鏁版嵁
+            // 验证数据
             if (!validateMemberData(formData, false, oldMember.username)) return;
             
-            // 鏄剧ず淇濆瓨涓姸鎬?
+            // 显示保存中状态
             const originalBtnText = document.getElementById('submitBtn').innerHTML;
-            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> 淇濆瓨涓?..';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
             document.getElementById('submitBtn').disabled = true;
             
             try {
-                // 1. 棣栧厛灏濊瘯鏇存柊鍒颁簯绔?
+                // 1. 首先尝试更新到云端
                 let cloudResult = null;
                 if (cloudEnabled && currentCloudSync) {
                     cloudResult = await updateUserInSupabase(oldMember.id, {
@@ -1999,7 +1999,7 @@
                     });
                 }
                 
-                // 2. 鏇存柊鏈湴鎴愬憳淇℃伅
+                // 2. 更新本地成员信息
                 members[memberIndex] = {
                     ...oldMember,
                     name: formData.name,
@@ -2011,9 +2011,9 @@
                     status: formData.status
                 };
                 
-                // 3. 鏇存柊鏈湴瀛樺偍
+                // 3. 更新本地存储
                 if (oldMember.username !== formData.username) {
-                    // 濡傛灉鐢ㄦ埛鍚嶆敼鍙橈紝鍒犻櫎鏃ф暟鎹紝娣诲姞鏂版暟鎹?
+                    // 如果用户名改变，删除旧数据，添加新数据
                     deleteMemberData(oldMember.username);
                 }
                 saveMemberData(formData.username, {
@@ -2023,71 +2023,71 @@
                     notes: oldMember.notes
                 });
                 
-                // 4. 鏇存柊鏄剧ず
+                // 4. 更新显示
                 filteredMembers = [...members];
                 hideModal();
                 updateStats();
                 renderMembers();
                 
-                // 5. 鏄剧ず鎴愬姛娑堟伅
-                let successMsg = '鎴愬憳淇℃伅宸叉洿鏂帮紒';
+                // 5. 显示成功消息
+                let successMsg = '成员信息已更新！';
                 if (cloudResult && cloudResult.success) {
-                    successMsg += '\n\n鉁?浜戠鏁版嵁宸插悓姝?;
+                    successMsg += '\n\n✅ 云端数据已同步';
                 } else if (cloudEnabled && currentCloudSync) {
-                    successMsg += '\n\n鈿狅笍 浜戠鏇存柊澶辫触锛屼粎鏇存柊鏈湴鏁版嵁';
+                    successMsg += '\n\n⚠️ 云端更新失败，仅更新本地数据';
                 }
                 
                 alert(successMsg);
                 
             } catch (error) {
-                console.error('缂栬緫鎴愬憳澶辫触:', error);
-                alert('缂栬緫鎴愬憳澶辫触: ' + error.message);
+                console.error('编辑成员失败:', error);
+                alert('编辑成员失败: ' + error.message);
             } finally {
-                // 鎭㈠鎸夐挳鐘舵€?
+                // 恢复按钮状态
                 document.getElementById('submitBtn').innerHTML = originalBtnText;
                 document.getElementById('submitBtn').disabled = false;
             }
         }
         
-        // 楠岃瘉鎴愬憳鏁版嵁
+        // 验证成员数据
         function validateMemberData(data, isNew = false, oldUsername = '') {
-            // 楠岃瘉鐢ㄦ埛鍚?
+            // 验证用户名
             if (!/^[a-zA-Z0-9_\u4e00-\u9fa5]{2,20}$/.test(data.username)) {
-                alert('鐢ㄦ埛鍚嶆牸寮忎笉姝ｇ‘锛佸彧鑳藉寘鍚腑鏂囥€佽嫳鏂囥€佹暟瀛楀拰涓嬪垝绾匡紝闀垮害2-20浣?);
+                alert('用户名格式不正确！只能包含中文、英文、数字和下划线，长度2-20位');
                 return false;
             }
             
-            // 楠岃瘉鏂扮敤鎴峰悕鐨勫敮涓€鎬?
+            // 验证新用户名的唯一性
             if (isNew && members.some(m => m.username === data.username)) {
-                alert('璇ョ敤鎴峰悕宸茶浣跨敤锛岃閫夋嫨鍏朵粬鐢ㄦ埛鍚嶏紒');
+                alert('该用户名已被使用，请选择其他用户名！');
                 return false;
             }
             
-            // 楠岃瘉缂栬緫鏃剁敤鎴峰悕鐨勫敮涓€鎬э紙鎺掗櫎褰撳墠鎴愬憳锛?
+            // 验证编辑时用户名的唯一性（排除当前成员）
             if (!isNew && oldUsername !== data.username && members.some(m => m.username === data.username && m.id !== editingMemberId)) {
-                alert('璇ョ敤鎴峰悕宸茶鍏朵粬鎴愬憳浣跨敤锛?);
+                alert('该用户名已被其他成员使用！');
                 return false;
             }
             
-            // 楠岃瘉瀵嗙爜
+            // 验证密码
             if (data.password.length < 6) {
-                alert('瀵嗙爜闀垮害鑷冲皯涓?浣嶏紒');
+                alert('密码长度至少为6位！');
                 return false;
             }
             
             if (data.password !== document.getElementById('confirmPassword').value) {
-                alert('涓ゆ杈撳叆鐨勫瘑鐮佷笉涓€鑷达紒');
+                alert('两次输入的密码不一致！');
                 return false;
             }
             
-            // 楠岃瘉鎴樻枟缃叉垚鍛樼殑闃熶紞鍜岃亴浣?
-            if (data.department === '鎴樻枟缃?) {
-                if (!data.team || data.team === '璇烽€夋嫨闃熶紞') {
-                    alert('鎴樻枟缃叉垚鍛樺繀椤婚€夋嫨鎵€灞為槦浼嶏紒');
+            // 验证战斗署成员的队伍和职位
+            if (data.department === '战斗署') {
+                if (!data.team || data.team === '请选择队伍') {
+                    alert('战斗署成员必须选择所属队伍！');
                     return false;
                 }
-                if (!data.position || data.position === '璇烽€夋嫨鑱屼綅') {
-                    alert('鎴樻枟缃叉垚鍛樺繀椤婚€夋嫨缁勫唴鑱屼綅锛?);
+                if (!data.position || data.position === '请选择职位') {
+                    alert('战斗署成员必须选择组内职位！');
                     return false;
                 }
             }
@@ -2095,7 +2095,7 @@
             return true;
         }
         
-        // 淇濆瓨鎴愬憳鏁版嵁鍒版湰鍦板瓨鍌?
+        // 保存成员数据到本地存储
         function saveMemberData(username, data) {
             const usersData = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '{}');
             usersData[username] = {
@@ -2128,7 +2128,7 @@
             localStorage.setItem('login_users', JSON.stringify(loginUsers));
         }
         
-        // 鍒犻櫎鎴愬憳鏁版嵁浠庢湰鍦板瓨鍌?
+        // 删除成员数据从本地存储
         function deleteMemberData(username) {
             const usersData = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '{}');
             delete usersData[username];
@@ -2140,16 +2140,16 @@
             localStorage.setItem('login_users', JSON.stringify(loginUsers));
         }
         
-        // 鏄剧ず鍒犻櫎纭寮圭獥
+        // 显示删除确认弹窗
         function showDeleteModal(memberId) {
             deletingMemberId = memberId;
             const member = members.find(m => m.id === memberId);
             
             if (member) {
-                // 涓嶈兘鍒犻櫎褰撳墠鐧诲綍鐨勭鐞嗗憳鑷繁
+                // 不能删除当前登录的管理员自己
                 const currentUser = localStorage.getItem('auth_user');
                 if (member.username === currentUser) {
-                    alert('涓嶈兘鍒犻櫎鎮ㄨ嚜宸辩殑璐︽埛锛?);
+                    alert('不能删除您自己的账户！');
                     return;
                 }
                 
@@ -2158,7 +2158,7 @@
             }
         }
         
-        // 纭鍒犻櫎鎴愬憳
+        // 确认删除成员
         async function confirmDelete() {
             if (!deletingMemberId) return;
             
@@ -2167,56 +2167,56 @@
             
             const memberToDelete = members[memberIndex];
             
-            // 鏄剧ず鍒犻櫎涓姸鎬?
+            // 显示删除中状态
             const deleteBtn = document.querySelector('.btn[style*="background: rgba(255, 107, 107, 0.8)"]');
             const originalBtnText = deleteBtn.innerHTML;
-            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 鍒犻櫎涓?..';
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 删除中...';
             deleteBtn.disabled = true;
             
             try {
-                // 1. 棣栧厛灏濊瘯浠庝簯绔垹闄?
+                // 1. 首先尝试从云端删除
                 let cloudResult = null;
                 if (cloudEnabled && currentCloudSync) {
                     cloudResult = await deleteUserFromSupabase(memberToDelete.id);
                 }
                 
-                // 2. 浠庢湰鍦版暟缁勪腑鍒犻櫎
+                // 2. 从本地数组中删除
                 members.splice(memberIndex, 1);
                 
-                // 3. 浠庢湰鍦板瓨鍌ㄥ垹闄?
+                // 3. 从本地存储删除
                 deleteMemberData(memberToDelete.username);
                 
-                // 4. 鏇存柊鏄剧ず
+                // 4. 更新显示
                 filteredMembers = [...members];
                 hideDeleteModal();
                 updateStats();
                 renderMembers();
                 
-                // 5. 鏄剧ず鎴愬姛娑堟伅
-                let successMsg = `鎴愬憳 "${memberToDelete.name}" 宸插垹闄わ紒`;
+                // 5. 显示成功消息
+                let successMsg = `成员 "${memberToDelete.name}" 已删除！`;
                 if (cloudResult && cloudResult.success) {
-                    successMsg += '\n\n鉁?浜戠鏁版嵁宸插悓姝ュ垹闄?;
+                    successMsg += '\n\n✅ 云端数据已同步删除';
                 } else if (cloudEnabled && currentCloudSync) {
-                    successMsg += '\n\n鈿狅笍 浜戠鍒犻櫎澶辫触锛屼粎鍒犻櫎鏈湴鏁版嵁';
+                    successMsg += '\n\n⚠️ 云端删除失败，仅删除本地数据';
                 }
                 
                 alert(successMsg);
                 
             } catch (error) {
-                console.error('鍒犻櫎鎴愬憳澶辫触:', error);
-                alert('鍒犻櫎鎴愬憳澶辫触: ' + error.message);
+                console.error('删除成员失败:', error);
+                alert('删除成员失败: ' + error.message);
             } finally {
-                // 鎭㈠鎸夐挳鐘舵€?
+                // 恢复按钮状态
                 deleteBtn.innerHTML = originalBtnText;
                 deleteBtn.disabled = false;
             }
         }
         
         // ================================================
-        // 8. 杈呭姪鍑芥暟
+        // 8. 辅助函数
         // ================================================
         
-        // 闅愯棌寮圭獥
+        // 隐藏弹窗
         function hideModal() {
             document.getElementById('memberModal').style.display = 'none';
         }
@@ -2225,7 +2225,7 @@
             document.getElementById('deleteModal').style.display = 'none';
         }
         
-        // 鍒囨崲瀵嗙爜鏄剧ず
+        // 切换密码显示
         function togglePassword(fieldId) {
             const input = document.getElementById(fieldId);
             const icon = input.nextElementSibling.querySelector('i');
@@ -2239,23 +2239,23 @@
             }
         }
         
-        // 鍒锋柊鎴愬憳鍒楄〃
+        // 刷新成员列表
         async function refreshMembers() {
             await loadMembers();
             document.getElementById('searchInput').value = '';
-            alert('鎴愬憳鍒楄〃宸插埛鏂帮紒');
+            alert('成员列表已刷新！');
         }
         
-        // 鍚屾鍒颁簯绔寜閽?
+        // 同步到云端按钮
         async function syncToCloud() {
             const result = await syncLocalToSupabase();
             if (result) {
-                // 閲嶆柊鍔犺浇鏁版嵁锛岀‘淇濇樉绀轰簯绔姸鎬?
+                // 重新加载数据，确保显示云端状态
                 await loadMembers();
             }
         }
         
-        // 瀵煎嚭鎴愬憳鏁版嵁
+        // 导出成员数据
         function exportMembers() {
             const exportData = {
                 exportTime: new Date().toISOString(),
@@ -2286,12 +2286,12 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            alert('鏁版嵁瀵煎嚭鎴愬姛锛?);
+            alert('数据导出成功！');
         }
         
-        // 閫€鍑虹櫥褰?
+        // 退出登录
         function logout() {
-            if (confirm('纭畾瑕侀€€鍑虹櫥褰曞悧锛?)) {
+            if (confirm('确定要退出登录吗？')) {
                 localStorage.removeItem('auth_user');
                 localStorage.removeItem('auth_role');
                 localStorage.removeItem('auth_time');

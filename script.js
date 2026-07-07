@@ -1,32 +1,32 @@
-﻿// script.js - 澧炲己鐗堬紙闆嗘垚Supabase浜戠瀛樺偍锛?
+﻿// script.js - 增强版（集成Supabase云端存储）
 // ================================================
-// 1. SUPABASE 閰嶇疆
+// 1. SUPABASE 配置
 // ================================================
-// 璇锋浛鎹互涓嬪€间负鎮ㄧ殑Supabase椤圭洰淇℃伅
-const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co'; // 鏇挎崲涓烘偍鐨刄RL
-const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV'; // 鏇挎崲涓烘偍鐨凙non Key
+// 请替换以下值为您的Supabase项目信息
+const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co'; // 替换为您的URL
+const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV'; // 替换为您的Anon Key
 
-// 鍒涘缓Supabase瀹㈡埛绔紙鍐呴儴浣跨敤鍚嶄负 supabaseClient锛岄伩鍏嶄笌 SDK 瀵煎嚭鐨勫叏灞€鍙橀噺鍐茬獊锛?
+// 创建Supabase客户端（内部使用名为 supabaseClient，避免与 SDK 导出的全局变量冲突）
 let supabaseClient = null;
 try {
     if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
         // window.supabase from CDN is the Supabase SDK which exposes createClient
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        // 鏆撮湶瀹㈡埛绔埌 window锛屽苟纭繚鍏ㄥ眬 `supabase` 鎸囧悜宸插垵濮嬪寲鐨?client锛堥伩鍏?SDK/Client 娣锋穯锛?
+        // 暴露客户端到 window，并确保全局 `supabase` 指向已初始化的 client（避免 SDK/Client 混淆）
         try { window.supabaseClient = supabaseClient; } catch (e) { /* ignore */ }
         try { window.supabase = supabaseClient; } catch (e) { /* ignore */ }
-        console.log('Supabase瀹㈡埛绔凡鍒濆鍖栧苟缁戝畾鍒?window.supabase');
+        console.log('Supabase客户端已初始化并绑定到 window.supabase');
     }
 } catch (e) {
-    console.warn('Supabase鍒濆鍖栧け璐ワ紝灏嗕娇鐢ㄧ函鏈湴妯″紡:', e);
+    console.warn('Supabase初始化失败，将使用纯本地模式:', e);
 }
 
-// 纭繚瀛樺湪鍏ㄥ眬涓斿彲璁块棶鐨?`supabase` 鏍囪瘑锛岄伩鍏嶅叾浠栬剼鏈腑鐩存帴浣跨敤鏈畾涔夌殑 `supabase` 鎶涘嚭 ReferenceError
-// 浼樺厛浣跨敤 CDN 鎻愪緵鐨勫叏灞€ `window.supabase`锛屽叾娆′娇鐢ㄦ湰鍦板垱寤虹殑 `supabaseClient`銆?
-// 纭繚鏈湴鑴氭湰涓湁涓€涓彲鐢ㄧ殑 `supabase` 鍙橀噺锛屼紭鍏堟寚鍚戝凡鍒濆鍖栫殑 client
+// 确保存在全局且可访问的 `supabase` 标识，避免其他脚本中直接使用未定义的 `supabase` 抛出 ReferenceError
+// 优先使用 CDN 提供的全局 `window.supabase`，其次使用本地创建的 `supabaseClient`。
+// 确保本地脚本中有一个可用的 `supabase` 变量，优先指向已初始化的 client
 try {
     if (typeof window !== 'undefined' && window.supabase) {
-        // window.supabase 宸茶鎴戜滑鍦ㄤ笂闈㈢粦瀹氫负 supabaseClient锛堣嫢鍙敤锛?
+        // window.supabase 已被我们在上面绑定为 supabaseClient（若可用）
         var supabase = window.supabase;
     } else if (typeof supabaseClient !== 'undefined' && supabaseClient) {
         var supabase = supabaseClient;
@@ -39,13 +39,13 @@ try {
 }
 
 // ================================================
-// 2. 鏍稿績鏁版嵁绠＄悊鍑芥暟锛堜簯绔紭鍏堬級
+// 2. 核心数据管理函数（云端优先）
 // ================================================
 
-// 浠嶴upabase鍔犺浇鎵€鏈夌敤鎴锋暟鎹?
+// 从Supabase加载所有用户数据
 async function loadUsersFromSupabase() {
     if (!supabaseClient) {
-        console.warn('Supabase鏈厤缃紝浣跨敤鏈湴鏁版嵁');
+        console.warn('Supabase未配置，使用本地数据');
         return null;
     }
     
@@ -56,19 +56,19 @@ async function loadUsersFromSupabase() {
             .order('id', { ascending: true });
         
         if (error) {
-            console.error('浠嶴upabase鍔犺浇鐢ㄦ埛澶辫触:', error);
+            console.error('从Supabase加载用户失败:', error);
             return null;
         }
         
-        console.log(`浠嶴upabase鍔犺浇浜?${users.length} 涓敤鎴穈);
+        console.log(`从Supabase加载了 ${users.length} 个用户`);
         return users;
     } catch (e) {
-        console.error('缃戠粶鎴朣upabase閿欒:', e);
+        console.error('网络或Supabase错误:', e);
         return null;
     }
 }
 
-// 杞崲鏁版嵁搴撴牸寮忎负绋嬪簭鏍煎紡
+// 转换数据库格式为程序格式
 function formatSupabaseUsers(supabaseUsers) {
     if (!supabaseUsers) return { loginUsers: {}, qsUsers: {} };
     
@@ -76,7 +76,7 @@ function formatSupabaseUsers(supabaseUsers) {
     const qsUsers = {};
     
     supabaseUsers.forEach(user => {
-        // 涓簂ogin_users鍑嗗鏁版嵁锛坮ole杞崲锛?user' -> 'member'锛?
+        // 为login_users准备数据（role转换：'user' -> 'member'）
         // use a normalized username key to avoid case mismatches across devices
         const usernameKey = (user.username || '').toString().trim().toLowerCase();
         const loginRole = user.role === 'user' ? 'member' : user.role;
@@ -84,21 +84,21 @@ function formatSupabaseUsers(supabaseUsers) {
             password: user.password,
             role: loginRole,
             name: user.name,
-            department: user.department || '鏈垎閰?,
+            department: user.department || '未分配',
             team: user.team || '',
             position: user.position || ''
         };
 
-        // 涓簈s_users_data鍑嗗鏁版嵁锛宬ey 鍚屾牱瑙勮寖鍖?
+        // 为qs_users_data准备数据，key 同样规范化
         qsUsers[usernameKey] = {
             id: user.id,
             name: user.name,
             password: user.password,
-            role: user.role, // 娉ㄦ剰锛氫繚鎸佸師鏍?
+            role: user.role, // 注意：保持原样
             status: user.status || 'active',
             joinDate: user.join_date || '2023-01-01',
-            notes: user.notes || '绯荤粺鐢ㄦ埛',
-            department: user.department || '鏈垎閰?,
+            notes: user.notes || '系统用户',
+            department: user.department || '未分配',
             team: user.team || '',
             position: user.position || ''
         };
@@ -107,11 +107,11 @@ function formatSupabaseUsers(supabaseUsers) {
     return { loginUsers, qsUsers };
 }
 
-// 澧炲己鐗坙oadLoginUsers锛氫簯绔紭鍏?
+// 增强版loadLoginUsers：云端优先
 async function loadLoginUsers() {
-    console.log('寮€濮嬪姞杞界敤鎴锋暟鎹紙浜戠浼樺厛锛?..');
+    console.log('开始加载用户数据（云端优先）...');
     
-    // 浼樺寲锛氬鏋滄湰鍦板凡鏈夌紦瀛橈紝鍏堣繑鍥炵紦瀛樹互閬垮厤鍥犵綉缁滄垨浜戠寤惰繜瀵艰嚧鐧诲綍澶辫触
+    // 优化：如果本地已有缓存，先返回缓存以避免因网络或云端延迟导致登录失败
     const loginUsersCached = localStorage.getItem('login_users');
     if (loginUsersCached) {
         try {
@@ -124,52 +124,52 @@ async function loadLoginUsers() {
             });
             parsed = normalized;
 
-            // 鍚屾椂鍦ㄥ悗鍙板皾璇曞埛鏂颁簯绔暟鎹紙涓嶉樆濉炵櫥褰曪級
+            // 同时在后台尝试刷新云端数据（不阻塞登录）
             if (supabaseClient) {
                 loadUsersFromSupabase().then(supabaseUsers => {
                     if (supabaseUsers && supabaseUsers.length > 0) {
                         const { loginUsers, qsUsers } = formatSupabaseUsers(supabaseUsers);
                         localStorage.setItem('login_users', JSON.stringify(loginUsers));
                         localStorage.setItem('qs_users_data', JSON.stringify(qsUsers));
-                        console.log('鍚庡彴宸插埛鏂颁簯绔敤鎴峰苟鏇存柊鏈湴缂撳瓨');
+                        console.log('后台已刷新云端用户并更新本地缓存');
                     }
                 }).catch(err => {
-                    console.warn('鍚庡彴鍒锋柊浜戠鐢ㄦ埛澶辫触:', err);
+                    console.warn('后台刷新云端用户失败:', err);
                 });
             } else {
-                console.warn('Supabase鏈厤缃紝璺宠繃鍚庡彴鍒锋柊');
+                console.warn('Supabase未配置，跳过后台刷新');
             }
 
             return parsed;
         } catch (e) {
-            console.error('瑙ｆ瀽鏈湴鐢ㄦ埛缂撳瓨澶辫触锛岀Щ闄ょ紦瀛樺苟缁х画鍔犺浇:', e);
+            console.error('解析本地用户缓存失败，移除缓存并继续加载:', e);
             localStorage.removeItem('login_users');
         }
     }
 
-    // 1. 鏈湴娌℃湁缂撳瓨鏃讹紝棣栧厛灏濊瘯浠嶴upabase鍔犺浇锛堜簯绔紭鍏堬級
+    // 1. 本地没有缓存时，首先尝试从Supabase加载（云端优先）
     const supabaseUsers = await loadUsersFromSupabase();
 
     if (supabaseUsers && supabaseUsers.length > 0) {
-        // 浜戠鏁版嵁鍙敤
+        // 云端数据可用
         const { loginUsers, qsUsers } = formatSupabaseUsers(supabaseUsers);
 
-        // 鏇存柊鏈湴瀛樺偍浣滀负缂撳瓨锛坘eys 宸茶鑼冧负灏忓啓锛?
+        // 更新本地存储作为缓存（keys 已规范为小写）
         localStorage.setItem('login_users', JSON.stringify(loginUsers));
         localStorage.setItem('qs_users_data', JSON.stringify(qsUsers));
 
-        console.log('宸蹭娇鐢ㄤ簯绔暟鎹紝骞舵洿鏂颁簡鏈湴缂撳瓨');
+        console.log('已使用云端数据，并更新了本地缓存');
         return loginUsers;
     }
 
-    // 2. 浜戠涓嶅彲鐢紝鍥為€€鍒板師鏈夐€昏緫
-    console.log('浜戠鏁版嵁涓嶅彲鐢紝浣跨敤鍘熸湁鏈湴閫昏緫');
+    // 2. 云端不可用，回退到原有逻辑
+    console.log('云端数据不可用，使用原有本地逻辑');
     
-    // 鍘熸湁閫昏緫锛堝凡绠€鍖栵紝鍙繚鐣欐牳蹇冮儴鍒嗭級
+    // 原有逻辑（已简化，只保留核心部分）
     const qsUsersData = localStorage.getItem('qs_users_data');
     const loginUsersStored = localStorage.getItem('login_users');
     
-    // 濡傛灉涓や釜鏁版嵁婧愰兘鏈夋暟鎹紝纭繚瀹冧滑鍚屾
+    // 如果两个数据源都有数据，确保它们同步
     if (qsUsersData && loginUsersStored) {
         try {
             // parse and normalize both datasets to lowercased keys
@@ -187,7 +187,7 @@ async function loadLoginUsers() {
                 loginUsers[key] = rawLoginUsers[k];
             });
             
-            // 鍚屾涓や釜鏁版嵁婧?
+            // 同步两个数据源
             const syncedLoginUsers = {};
             const syncedQsUsers = {};
             
@@ -200,22 +200,22 @@ async function loadLoginUsers() {
                 if (qsUsers[username]) {
                     const user = qsUsers[username];
                     
-                    // 鍚屾鍒皅s_users_data
+                    // 同步到qs_users_data
                     syncedQsUsers[username] = {
                         ...user,
-                        department: user.department || '鏈垎閰?,
+                        department: user.department || '未分配',
                         team: user.team || '',
                         position: user.position || ''
                     };
                     
-                    // 瑙掕壊鍚嶈浆鎹細'user' -> 'member'
+                    // 角色名转换：'user' -> 'member'
                     const loginRole = user.role === 'user' ? 'member' : user.role;
                     
                     syncedLoginUsers[username] = {
                         password: user.password,
                         role: loginRole,
                         name: user.name || username,
-                        department: user.department || '鏈垎閰?,
+                        department: user.department || '未分配',
                         team: user.team || '',
                         position: user.position || ''
                     };
@@ -223,7 +223,7 @@ async function loadLoginUsers() {
                 } else if (loginUsers[username]) {
                     const user = loginUsers[username];
                     
-                    // 瑙掕壊鍚嶈浆鎹細'member' -> 'user'
+                    // 角色名转换：'member' -> 'user'
                     const qsRole = user.role === 'member' ? 'user' : user.role;
                     
                     syncedQsUsers[username] = {
@@ -233,8 +233,8 @@ async function loadLoginUsers() {
                         role: qsRole,
                         status: 'active',
                         joinDate: new Date().toISOString().split('T')[0],
-                        notes: '浠巐ogin_users鍚屾',
-                        department: user.department || '鏈垎閰?,
+                        notes: '从login_users同步',
+                        department: user.department || '未分配',
                         team: user.team || '',
                         position: user.position || ''
                     };
@@ -243,43 +243,43 @@ async function loadLoginUsers() {
                         password: user.password,
                         role: user.role,
                         name: user.name || username,
-                        department: user.department || '鏈垎閰?,
+                        department: user.department || '未分配',
                         team: user.team || '',
                         position: user.position || ''
                     };
                 }
             });
             
-            // 淇濆瓨鍚屾鍚庣殑鏁版嵁
+            // 保存同步后的数据
             localStorage.setItem('login_users', JSON.stringify(syncedLoginUsers));
             localStorage.setItem('qs_users_data', JSON.stringify(syncedQsUsers));
             
             return syncedLoginUsers;
             
         } catch (e) {
-            console.error('鍚屾鐢ㄦ埛鏁版嵁澶辫触:', e);
+            console.error('同步用户数据失败:', e);
         }
     }
     
-    // 3. 濡傛灉鏈湴涔熸病鏈夋暟鎹紝鍒涘缓榛樿鐢ㄦ埛
-    console.log('鍒涘缓榛樿鐢ㄦ埛鏁版嵁');
+    // 3. 如果本地也没有数据，创建默认用户
+    console.log('创建默认用户数据');
     
     const defaultUsers = {
         'ophelia': { 
             password: 'qsam137', 
             role: 'admin', 
             name: 'Ophelia',
-            department: '绠＄悊灞?,
+            department: '管理层',
             team: '',
             position: ''
         },
-        '003绔?: { 
+        '003竺': { 
             password: 'zhu0902', 
             role: 'member', 
-            name: '003绔?,
-            department: '鎴樻枟缃?,
-            team: '鐗规畩鏀跺缁?,
-            position: '闃熷憳'
+            name: '003竺',
+            department: '战斗署',
+            team: '特殊收容组',
+            position: '队员'
         }
     };
     
@@ -293,38 +293,38 @@ async function loadLoginUsers() {
             role: 'admin', 
             status: 'active', 
             joinDate: '2023-01-01', 
-            notes: '绯荤粺绠＄悊鍛?,
-            department: '绠＄悊灞?,
+            notes: '系统管理员',
+            department: '管理层',
             team: '',
             position: ''
         },
-        '003绔?: { 
+        '003竺': { 
             id: 2,
-            name: '003绔?, 
+            name: '003竺', 
             password: 'zhu0902', 
             role: 'user',
             status: 'active', 
             joinDate: '2023-02-15', 
-            notes: '鏅€氭垚鍛?,
-            department: '鎴樻枟缃?,
-            team: '鐗规畩鏀跺缁?,
-            position: '闃熷憳'
+            notes: '普通成员',
+            department: '战斗署',
+            team: '特殊收容组',
+            position: '队员'
         }
     };
     localStorage.setItem('qs_users_data', JSON.stringify(defaultQsUsers));
     
-    console.log('榛樿鐢ㄦ埛鍒涘缓瀹屾垚');
+    console.log('默认用户创建完成');
     return defaultUsers;
 }
 
 // ================================================
-// 3. 浜戠鏁版嵁鍚屾鍑芥暟
+// 3. 云端数据同步函数
 // ================================================
 
-// 鍚屾鏈湴鏁版嵁鍒癝upabase
+// 同步本地数据到Supabase
 async function syncLocalToSupabase() {
     if (!supabaseClient) {
-        console.warn('Supabase鏈厤缃紝璺宠繃鍚屾');
+        console.warn('Supabase未配置，跳过同步');
         return false;
     }
     
@@ -335,16 +335,16 @@ async function syncLocalToSupabase() {
         const localUsers = JSON.parse(qsUsersData);
         const usernames = Object.keys(localUsers);
         
-        console.log(`寮€濮嬪悓姝?${usernames.length} 涓敤鎴峰埌Supabase...`);
+        console.log(`开始同步 ${usernames.length} 个用户到Supabase...`);
         
-        // 鑾峰彇浜戠鐜版湁鐢ㄦ埛
+        // 获取云端现有用户
         const { data: cloudUsers } = await supabaseClient
             .from('users')
             .select('username');
         
         const cloudUsernames = cloudUsers ? cloudUsers.map(u => u.username) : [];
         
-        // 鎵惧嚭闇€瑕佹坊鍔犵殑鐢ㄦ埛
+        // 找出需要添加的用户
         const usersToAdd = [];
         
         for (const username of usernames) {
@@ -356,85 +356,85 @@ async function syncLocalToSupabase() {
                     password: user.password,
                     role: user.role,
                     status: user.status || 'active',
-                    department: user.department || '鏈垎閰?,
+                    department: user.department || '未分配',
                     team: user.team || '',
                     position: user.position || '',
                     join_date: user.joinDate || new Date().toISOString().split('T')[0],
-                    notes: user.notes || '浠庢湰鍦板悓姝?
+                    notes: user.notes || '从本地同步'
                 });
             }
         }
         
-        // 鎵归噺鎻掑叆
+        // 批量插入
         if (usersToAdd.length > 0) {
             const { error } = await supabase
                 .from('users')
                 .insert(usersToAdd);
             
             if (error) throw error;
-            console.log(`鎴愬姛鍚屾浜?${usersToAdd.length} 涓敤鎴峰埌浜戠`);
+            console.log(`成功同步了 ${usersToAdd.length} 个用户到云端`);
         } else {
-            console.log('鏈湴涓庝簯绔暟鎹凡鍚屾锛屾棤闇€鏇存柊');
+            console.log('本地与云端数据已同步，无需更新');
         }
         
         return true;
     } catch (error) {
-        console.error('鍚屾鍒癝upabase澶辫触:', error);
+        console.error('同步到Supabase失败:', error);
         return false;
     }
 }
 
-// 妫€娴嬪苟澶勭悊鏁版嵁鍐茬獊
+// 检测并处理数据冲突
 async function handleDataConflict() {
     if (!supabaseClient) return false;
     
     try {
-        // 鑾峰彇浜戠鏁版嵁
+        // 获取云端数据
         const cloudUsers = await loadUsersFromSupabase();
         if (!cloudUsers) return false;
         
-        // 鑾峰彇鏈湴鏁版嵁
+        // 获取本地数据
         const localData = localStorage.getItem('qs_users_data');
         if (!localData) return false;
         
         const localUsers = JSON.parse(localData);
         
-        // 绠€鍗曠瓥鐣ワ細浠ヤ簯绔暟鎹负鍑?
+        // 简单策略：以云端数据为准
         const { loginUsers, qsUsers } = formatSupabaseUsers(cloudUsers);
         
         localStorage.setItem('login_users', JSON.stringify(loginUsers));
         localStorage.setItem('qs_users_data', JSON.stringify(qsUsers));
         
-        console.log('宸蹭娇鐢ㄤ簯绔暟鎹鐩栨湰鍦版暟鎹紙瑙ｅ喅鍐茬獊锛?);
+        console.log('已使用云端数据覆盖本地数据（解决冲突）');
         return true;
     } catch (error) {
-        console.error('澶勭悊鏁版嵁鍐茬獊澶辫触:', error);
+        console.error('处理数据冲突失败:', error);
         return false;
     }
 }
 
 // ================================================
-// 4. 椤甸潰鍔犺浇瀹屾垚鍚庣殑鍒濆鍖?
+// 4. 页面加载完成后的初始化
 // ================================================
 
-// 椤甸潰鍔犺浇瀹屾垚
+// 页面加载完成
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('椤甸潰鍔犺浇瀹屾垚锛屽紑濮嬪垵濮嬪寲鐢ㄦ埛鏁版嵁');
+    console.log('页面加载完成，开始初始化用户数据');
     
-    // 妫€鏌upabase閰嶇疆
+    // 检查Supabase配置
     if (!SUPABASE_URL.includes('your-project-id') && !SUPABASE_ANON_KEY.includes('your-anon-key')) {
-        console.log('Supabase閰嶇疆妫€娴嬮€氳繃');
+        console.log('Supabase配置检测通过');
     } else {
-        console.warn('鈿狅笍 璇峰厛閰嶇疆Supabase URL鍜孉non Key锛?);
+        console.warn('⚠️ 请先配置Supabase URL和Anon Key！');
     }
     
-    // 鏁版嵁涓€鑷存€ф鏌ワ紙鍘熸湁鍑芥暟锛?
+    // 数据一致性检查（原有函数）
     checkDataConsistency();
     
-    // 鍒濆鍖栫敤鎴锋暟鎹紝浼樺厛灏濊瘯浜戠
+    // 初始化用户数据，优先尝试云端
     const initPromise = loadLoginUsers();
     
-    // 寮€灞忓姩鐢?
+    // 开屏动画
     setTimeout(() => {
         const splashScreen = document.getElementById('splashScreen');
         const loginContainer = document.getElementById('loginContainer');
@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1500);
     }, 3000);
     
-    // 鐧诲綍琛ㄥ崟鎻愪氦
+    // 登录表单提交
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 娓稿鐧诲綍
+    // 游客登录
     const guestLoginBtn = document.getElementById('guestLogin');
     if (guestLoginBtn) {
         guestLoginBtn.addEventListener('click', function() {
@@ -482,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 鎸塃nter閿彁浜?
+    // 按Enter键提交
     const passwordInput = document.getElementById('password');
     if (passwordInput) {
         passwordInput.addEventListener('keypress', function(e) {
@@ -492,16 +492,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 娣诲姞璋冭瘯鎸夐挳锛堜粎鍦ㄥ紑鍙戞椂浣跨敤锛?
+    // 添加调试按钮（仅在开发时使用）
     addDebugButtons();
     
-    // 鍒濆鍖栧悗灏濊瘯鍚屾鏁版嵁
+    // 初始化后尝试同步数据
     initPromise.then(() => {
-        // 寤惰繜鎵ц鍚屾锛岄伩鍏嶅奖鍝嶉〉闈㈠姞杞?
+        // 延迟执行同步，避免影响页面加载
         setTimeout(() => {
             syncLocalToSupabase().then(success => {
                 if (success) {
-                    console.log('鏁版嵁鍚屾瀹屾垚');
+                    console.log('数据同步完成');
                 }
             });
         }, 5000);
@@ -509,36 +509,36 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ================================================
-// 5. 鍘熸湁鍑芥暟淇濇寔涓嶅彉锛屽彧娣诲姞浜戠鏀寔
+// 5. 原有函数保持不变，只添加云端支持
 // ================================================
 
-// 鏁版嵁涓€鑷存€ф鏌ワ紙淇濇寔涓嶅彉锛?
+// 数据一致性检查（保持不变）
 function checkDataConsistency() {
-    console.log('寮€濮嬫暟鎹竴鑷存€ф鏌?..');
-    // ... 鍘熸湁浠ｇ爜淇濇寔涓嶅彉 ...
+    console.log('开始数据一致性检查...');
+    // ... 原有代码保持不变 ...
 }
 
-// 澶勭悊鐧诲綍锛堟敼涓哄紓姝ワ級
+// 处理登录（改为异步）
 async function handleLogin() {
     const rawUsername = document.getElementById('username').value || '';
     const username = rawUsername.toString().trim();
     const password = document.getElementById('password').value;
     
-    console.log('鐧诲綍灏濊瘯:', username);
+    console.log('登录尝试:', username);
     
-    // 娓呴櫎涔嬪墠鐨勯敊璇彁绀?
+    // 清除之前的错误提示
     clearErrors();
     
     if (!username || !password) {
-        showError('璇疯緭鍏ョ敤鎴峰悕鍜屽瘑鐮?);
+        showError('请输入用户名和密码');
         return;
     }
     
     try {
-        // 鍔犺浇鐢ㄦ埛鏁版嵁锛堢瓑寰呭紓姝ュ畬鎴愶級
+        // 加载用户数据（等待异步完成）
         const users = await loadLoginUsers();
         
-        // 妯℃嫙鏈嶅姟鍣ㄩ獙璇?
+        // 模拟服务器验证
         setTimeout(() => {
             // normalize lookup key
             const key = username.toLowerCase();
@@ -561,40 +561,40 @@ async function handleLogin() {
             }
 
             if (user) {
-                console.log('鎵惧埌鐢ㄦ埛:', user);
+                console.log('找到用户:', user);
 
                 if ((user.password || '') === password) {
-                    console.log('瀵嗙爜楠岃瘉鎴愬姛');
+                    console.log('密码验证成功');
                     // use the canonical username key for storing session
                     const sessionName = (user.username || username).toString().trim() || username;
                     loginSuccess(sessionName, user.role || 'member');
                 } else {
-                    console.log('瀵嗙爜閿欒');
-                    showError('瀵嗙爜閿欒');
+                    console.log('密码错误');
+                    showError('密码错误');
                 }
             } else {
-                console.log('鐢ㄦ埛涓嶅瓨鍦?);
-                showError('鐢ㄦ埛涓嶅瓨鍦?);
+                console.log('用户不存在');
+                showError('用户不存在');
             }
         }, 500);
     } catch (error) {
-        console.error('鐧诲綍杩囩▼涓嚭閿?', error);
-        showError('鐧诲綍澶辫触锛岃閲嶈瘯');
+        console.error('登录过程中出错:', error);
+        showError('登录失败，请重试');
     }
 }
 
-// 澶勭悊娓稿鐧诲綍锛堜繚鎸佷笉鍙橈級
+// 处理游客登录（保持不变）
 function handleGuestLogin() {
-    console.log('娓稿鐧诲綍');
+    console.log('游客登录');
     
-    // 娓呴櫎杈撳叆
+    // 清除输入
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     if (usernameInput) usernameInput.value = '';
     if (passwordInput) passwordInput.value = '';
     
-    // 妯℃嫙鐧诲綍杩囩▼
-    const resetLoading = showLoading('姝ｅ湪杩涘叆娓稿妯″紡...');
+    // 模拟登录过程
+    const resetLoading = showLoading('正在进入游客模式...');
     
     setTimeout(() => {
         loginSuccess('guest', 'guest');
@@ -602,28 +602,28 @@ function handleGuestLogin() {
     }, 1000);
 }
 
-// 鐧诲綍鎴愬姛锛堜繚鎸佷笉鍙橈級
+// 登录成功（保持不变）
 function loginSuccess(username, role, displayName) {
-    console.log('鐧诲綍鎴愬姛:', { username, role, displayName });
+    console.log('登录成功:', { username, role, displayName });
 
     // canonicalize username storage key (lowercase trimmed) to match cached keys
     const canonical = (username || '').toString().trim().toLowerCase();
 
-    // 淇濆瓨鐧诲綍鐘舵€佸埌鏈湴瀛樺偍
+    // 保存登录状态到本地存储
     localStorage.setItem('auth_user', canonical);
     localStorage.setItem('auth_user_name', displayName || username || canonical);
     localStorage.setItem('auth_role', role);
     localStorage.setItem('auth_time', new Date().toISOString());
     
-    // 鏍规嵁瑙掕壊璺宠浆鍒颁笉鍚岄〉闈?
-    let redirectUrl = 'member.html'; // 榛樿
+    // 根据角色跳转到不同页面
+    let redirectUrl = 'member.html'; // 默认
     
     switch(role) {
         case 'admin':
             redirectUrl = 'admin.html';
             break;
         case 'member':
-        case 'user': // 鍏煎鏅€氭垚鍛?
+        case 'user': // 兼容普通成员
             redirectUrl = 'member.html';
             break;
         case 'viewer':
@@ -634,11 +634,11 @@ function loginSuccess(username, role, displayName) {
             break;
     }
     
-    console.log('璺宠浆鍒?', redirectUrl);
+    console.log('跳转到:', redirectUrl);
     window.location.href = redirectUrl;
 }
 
-// 鏄剧ず閿欒淇℃伅锛堜繚鎸佷笉鍙橈級
+// 显示错误信息（保持不变）
 function showError(message) {
     clearErrors();
     
@@ -660,13 +660,13 @@ function showError(message) {
     if (form) form.appendChild(errorDiv);
 }
 
-// 娓呴櫎閿欒淇℃伅锛堜繚鎸佷笉鍙橈級
+// 清除错误信息（保持不变）
 function clearErrors() {
     const errors = document.querySelectorAll('.error-message');
     errors.forEach(error => error.remove());
 }
 
-// 鏄剧ず鍔犺浇鐘舵€侊紙淇濇寔涓嶅彉锛?
+// 显示加载状态（保持不变）
 function showLoading(message) {
     const submitBtn = document.querySelector('.btn-login');
     const guestBtn = document.querySelector('.btn-guest');
@@ -675,7 +675,7 @@ function showLoading(message) {
     
     const originalText = submitBtn.innerHTML;
     
-    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message || '鐧诲綍涓?..'}`;
+    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message || '登录中...'}`;
     submitBtn.disabled = true;
     guestBtn.disabled = true;
     
@@ -686,9 +686,9 @@ function showLoading(message) {
     };
 }
 
-// 璋冭瘯宸ュ叿锛堜繚鎸佷笉鍙橈級
+// 调试工具（保持不变）
 function addDebugButtons() {
-    // 鍙湪鏈湴寮€鍙戠幆澧冧腑娣诲姞璋冭瘯鎸夐挳
+    // 只在本地开发环境中添加调试按钮
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         const debugDiv = document.createElement('div');
         debugDiv.style.cssText = `
@@ -702,78 +702,78 @@ function addDebugButtons() {
         `;
         
         debugDiv.innerHTML = `
-            <button onclick="debugShowUsers()" style="margin: 5px; padding: 5px;">鏄剧ず鐢ㄦ埛</button>
-            <button onclick="debugClearData()" style="margin: 5px; padding: 5px;">娓呴櫎鏁版嵁</button>
-            <button onclick="debugSyncData()" style="margin: 5px; padding: 5px;">鍚屾鏁版嵁</button>
-            <button onclick="debugTestSupabase()" style="margin: 5px; padding: 5px;">娴嬭瘯Supabase</button>
+            <button onclick="debugShowUsers()" style="margin: 5px; padding: 5px;">显示用户</button>
+            <button onclick="debugClearData()" style="margin: 5px; padding: 5px;">清除数据</button>
+            <button onclick="debugSyncData()" style="margin: 5px; padding: 5px;">同步数据</button>
+            <button onclick="debugTestSupabase()" style="margin: 5px; padding: 5px;">测试Supabase</button>
         `;
         
         document.body.appendChild(debugDiv);
     }
 }
 
-// 璋冭瘯鍑芥暟锛氭樉绀哄綋鍓嶆墍鏈夌敤鎴?
+// 调试函数：显示当前所有用户
 function debugShowUsers() {
     const qsUsersData = localStorage.getItem('qs_users_data');
     const loginUsersData = localStorage.getItem('login_users');
     
-    console.log('=== 璋冭瘯淇℃伅 ===');
-    console.log('qs_users_data:', qsUsersData ? JSON.parse(qsUsersData) : '绌?);
-    console.log('login_users:', loginUsersData ? JSON.parse(loginUsersData) : '绌?);
+    console.log('=== 调试信息 ===');
+    console.log('qs_users_data:', qsUsersData ? JSON.parse(qsUsersData) : '空');
+    console.log('login_users:', loginUsersData ? JSON.parse(loginUsersData) : '空');
     
-    alert(`鐢ㄦ埛鏁版嵁宸茶緭鍑哄埌鎺у埗鍙癨nqs_users_data: ${qsUsersData ? Object.keys(JSON.parse(qsUsersData)).length : 0} 涓敤鎴穃nlogin_users: ${loginUsersData ? Object.keys(JSON.parse(loginUsersData)).length : 0} 涓敤鎴穈);
+    alert(`用户数据已输出到控制台\nqs_users_data: ${qsUsersData ? Object.keys(JSON.parse(qsUsersData)).length : 0} 个用户\nlogin_users: ${loginUsersData ? Object.keys(JSON.parse(loginUsersData)).length : 0} 个用户`);
 }
 
-// 璋冭瘯鍑芥暟锛氭竻闄ゆ墍鏈夋暟鎹?
+// 调试函数：清除所有数据
 function debugClearData() {
-    if (confirm('纭畾瑕佹竻闄ゆ墍鏈夌敤鎴锋暟鎹悧锛?)) {
+    if (confirm('确定要清除所有用户数据吗？')) {
         localStorage.removeItem('qs_users_data');
         localStorage.removeItem('login_users');
         localStorage.removeItem('auth_user');
         localStorage.removeItem('auth_role');
         localStorage.removeItem('auth_time');
-        alert('鏁版嵁宸叉竻闄わ紝椤甸潰灏嗗埛鏂?);
+        alert('数据已清除，页面将刷新');
         location.reload();
     }
 }
 
-// 璋冭瘯鍑芥暟锛氬己鍒跺悓姝ユ暟鎹?
+// 调试函数：强制同步数据
 function debugSyncData() {
-    console.log('寮哄埗鍚屾鏁版嵁...');
+    console.log('强制同步数据...');
     syncLocalToSupabase().then(success => {
-        alert(`鏁版嵁鍚屾${success ? '鎴愬姛' : '澶辫触'}锛岃鏌ョ湅鎺у埗鍙拌緭鍑篳);
+        alert(`数据同步${success ? '成功' : '失败'}，请查看控制台输出`);
     });
 }
 
-// 鏂板锛氭祴璇昐upabase杩炴帴
+// 新增：测试Supabase连接
 function debugTestSupabase() {
     if (!supabaseClient) {
-        alert('Supabase鏈厤缃垨鍒濆鍖栧け璐?);
+        alert('Supabase未配置或初始化失败');
         return;
     }
     
-    alert('寮€濮嬫祴璇昐upabase杩炴帴...');
+    alert('开始测试Supabase连接...');
     
     loadUsersFromSupabase().then(users => {
         if (users) {
-            alert(`Supabase杩炴帴鎴愬姛锛乗n鑾峰彇鍒?${users.length} 涓敤鎴穈);
+            alert(`Supabase连接成功！\n获取到 ${users.length} 个用户`);
         } else {
-            alert('Supabase杩炴帴澶辫触锛岃妫€鏌ラ厤缃拰缃戠粶');
+            alert('Supabase连接失败，请检查配置和网络');
         }
     });
 }
 
 // ================================================
-// 6. 鎻愪緵缁欏叾浠栭〉闈娇鐢ㄧ殑鍏ㄥ眬鍑芥暟
+// 6. 提供给其他页面使用的全局函数
 // ================================================
 
-// 鎻愪緵缁檓embers.html浣跨敤鐨勭敤鎴风鐞嗗嚱鏁?
+// 提供给members.html使用的用户管理函数
 window.supabaseHelpers = {
-    // 娣诲姞鐢ㄦ埛鍒癝upabase
+    // 添加用户到Supabase
     async addUserToSupabase(userData) {
         if (!supabaseClient) {
-            console.warn('Supabase鏈厤缃紝淇濆瓨鍒版湰鍦?);
-            return { success: false, message: 'Supabase鏈厤缃? };
+            console.warn('Supabase未配置，保存到本地');
+            return { success: false, message: 'Supabase未配置' };
         }
         
         try {
@@ -785,29 +785,29 @@ window.supabaseHelpers = {
                     password: userData.password,
                     role: userData.role,
                     status: userData.status || 'active',
-                    department: userData.department || '鏈垎閰?,
+                    department: userData.department || '未分配',
                     team: userData.team || '',
                     position: userData.position || '',
                     join_date: userData.joinDate || new Date().toISOString().split('T')[0],
-                    notes: userData.notes || '绯荤粺鐢ㄦ埛'
+                    notes: userData.notes || '系统用户'
                 }])
                 .select();
             
             if (error) throw error;
             
-            console.log('鐢ㄦ埛宸叉坊鍔犲埌Supabase:', data[0]);
+            console.log('用户已添加到Supabase:', data[0]);
             return { success: true, data: data[0] };
         } catch (error) {
-            console.error('娣诲姞鐢ㄦ埛鍒癝upabase澶辫触:', error);
+            console.error('添加用户到Supabase失败:', error);
             return { success: false, message: error.message };
         }
     },
     
-    // 鏇存柊Supabase涓殑鐢ㄦ埛
+    // 更新Supabase中的用户
     async updateUserInSupabase(userId, userData) {
         if (!supabaseClient) {
-            console.warn('Supabase鏈厤缃紝鏇存柊鏈湴鏁版嵁');
-            return { success: false, message: 'Supabase鏈厤缃? };
+            console.warn('Supabase未配置，更新本地数据');
+            return { success: false, message: 'Supabase未配置' };
         }
         
         try {
@@ -829,19 +829,19 @@ window.supabaseHelpers = {
             
             if (error) throw error;
             
-            console.log('鐢ㄦ埛宸插湪Supabase鏇存柊:', data[0]);
+            console.log('用户已在Supabase更新:', data[0]);
             return { success: true, data: data[0] };
         } catch (error) {
-            console.error('鏇存柊Supabase鐢ㄦ埛澶辫触:', error);
+            console.error('更新Supabase用户失败:', error);
             return { success: false, message: error.message };
         }
     },
     
-    // 浠嶴upabase鍒犻櫎鐢ㄦ埛
+    // 从Supabase删除用户
     async deleteUserFromSupabase(userId) {
         if (!supabaseClient) {
-            console.warn('Supabase鏈厤缃紝鍒犻櫎鏈湴鏁版嵁');
-            return { success: false, message: 'Supabase鏈厤缃? };
+            console.warn('Supabase未配置，删除本地数据');
+            return { success: false, message: 'Supabase未配置' };
         }
         
         try {
@@ -852,23 +852,23 @@ window.supabaseHelpers = {
             
             if (error) throw error;
             
-            console.log('鐢ㄦ埛宸蹭粠Supabase鍒犻櫎:', userId);
+            console.log('用户已从Supabase删除:', userId);
             return { success: true };
         } catch (error) {
-            console.error('浠嶴upabase鍒犻櫎鐢ㄦ埛澶辫触:', error);
+            console.error('从Supabase删除用户失败:', error);
             return { success: false, message: error.message };
         }
     },
     
-    // 淇濆瓨鎴愬憳璇︽儏鍒癝upabase
+    // 保存成员详情到Supabase
     async saveMemberDetailToSupabase(memberDetail) {
         if (!supabaseClient) {
-            console.warn('Supabase鏈厤缃紝淇濆瓨鍒版湰鍦?);
-            return { success: false, message: 'Supabase鏈厤缃? };
+            console.warn('Supabase未配置，保存到本地');
+            return { success: false, message: 'Supabase未配置' };
         }
         
         try {
-            // 妫€鏌ユ槸鍚﹀凡瀛樺湪
+            // 检查是否已存在
             const { data: existing } = await supabaseClient
                 .from('member_details')
                 .select('id')
@@ -878,7 +878,7 @@ window.supabaseHelpers = {
             let result;
             
             if (existing) {
-                // 鏇存柊鐜版湁璁板綍
+                // 更新现有记录
                 const { data, error } = await supabase
                     .from('member_details')
                     .update({
@@ -904,7 +904,7 @@ window.supabaseHelpers = {
                 if (error) throw error;
                 result = data[0];
             } else {
-                // 鎻掑叆鏂拌褰?
+                // 插入新记录
                 const { data, error } = await supabase
                     .from('member_details')
                     .insert([{
@@ -930,18 +930,18 @@ window.supabaseHelpers = {
                 result = data[0];
             }
             
-            console.log('鎴愬憳璇︽儏宸蹭繚瀛樺埌Supabase:', result);
+            console.log('成员详情已保存到Supabase:', result);
             return { success: true, data: result };
         } catch (error) {
-            console.error('淇濆瓨鎴愬憳璇︽儏鍒癝upabase澶辫触:', error);
+            console.error('保存成员详情到Supabase失败:', error);
             return { success: false, message: error.message };
         }
     },
     
-    // 浠嶴upabase鍔犺浇鎴愬憳璇︽儏
+    // 从Supabase加载成员详情
     async loadMemberDetailFromSupabase(username) {
         if (!supabase) {
-            console.warn('Supabase鏈厤缃紝浠庢湰鍦板姞杞?);
+            console.warn('Supabase未配置，从本地加载');
             return null;
         }
         
@@ -953,7 +953,7 @@ window.supabaseHelpers = {
                 .single();
             
             if (error) {
-                // 濡傛灉娌℃湁鎵惧埌锛岃繑鍥瀗ull鑰屼笉鏄姏鍑洪敊璇?
+                // 如果没有找到，返回null而不是抛出错误
                 if (error.code === 'PGRST116') {
                     return null;
                 }
@@ -962,24 +962,24 @@ window.supabaseHelpers = {
             
             return data;
         } catch (error) {
-            console.error('浠嶴upabase鍔犺浇鎴愬憳璇︽儏澶辫触:', error);
+            console.error('从Supabase加载成员详情失败:', error);
             return null;
         }
     },
     
-    // 浠嶴upabase鍔犺浇鎵€鏈夌敤鎴?
+    // 从Supabase加载所有用户
     async loadAllUsersFromSupabase() {
         return await loadUsersFromSupabase();
     },
     
-    // 鑾峰彇浜戠鐘舵€?
+    // 获取云端状态
     async getCloudSyncStatus() {
         if (!supabase) {
-            return { connected: false, message: 'Supabase鏈厤缃? };
+            return { connected: false, message: 'Supabase未配置' };
         }
         
         try {
-            // 娴嬭瘯杩炴帴
+            // 测试连接
             const { error } = await supabase
                 .from('member_details')
                 .select('count')
@@ -989,25 +989,19 @@ window.supabaseHelpers = {
                 return { connected: false, message: error.message };
             }
             
-            return { connected: true, message: '浜戠杩炴帴姝ｅ父' };
+            return { connected: true, message: '云端连接正常' };
         } catch (e) {
             return { connected: false, message: e.message };
         }
     },
     
-    // 鑾峰彇Supabase瀹㈡埛绔姸鎬?
+    // 获取Supabase客户端状态
     getSupabaseStatus() {
         return {
             configured: !!(SUPABASE_URL && SUPABASE_ANON_KEY),
             initialized: !!supabase,
             url: SUPABASE_URL,
-            hasValidConfig: !!(
-                SUPABASE_URL &&
-                SUPABASE_ANON_KEY &&
-                SUPABASE_URL.startsWith('https://') &&
-                SUPABASE_URL.includes('.supabase.co') &&
-                SUPABASE_ANON_KEY.startsWith('sb_publishable_')
-            )
+            hasValidConfig: !SUPABASE_URL.includes('https://owfyycgomqclytnswobj.supabase.co') && !SUPABASE_ANON_KEY.includes('sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV')
         };
     }
 };

@@ -1,17 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>缁堝绠€鍘?- 鏈€楂樻潈闄愮鐞嗗憳</title>
+    <title>终审简历 - 最高权限管理员</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- 娣诲姞 Supabase 瀹㈡埛绔簱 -->
+    <!-- 添加 Supabase 客户端库 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* 鍏ㄥ眬鏍峰紡 */
+        /* 全局样式 */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +24,7 @@
             overflow: auto;
         }
         
-        /* 鎺у埗鍙版牱寮?*/
+        /* 控制台样式 */
         .desktop {
             min-height: 100vh;
             width: 100%;
@@ -34,7 +34,7 @@
             overflow: visible;
         }
         
-        /* 椤堕儴鐘舵€佹爮 */
+        /* 顶部状态栏 */
         .status-bar {
             position: sticky;
             top: 0;
@@ -56,7 +56,7 @@
             flex-wrap: nowrap;
         }
         
-        /* 杩斿洖鎸夐挳鏍峰紡 */
+        /* 返回按钮样式 */
         .back-btn {
             background: rgba(0, 150, 255, 0.2);
             border: 1px solid rgba(0, 150, 255, 0.5);
@@ -117,7 +117,7 @@
             letter-spacing: 1px;
         }
         
-        /* 涓昏鍐呭鍖哄煙 */
+        /* 主要内容区域 */
         .main-content {
             width: 100%;
             min-height: calc(100vh - 80px);
@@ -130,7 +130,7 @@
             margin: 0 auto;
         }
         
-        /* 椤甸潰鏍囬 */
+        /* 页面标题 */
         .page-header {
             text-align: center;
             margin-bottom: 40px;
@@ -153,7 +153,7 @@
             line-height: 1.6;
         }
         
-        /* 鎺у埗闈㈡澘 */
+        /* 控制面板 */
         .control-panel {
             background: rgba(10, 36, 99, 0.7);
             border: 2px solid rgba(0, 150, 255, 0.3);
@@ -234,7 +234,7 @@
             transform: scale(1.05);
         }
         
-        /* 绠€鍘嗗垪琛?*/
+        /* 简历列表 */
         .resume-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -380,7 +380,7 @@
             background: rgba(255, 107, 107, 0.3);
         }
         
-        /* 鍔犺浇鐘舵€?*/
+        /* 加载状态 */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -412,7 +412,7 @@
             letter-spacing: 2px;
         }
         
-        /* 璇︽儏妯℃€佹 */
+        /* 详情模态框 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -521,7 +521,7 @@
             grid-column: 1 / -1;
         }
         
-        /* 缁堝琛ㄥ崟 */
+        /* 终审表单 */
         .final-review-form {
             margin-top: 30px;
             padding-top: 30px;
@@ -685,7 +685,7 @@
             cursor: not-allowed;
         }
         
-        /* 绌虹姸鎬?*/
+        /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -704,7 +704,7 @@
             margin-bottom: 30px;
         }
         
-        /* 鎴愬姛鎻愮ず */
+        /* 成功提示 */
         .success-toast {
             position: fixed;
             bottom: 30px;
@@ -724,7 +724,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         
-        /* 灞炴€ф爣绛?*/
+        /* 属性标签 */
         .attributes-tags {
             display: flex;
             flex-wrap: wrap;
@@ -751,7 +751,7 @@
         .attr-physics { background: rgba(158, 158, 158, 0.2); color: #9e9e9e; border: 1px solid rgba(158, 158, 158, 0.5); }
         .attr-none { background: rgba(158, 158, 158, 0.1); color: #9e9e9e; border: 1px solid rgba(158, 158, 158, 0.3); }
         
-        /* 鍔ㄧ敾 */
+        /* 动画 */
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -762,7 +762,7 @@
             to { transform: translateY(0); opacity: 1; }
         }
         
-        /* 鍝嶅簲寮忚璁?*/
+        /* 响应式设计 */
         @media (max-width: 768px) {
             .status-bar {
                 padding: 15px 20px;
@@ -831,19 +831,19 @@
     </style>
 </head>
 <body>
-    <!-- 鎺у埗鍙扮晫闈?-->
+    <!-- 控制台界面 -->
     <div class="desktop">
-        <!-- 椤堕儴鐘舵€佹爮 -->
+        <!-- 顶部状态栏 -->
         <div class="status-bar">
             <div class="system-info">
-                <!-- 杩斿洖鎸夐挳 -->
-                <button class="back-btn" onclick="goBack()" title="杩斿洖绠＄悊鍛樻帶鍒跺彴">
+                <!-- 返回按钮 -->
+                <button class="back-btn" onclick="goBack()" title="返回管理员控制台">
                     <i class="fas fa-chevron-left"></i>
-                    <span>杩斿洖</span>
+                    <span>返回</span>
                 </button>
                 
-                <img src="qsamlogo.png" alt="绯荤粺鏍囧織" class="system-logo">
-                <div class="system-name">缁堝绠€鍘?- 鏈€楂樻潈闄愮鐞嗗憳</div>
+                <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+                <div class="system-name">终审简历 - 最高权限管理员</div>
             </div>
             
             <div class="user-info">
@@ -852,99 +852,99 @@
                     <i class="fas fa-user-shield"></i>
                 </div>
                 <div>
-                    <div id="userDisplayName" style="color: #ffd93d;">璁垮</div>
+                    <div id="userDisplayName" style="color: #ffd93d;">访客</div>
                     <div id="userRoleText" style="font-size: 0.8rem; color: #6b9ccc;">-</div>
                 </div>
             </div>
         </div>
         
-        <!-- 涓昏鍐呭鍖哄煙 -->
+        <!-- 主要内容区域 -->
         <div class="main-content">
             <div class="content-wrapper">
-                <!-- 椤甸潰鏍囬 -->
+                <!-- 页面标题 -->
                 <div class="page-header">
-                    <h1 class="page-title">绠€鍘嗙粓瀹＄郴缁?/h1>
+                    <h1 class="page-title">简历终审系统</h1>
                     <p class="page-subtitle">
-                        鏌ョ湅骞剁粓瀹″垵瀹￠€氳繃鐨勭敵璇枫€傛偍鍙互鏌ョ湅鐢宠璇︽儏锛屽苟閫氳繃缁堝鎴栭┏鍥炵敵璇凤紙椹冲洖闇€瑕佸～鍐欑悊鐢憋級銆?
-                        <br><span style="color: #ffd93d;">娉ㄦ剰锛氭椤甸潰浠呮樉绀哄垵瀹￠€氳繃鐨勭畝鍘嗐€?/span>
+                        查看并终审初审通过的申请。您可以查看申请详情，并通过终审或驳回申请（驳回需要填写理由）。
+                        <br><span style="color: #ffd93d;">注意：此页面仅显示初审通过的简历。</span>
                     </p>
                 </div>
                 
-                <!-- 鎺у埗闈㈡澘 -->
+                <!-- 控制面板 -->
                 <div class="control-panel">
                     <div class="stats-box">
                         <div class="stat-item">
-                            <div class="stat-label">寰呯粓瀹＄敵璇?/div>
+                            <div class="stat-label">待终审申请</div>
                             <div class="stat-value pending" id="pendingFinalCount">0</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">缁堝閫氳繃</div>
+                            <div class="stat-label">终审通过</div>
                             <div class="stat-value final-approved" id="finalApprovedCount">0</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">缁堝椹冲洖</div>
+                            <div class="stat-label">终审驳回</div>
                             <div class="stat-value final-rejected" id="finalRejectedCount">0</div>
                         </div>
                     </div>
                     
                     <div class="filter-controls">
                         <select class="filter-select" id="finalStatusFilter">
-                            <option value="approved">浠呮樉绀哄緟缁堝</option>
-                            <option value="all">鏄剧ず鎵€鏈夊垵瀹￠€氳繃</option>
-                            <option value="final_approved">宸茬粓瀹￠€氳繃</option>
-                            <option value="final_rejected">宸茬粓瀹￠┏鍥?/option>
+                            <option value="approved">仅显示待终审</option>
+                            <option value="all">显示所有初审通过</option>
+                            <option value="final_approved">已终审通过</option>
+                            <option value="final_rejected">已终审驳回</option>
                         </select>
                         
                         <button class="refresh-btn" onclick="loadResumes()">
-                            <i class="fas fa-sync-alt"></i> 鍒锋柊鍒楄〃
+                            <i class="fas fa-sync-alt"></i> 刷新列表
                         </button>
                     </div>
                 </div>
                 
-                <!-- 绠€鍘嗗垪琛?-->
+                <!-- 简历列表 -->
                 <div class="resume-list" id="resumeList">
-                    <!-- 绠€鍘嗗崱鐗囧皢閫氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                    <!-- 简历卡片将通过JavaScript动态生成 -->
                 </div>
                 
-                <!-- 绌虹姸鎬?-->
+                <!-- 空状态 -->
                 <div class="empty-state" id="emptyState" style="display: none;">
                     <div class="empty-icon">
                         <i class="fas fa-file-alt"></i>
                     </div>
-                    <div class="empty-text" id="emptyText">鏆傛棤寰呯粓瀹＄殑绠€鍘嗙敵璇?/div>
+                    <div class="empty-text" id="emptyText">暂无待终审的简历申请</div>
                     <button class="refresh-btn" onclick="loadResumes()">
-                        <i class="fas fa-sync-alt"></i> 鍒锋柊鍒楄〃
+                        <i class="fas fa-sync-alt"></i> 刷新列表
                     </button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- 鍔犺浇閬僵灞?-->
+    <!-- 加载遮罩层 -->
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText">姝ｅ湪鍔犺浇鏁版嵁...</div>
+        <div class="loading-text" id="loadingText">正在加载数据...</div>
     </div>
     
-    <!-- 璇︽儏妯℃€佹 -->
+    <!-- 详情模态框 -->
     <div class="modal-overlay" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">绠€鍘嗚鎯?- 缁堝</h2>
+                <h2 class="modal-title" id="modalTitle">简历详情 - 终审</h2>
                 <button class="close-modal" onclick="closeModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <!-- 绠€鍘嗚鎯呭唴瀹?-->
+            <!-- 简历详情内容 -->
             <div id="resumeDetailContent">
-                <!-- 鍐呭灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                <!-- 内容将通过JavaScript动态生成 -->
             </div>
             
-            <!-- 缁堝琛ㄥ崟 -->
+            <!-- 终审表单 -->
             <div class="final-review-form" id="finalReviewForm">
                 <h3 class="review-title">
-                    <i class="fas fa-gavel"></i> 缁堝瀹℃牳
+                    <i class="fas fa-gavel"></i> 终审审核
                 </h3>
                 
                 <div class="review-options">
@@ -952,55 +952,55 @@
                         <div class="option-icon">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <div class="option-title">閫氳繃缁堝</div>
-                        <div class="option-desc">璇ョ敵璇风鍚堟墍鏈夎姹傦紝鎵瑰噯鍙戦€侀潰璇曢€氱煡</div>
+                        <div class="option-title">通过终审</div>
+                        <div class="option-desc">该申请符合所有要求，批准发送面试通知</div>
                     </div>
                     
                     <div class="review-option option-reject-final" onclick="selectFinalReviewOption('reject_final')">
                         <div class="option-icon">
                             <i class="fas fa-times-circle"></i>
                         </div>
-                        <div class="option-title">椹冲洖鐢宠</div>
-                        <div class="option-desc">璇ョ敵璇蜂笉绗﹀悎鏈€缁堣姹傦紝璇峰～鍐欓┏鍥炲師鍥?/div>
+                        <div class="option-title">驳回申请</div>
+                        <div class="option-desc">该申请不符合最终要求，请填写驳回原因</div>
                     </div>
                 </div>
                 
-                <!-- 椹冲洖鍘熷洜杈撳叆 -->
+                <!-- 驳回原因输入 -->
                 <div class="reason-container" id="reasonContainer">
                     <div class="reason-label">
-                        <i class="fas fa-comment-dots"></i> 璇峰～鍐欑粓瀹￠┏鍥炲師鍥狅細
+                        <i class="fas fa-comment-dots"></i> 请填写终审驳回原因：
                     </div>
                     <textarea 
                         class="reason-textarea" 
                         id="rejectFinalReason" 
-                        placeholder="璇疯缁嗚鏄庣粓瀹￠┏鍥炵敵璇风殑鍘熷洜锛堣嚦灏?0涓瓧绗︼級..."
+                        placeholder="请详细说明终审驳回申请的原因（至少20个字符）..."
                         maxlength="500"
                     ></textarea>
                     <div style="text-align: right; color: #a3d5ff; font-size: 0.9rem; margin-top: 5px;">
-                        <span id="charCount">0</span>/500 瀛楃
+                        <span id="charCount">0</span>/500 字符
                     </div>
                 </div>
                 
                 <div class="review-actions">
                     <button class="btn-cancel" onclick="closeModal()">
-                        <i class="fas fa-times"></i> 鍙栨秷
+                        <i class="fas fa-times"></i> 取消
                     </button>
                     <button class="btn-submit-final-review" id="submitFinalReviewBtn" onclick="submitFinalReview()" disabled>
-                        <i class="fas fa-gavel"></i> 鎻愪氦缁堝缁撴灉
+                        <i class="fas fa-gavel"></i> 提交终审结果
                     </button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- 鎴愬姛鎻愮ず -->
+    <!-- 成功提示 -->
     <div class="success-toast" id="successToast" style="display: none;">
         <div class="success-icon">
             <i class="fas fa-check-circle"></i>
         </div>
         <div class="success-content">
-            <div class="success-title" id="successTitle">缁堝鎿嶄綔鎴愬姛锛?/div>
-            <div class="success-message" id="successMessage">缁堝缁撴灉宸叉彁浜ゅ埌浜戠鏁版嵁搴撱€?/div>
+            <div class="success-title" id="successTitle">终审操作成功！</div>
+            <div class="success-message" id="successMessage">终审结果已提交到云端数据库。</div>
         </div>
         <button onclick="document.getElementById('successToast').style.display='none'" style="background:none; border:none; color:#a3d5ff; cursor:pointer;">
             <i class="fas fa-times"></i>
@@ -1009,7 +1009,7 @@
 
 <script>
     // ================================================
-    // 1. SUPABASE 閰嶇疆鍜屽叏灞€鍙橀噺
+    // 1. SUPABASE 配置和全局变量
     // ================================================
     const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
@@ -1024,28 +1024,28 @@
     let selectedFinalReviewOption = null;
     
     // ================================================
-    // 2. 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+    // 2. 页面加载时初始化
     // ================================================
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('缁堝绠€鍘嗛〉闈㈠姞杞藉畬鎴愶紝寮€濮嬪垵濮嬪寲...');
+        console.log('终审简历页面加载完成，开始初始化...');
         
-        // 妫€鏌ョ櫥褰曠姸鎬佸拰鏉冮檺
+        // 检查登录状态和权限
         checkLoginStatus();
         
-        // 鍒濆鍖朣upabase
+        // 初始化Supabase
         initSupabase();
         
-        // 鏇存柊鏃堕棿鏄剧ず
+        // 更新时间显示
         updateTime();
         setInterval(updateTime, 1000);
         
-        // 鍔犺浇绠€鍘嗘暟鎹?
+        // 加载简历数据
         loadResumes();
         
-        // 娣诲姞浜嬩欢鐩戝惉鍣?
+        // 添加事件监听器
         setupEventListeners();
         
-        // 娣诲姞ESC閿敮鎸?
+        // 添加ESC键支持
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();
@@ -1053,14 +1053,14 @@
         });
     });
     
-    // 妫€鏌ョ櫥褰曠姸鎬佸拰鏉冮檺
+    // 检查登录状态和权限
     function checkLoginStatus() {
         currentUser = localStorage.getItem('auth_user');
         currentUserRole = localStorage.getItem('auth_role');
         
-        // 绠＄悊鍛樻垨绠＄悊灞傝瀵熷憳鍙互璁块棶
+        // 管理员或管理层观察员可以访问
         if (currentUserRole !== 'admin') {
-            // 棰濆妫€鏌ョ鐞嗗眰鏍囧織
+            // 额外检查管理层标志
             let isMgmt = false;
             try {
                 if (localStorage.getItem('viewer_management') === '1') isMgmt = true;
@@ -1072,29 +1072,29 @@
                     if (userInfo) {
                         const lvl = (userInfo.viewer_level || userInfo.level || userInfo.role || '').toString().toLowerCase();
                         const dept = (userInfo.department || '').toString().toLowerCase();
-                        if (lvl === 'management' || lvl === '绠＄悊' || lvl === '绠＄悊灞?) isMgmt = true;
-                        if (dept.includes('绠＄悊') || dept.includes('management')) isMgmt = true;
+                        if (lvl === 'management' || lvl === '管理' || lvl === '管理层') isMgmt = true;
+                        if (dept.includes('管理') || dept.includes('management')) isMgmt = true;
                     }
                 }
             } catch (e) {
                 console.warn('management detection failed', e);
             }
             if (!isMgmt) {
-                alert('鎮ㄦ病鏈夋潈闄愯闂粓瀹￠〉闈紒');
+                alert('您没有权限访问终审页面！');
                 window.location.href = 'index.html';
                 return;
             }
-            // 鑻ユ槸绠＄悊灞傦紝缁х画杩涘叆
+            // 若是管理层，继续进入
         }
         
-        // 鏄剧ず鐢ㄦ埛淇℃伅锛堝悕瀛?+ 瑙掕壊/閮ㄩ棬锛?
+        // 显示用户信息（名字 + 角色/部门）
         try {
-            const displayName = localStorage.getItem('auth_user_name') || currentUser || '璁垮';
+            const displayName = localStorage.getItem('auth_user_name') || currentUser || '访客';
             document.getElementById('userDisplayName').textContent = displayName;
             const roleTextEl = document.getElementById('userRoleText');
             if (roleTextEl) {
-                if (currentUserRole === 'admin') roleTextEl.textContent = '鏈€楂樻潈闄愮鐞嗗憳';
-                else roleTextEl.textContent = (currentUserRole || '绠＄悊灞傝瀵熷憳');
+                if (currentUserRole === 'admin') roleTextEl.textContent = '最高权限管理员';
+                else roleTextEl.textContent = (currentUserRole || '管理层观察员');
             }
             if (currentUser && currentUser.length > 0) {
                 const firstChar = currentUser.charAt(0).toUpperCase();
@@ -1105,26 +1105,26 @@
         }
     }
     
-    // 鍒濆鍖朣upabase
+    // 初始化Supabase
     function initSupabase() {
-        console.log('寮€濮嬪垵濮嬪寲Supabase...');
+        console.log('开始初始化Supabase...');
         
         try {
-            // 妫€鏌upabase搴撴槸鍚﹀姞杞?
+            // 检查Supabase库是否加载
             if (typeof window.supabase === 'undefined') {
-                console.error('鉂?Supabase JS搴撴湭鍔犺浇锛?);
+                console.error('❌ Supabase JS库未加载！');
                 showCloudStatus(false);
                 return false;
             }
             
-            // 妫€鏌ラ厤缃?
+            // 检查配置
             if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-                console.warn('Supabase閰嶇疆涓嶅畬鏁?);
+                console.warn('Supabase配置不完整');
                 showCloudStatus(false);
                 return false;
             }
             
-            // 鍒涘缓Supabase瀹㈡埛绔?
+            // 创建Supabase客户端
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                 auth: {
                     persistSession: false,
@@ -1133,23 +1133,23 @@
             });
             
             cloudEnabled = true;
-            console.log('鉁?Supabase瀹㈡埛绔凡鍒濆鍖?);
+            console.log('✅ Supabase客户端已初始化');
             showCloudStatus(true);
             return true;
             
         } catch (e) {
-            console.error('Supabase鍒濆鍖栧け璐?', e);
+            console.error('Supabase初始化失败:', e);
             showCloudStatus(false);
             return false;
         }
     }
     
-    // 鏄剧ず浜戠鐘舵€?
+    // 显示云端状态
     function showCloudStatus(isConnected) {
-        console.log(`浜戠鐘舵€? ${isConnected ? '宸茶繛鎺? : '鏈繛鎺?}`);
+        console.log(`云端状态: ${isConnected ? '已连接' : '未连接'}`);
     }
     
-    // 鏇存柊鏃堕棿鏄剧ず
+    // 更新时间显示
     function updateTime() {
         const now = new Date();
         const hours = now.getHours().toString().padStart(2, '0');
@@ -1158,15 +1158,15 @@
         document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
     }
     
-    // 璁剧疆浜嬩欢鐩戝惉鍣?
+    // 设置事件监听器
     function setupEventListeners() {
-        // 缁堝鐘舵€佺瓫閫夊櫒鍙樺寲浜嬩欢
+        // 终审状态筛选器变化事件
         const statusFilter = document.getElementById('finalStatusFilter');
         statusFilter.addEventListener('change', function() {
             filterResumes();
         });
         
-        // 椹冲洖鍘熷洜杈撳叆妗嗗瓧绗﹁鏁?
+        // 驳回原因输入框字符计数
         const rejectReason = document.getElementById('rejectFinalReason');
         if (rejectReason) {
             rejectReason.addEventListener('input', function() {
@@ -1179,75 +1179,75 @@
     }
     
     // ================================================
-    // 3. 绠€鍘嗘暟鎹姞杞藉拰鏄剧ず
+    // 3. 简历数据加载和显示
     // ================================================
     
-    // 鍔犺浇绠€鍘嗘暟鎹?
+    // 加载简历数据
     async function loadResumes() {
-        console.log('寮€濮嬪姞杞界畝鍘嗘暟鎹?..');
-        showLoading('姝ｅ湪鍔犺浇绠€鍘嗘暟鎹?..');
+        console.log('开始加载简历数据...');
+        showLoading('正在加载简历数据...');
         
         try {
-            // 浠嶴upabase鍔犺浇绠€鍘?
+            // 从Supabase加载简历
             const result = await loadResumesFromSupabase();
             
             if (result.success) {
                 allResumes = result.data || [];
-                console.log(`鎴愬姛鍔犺浇 ${allResumes.length} 浠界畝鍘哷);
+                console.log(`成功加载 ${allResumes.length} 份简历`);
                 
-                // 鏇存柊缁熻鏁版嵁
+                // 更新统计数据
                 updateStats();
                 
-                // 绛涢€夊苟鏄剧ず绠€鍘?
+                // 筛选并显示简历
                 filterResumes();
                 
-                // 闅愯棌鍔犺浇鍔ㄧ敾
+                // 隐藏加载动画
                 hideLoading();
                 
             } else {
-                console.warn('浠?Supabase 鍔犺浇澶辫触锛屽惎鐢ㄦ湰鍦板洖閫€绀轰緥鏁版嵁锛?, result.message);
-                // 鍥為€€鍒版湰鍦?sample_resumes.json 浠ヤ究椤甸潰浠嶅彲鏄剧ず绀轰緥椤?
+                console.warn('从 Supabase 加载失败，启用本地回退示例数据：', result.message);
+                // 回退到本地 sample_resumes.json 以便页面仍可显示示例项
                 try {
                     const resp = await fetch('sample_resumes.json');
                     if (resp.ok) {
                         const localData = await resp.json();
                         allResumes = localData || [];
-                        console.log(`宸插姞杞芥湰鍦?${allResumes.length} 浠界ず渚嬬畝鍘哷);
+                        console.log(`已加载本地 ${allResumes.length} 份示例简历`);
                         updateStats();
                         filterResumes();
                         hideLoading();
                         return;
                     }
                 } catch (e) {
-                    console.error('鍔犺浇鏈湴鍥為€€鏁版嵁澶辫触:', e);
+                    console.error('加载本地回退数据失败:', e);
                 }
 
-                throw new Error(result.message || '鍔犺浇绠€鍘嗗け璐?);
+                throw new Error(result.message || '加载简历失败');
             }
             
         } catch (error) {
-            console.error('鍔犺浇绠€鍘嗗け璐?', error);
+            console.error('加载简历失败:', error);
             hideLoading();
             
-            // 鏄剧ず绌虹姸鎬?
+            // 显示空状态
             document.getElementById('emptyState').style.display = 'block';
-            document.getElementById('emptyText').textContent = '鍔犺浇绠€鍘嗗け璐ワ紝璇锋鏌ョ綉缁滆繛鎺?;
+            document.getElementById('emptyText').textContent = '加载简历失败，请检查网络连接';
         }
     }
     
-    // 浠嶴upabase鍔犺浇绠€鍘嗭紙鍙姞杞藉垵瀹￠€氳繃鐨勶級
+    // 从Supabase加载简历（只加载初审通过的）
     async function loadResumesFromSupabase() {
         if (!supabaseClient) {
             return { 
                 success: false, 
-                message: '浜戠杩炴帴鏈厤缃? 
+                message: '云端连接未配置' 
             };
         }
         
         try {
-            console.log('浠嶴upabase鍔犺浇绠€鍘嗘暟鎹紙鍒濆閫氳繃鐨勶級... 鍏堝仛鍩烘湰鍙敤鎬ф鏌?);
+            console.log('从Supabase加载简历数据（初审通过的）... 先做基本可用性检查');
 
-            // 1) 鍩烘湰妫€娴嬶細灏濊瘯鏈€灏忔煡璇互纭琛ㄦ槸鍚﹀瓨鍦ㄥ苟涓斿彲璇?
+            // 1) 基本检测：尝试最小查询以确认表是否存在并且可读
             try {
                 const testRes = await supabaseClient
                     .from('resume_applications')
@@ -1255,36 +1255,36 @@
                     .limit(1);
 
                 if (testRes.error) {
-                    console.error('Supabase 鍩烘湰鏌ヨ閿欒:', testRes.error);
-                    // 濡傛灉 Postgres 鎶ヨ〃涓嶅瓨鍦紝浼氭湁 code 鎴?message 鎸囩ず
+                    console.error('Supabase 基本查询错误:', testRes.error);
+                    // 如果 Postgres 报表不存在，会有 code 或 message 指示
                     const errMsg = (testRes.error && (testRes.error.message || JSON.stringify(testRes.error))) || '';
                     if (errMsg.includes('does not exist') || errMsg.includes('42P01') || (errMsg.includes('relation') && errMsg.includes('does not exist'))) {
                         return {
                             success: false,
-                            message: '妫€娴嬪埌 resume_applications 琛ㄤ笉鍙敤锛堣〃涓嶅瓨鍦ㄦ垨鍚嶇О閿欒锛夈€傝鍦?Supabase 鎺у埗鍙扮‘璁よ〃鍚嶄笌鏋舵瀯銆?,
+                            message: '检测到 resume_applications 表不可用（表不存在或名称错误）。请在 Supabase 控制台确认表名与架构。',
                             error: testRes.error
                         };
                     }
 
-                    // 鍏朵粬閿欒姣斿 RLS锛堣绾у畨鍏級鎴栨潈闄愰棶棰橈紝浼氬湪杩欓噷杩斿洖
+                    // 其他错误比如 RLS（行级安全）或权限问题，会在这里返回
                     return {
                         success: false,
-                        message: '瀵?resume_applications 鐨勫熀鏈煡璇㈠け璐ワ紝鍙兘鏄潈闄愭垨 RLS 绛栫暐闃绘鍖垮悕璁块棶銆傛煡鐪嬫帶鍒跺彴涓?error 瀵硅薄鑾峰彇鏇村淇℃伅銆?,
+                        message: '对 resume_applications 的基本查询失败，可能是权限或 RLS 策略阻止匿名访问。查看控制台中 error 对象获取更多信息。',
                         error: testRes.error
                     };
                 }
 
             } catch (e) {
-                console.error('鎵ц鍩烘湰妫€娴嬫椂鎶涘嚭寮傚父:', e);
-                // 缁х画灏濊瘯鏇磋缁嗙殑鏌ヨ浠ヨ褰曚俊鎭?
+                console.error('执行基本检测时抛出异常:', e);
+                // 继续尝试更详细的查询以记录信息
                 return {
                     success: false,
-                    message: '瀵?resume_applications 鐨勫熀鏈娴嬫姏鍑哄紓甯? ' + (e && e.message),
+                    message: '对 resume_applications 的基本检测抛出异常: ' + (e && e.message),
                     error: e
                 };
             }
 
-            // 2) 濡傛灉鍩烘湰妫€娴嬮€氳繃锛屽垯鎵ц鍘熷澶嶆潅鏌ヨ骞惰褰曞畬鏁撮敊璇俊鎭互渚涙帓鏌?
+            // 2) 如果基本检测通过，则执行原始复杂查询并记录完整错误信息以供排查
             const { data, error } = await supabaseClient
                 .from('resume_applications')
                 .select('*')
@@ -1292,20 +1292,20 @@
                 .order('created_at', { ascending: false });
 
             if (error) {
-                // 杈撳嚭鏇村畬鏁寸殑閿欒淇℃伅锛屾柟渚垮畾浣嶏紙Supabase error 鍙兘鏄璞★級
+                // 输出更完整的错误信息，方便定位（Supabase error 可能是对象）
                 let errStr = null;
                 try {
                     errStr = JSON.stringify(error);
-                    console.error('Supabase 鏌ヨ閿欒锛堣缁嗭級:', errStr);
+                    console.error('Supabase 查询错误（详细）:', errStr);
                 } catch (e) {
                     errStr = String(error || '');
-                    console.error('Supabase 鏌ヨ閿欒锛堟棤娉曞簭鍒楀寲锛?', error);
+                    console.error('Supabase 查询错误（无法序列化）:', error);
                 }
 
-                // 濡傛灉閿欒涓寘鍚?final_status 鍒椾笉瀛樺湪鐨勬彁绀猴紝灏濊瘯鍥為€€鍒颁粎浣跨敤 status 杩囨护鐨勬煡璇?
+                // 如果错误中包含 final_status 列不存在的提示，尝试回退到仅使用 status 过滤的查询
                 const missingFinalStatus = errStr && (errStr.includes('final_status') || errStr.includes('42703') || errStr.includes('does not exist'));
                 if (missingFinalStatus) {
-                    console.warn('妫€娴嬪埌 resume_applications.final_status 涓嶅瓨鍦紝灏濊瘯鍥為€€鍒颁娇鐢?status 杩囨护鐨勬煡璇?..');
+                    console.warn('检测到 resume_applications.final_status 不存在，尝试回退到使用 status 过滤的查询...');
                     try {
                         const { data: fallbackData, error: fallbackError } = await supabaseClient
                             .from('resume_applications')
@@ -1314,24 +1314,24 @@
                             .order('created_at', { ascending: false });
 
                         if (fallbackError) {
-                            try { console.error('鍥為€€鏌ヨ閿欒锛堣缁嗭級:', JSON.stringify(fallbackError)); } catch (e) { console.error('鍥為€€鏌ヨ閿欒:', fallbackError); }
+                            try { console.error('回退查询错误（详细）:', JSON.stringify(fallbackError)); } catch (e) { console.error('回退查询错误:', fallbackError); }
                             return {
                                 success: false,
-                                message: '鍥為€€鏌ヨ澶辫触: ' + (fallbackError.message || JSON.stringify(fallbackError)),
+                                message: '回退查询失败: ' + (fallbackError.message || JSON.stringify(fallbackError)),
                                 error: fallbackError
                             };
                         }
 
-                        console.log(`鍥為€€鏌ヨ浠庝簯绔幏鍙栧埌 ${fallbackData ? fallbackData.length : 0} 浠界畝鍘哷);
+                        console.log(`回退查询从云端获取到 ${fallbackData ? fallbackData.length : 0} 份简历`);
                         return {
                             success: true,
                             data: fallbackData || []
                         };
                     } catch (e) {
-                        console.error('鎵ц鍥為€€鏌ヨ鏃舵姏鍑哄紓甯?', e);
+                        console.error('执行回退查询时抛出异常:', e);
                         return {
                             success: false,
-                            message: '鍥為€€鏌ヨ鎶涘嚭寮傚父: ' + (e && (e.message || JSON.stringify(e))),
+                            message: '回退查询抛出异常: ' + (e && (e.message || JSON.stringify(e))),
                             error: e
                         };
                     }
@@ -1339,12 +1339,12 @@
 
                 return {
                     success: false,
-                    message: '浠?Supabase 鏌ヨ鏁版嵁澶辫触: ' + (error.message || errStr),
+                    message: '从 Supabase 查询数据失败: ' + (error.message || errStr),
                     error: error
                 };
             }
 
-            console.log(`浠庝簯绔幏鍙栧埌 ${data ? data.length : 0} 浠界畝鍘嗭紙鍒濆閫氳繃鐨勶級`);
+            console.log(`从云端获取到 ${data ? data.length : 0} 份简历（初审通过的）`);
 
             return {
                 success: true,
@@ -1352,28 +1352,28 @@
             };
             
         } catch (error) {
-            console.error('浠嶴upabase鍔犺浇绠€鍘嗗け璐?', error);
+            console.error('从Supabase加载简历失败:', error);
             return { 
                 success: false, 
-                message: '浜戠鍔犺浇澶辫触: ' + error.message,
+                message: '云端加载失败: ' + error.message,
                 error: error 
             };
         }
     }
     
-    // 鏇存柊缁熻鏁版嵁
+    // 更新统计数据
     function updateStats() {
-        // 寰呯粓瀹★紙鍒濆閫氳繃浣嗘湭缁堝锛?
+        // 待终审（初审通过但未终审）
         const pendingFinalCount = allResumes.filter(r => 
             r.status === 'approved' && (!r.final_status || r.final_status === 'pending_final')
         ).length;
         
-        // 缁堝閫氳繃
+        // 终审通过
         const finalApprovedCount = allResumes.filter(r => 
             r.final_status === 'final_approved'
         ).length;
         
-        // 缁堝椹冲洖
+        // 终审驳回
         const finalRejectedCount = allResumes.filter(r => 
             r.final_status === 'final_rejected'
         ).length;
@@ -1383,31 +1383,31 @@
         document.getElementById('finalRejectedCount').textContent = finalRejectedCount;
     }
     
-    // 绛涢€夌畝鍘?
+    // 筛选简历
     function filterResumes() {
         const filterValue = document.getElementById('finalStatusFilter').value;
         
         if (filterValue === 'all') {
-            // 鏄剧ず鎵€鏈夊垵瀹￠€氳繃鐨勶紙鏃犺缁堝鐘舵€侊級
+            // 显示所有初审通过的（无论终审状态）
             filteredResumes = allResumes.filter(r => r.status === 'approved');
         } else if (filterValue === 'approved') {
-            // 浠呮樉绀哄緟缁堝鐨勶紙鍒濆閫氳繃涓旀湭缁堝锛?
+            // 仅显示待终审的（初审通过且未终审）
             filteredResumes = allResumes.filter(r => 
                 r.status === 'approved' && (!r.final_status || r.final_status === 'pending_final')
             );
         } else if (filterValue === 'final_approved') {
-            // 鏄剧ず缁堝閫氳繃鐨?
+            // 显示终审通过的
             filteredResumes = allResumes.filter(r => r.final_status === 'final_approved');
         } else if (filterValue === 'final_rejected') {
-            // 鏄剧ず缁堝椹冲洖鐨?
+            // 显示终审驳回的
             filteredResumes = allResumes.filter(r => r.final_status === 'final_rejected');
         }
         
-        // 鏄剧ず绛涢€夊悗鐨勭畝鍘?
+        // 显示筛选后的简历
         displayResumes();
     }
     
-    // 鏄剧ず绠€鍘嗗垪琛?
+    // 显示简历列表
     function displayResumes() {
         const resumeList = document.getElementById('resumeList');
         const emptyState = document.getElementById('emptyState');
@@ -1417,51 +1417,51 @@
             emptyState.style.display = 'block';
             document.getElementById('emptyText').textContent = 
                 document.getElementById('finalStatusFilter').value === 'approved' 
-                    ? '鏆傛棤寰呯粓瀹＄殑绠€鍘嗙敵璇? 
-                    : `鏆傛棤${getFinalStatusText(document.getElementById('finalStatusFilter').value)}鐨勭敵璇穈;
+                    ? '暂无待终审的简历申请' 
+                    : `暂无${getFinalStatusText(document.getElementById('finalStatusFilter').value)}的申请`;
             return;
         }
         
         emptyState.style.display = 'none';
         
-        // 鐢熸垚绠€鍘嗗崱鐗嘓TML
+        // 生成简历卡片HTML
         resumeList.innerHTML = filteredResumes.map(resume => createResumeCard(resume)).join('');
     }
     
-    // 鍒涘缓绠€鍘嗗崱鐗?
+    // 创建简历卡片
     function createResumeCard(resume) {
         const id = resume.id || 'N/A';
-        const fullName = resume.full_name || '鏈～鍐?;
-        const age = resume.age || '鏈～鍐?;
-        const gender = resume.gender || '鏈～鍐?;
-        const location = resume.location || '鏈～鍐?;
-        const meme = resume.meme || '鏃?;
-        const department = resume.department || '鏈€夋嫨';
+        const fullName = resume.full_name || '未填写';
+        const age = resume.age || '未填写';
+        const gender = resume.gender || '未填写';
+        const location = resume.location || '未填写';
+        const meme = resume.meme || '无';
+        const department = resume.department || '未选择';
         const status = resume.status || 'approved';
         const finalStatus = resume.final_status || 'pending_final';
-        const submissionDate = resume.submission_date ? formatDate(resume.submission_date) : '鏈褰?;
-        const reviewer = resume.reviewer || '鏈垵瀹?;
+        const submissionDate = resume.submission_date ? formatDate(resume.submission_date) : '未记录';
+        const reviewer = resume.reviewer || '未初审';
         
-        // 纭畾鍗＄墖鐨凜SS绫诲拰鐘舵€佹爣绛?
-        let statusClass = 'approved'; // 榛樿
-        let statusText = '寰呯粓瀹?;
+        // 确定卡片的CSS类和状态标签
+        let statusClass = 'approved'; // 默认
+        let statusText = '待终审';
         let statusBadgeClass = 'status-approved';
         
         if (finalStatus === 'final_approved') {
             statusClass = 'final-approved';
-            statusText = '缁堝閫氳繃';
+            statusText = '终审通过';
             statusBadgeClass = 'status-final-approved';
         } else if (finalStatus === 'final_rejected') {
             statusClass = 'final-rejected';
-            statusText = '缁堝椹冲洖';
+            statusText = '终审驳回';
             statusBadgeClass = 'status-final-rejected';
         } else if (status === 'approved') {
             statusClass = 'approved';
-            statusText = '寰呯粓瀹?;
+            statusText = '待终审';
             statusBadgeClass = 'status-approved';
         }
         
-        // 鍒涘缓灞炴€ф爣绛?
+        // 创建属性标签
         let attributesHtml = '';
         if (resume.attributes && Array.isArray(resume.attributes)) {
             attributesHtml = resume.attributes.map(attr => 
@@ -1474,9 +1474,9 @@
                 <div class="resume-header">
                     <div class="applicant-info">
                         <h3>${fullName}</h3>
-                        <div class="applicant-id">鐢宠ID: ${id}</div>
+                        <div class="applicant-id">申请ID: ${id}</div>
                         <div style="font-size: 0.8rem; color: #6b9ccc; margin-top: 5px;">
-                            鍒濆浜? ${reviewer}
+                            初审人: ${reviewer}
                         </div>
                     </div>
                     <div class="status-badge ${statusBadgeClass}">${statusText}</div>
@@ -1484,40 +1484,40 @@
                 
                 <div class="resume-details">
                     <div class="detail-row">
-                        <div class="detail-label">骞撮緞/鎬у埆</div>
-                        <div class="detail-value">${age}宀?/ ${gender}</div>
+                        <div class="detail-label">年龄/性别</div>
+                        <div class="detail-value">${age}岁 / ${gender}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">灞呬綇鍦?/div>
+                        <div class="detail-label">居住地</div>
                         <div class="detail-value">${location}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">妯″洜/灞炴€?/div>
+                        <div class="detail-label">模因/属性</div>
                         <div class="detail-value">
                             ${meme}
                             ${attributesHtml ? `<div class="attributes-tags">${attributesHtml}</div>` : ''}
                         </div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">鐢宠閮ㄩ棬</div>
+                        <div class="detail-label">申请部门</div>
                         <div class="detail-value">${department}</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">鎻愪氦鏃堕棿</div>
+                        <div class="detail-label">提交时间</div>
                         <div class="detail-value">${submissionDate}</div>
                     </div>
                 </div>
                 
                 <div class="resume-actions">
                     <button class="action-btn btn-view" onclick="openResumeDetail('${id}'); event.stopPropagation();">
-                        <i class="fas fa-eye"></i> 鏌ョ湅璇︽儏
+                        <i class="fas fa-eye"></i> 查看详情
                     </button>
                     ${finalStatus === 'pending_final' || !finalStatus ? `
                         <button class="action-btn btn-approve-final" onclick="approveFinalResume('${id}'); event.stopPropagation();">
-                            <i class="fas fa-check"></i> 閫氳繃
+                            <i class="fas fa-check"></i> 通过
                         </button>
                         <button class="action-btn btn-reject-final" onclick="rejectFinalResume('${id}'); event.stopPropagation();">
-                            <i class="fas fa-times"></i> 椹冲洖
+                            <i class="fas fa-times"></i> 驳回
                         </button>
                     ` : ''}
                 </div>
@@ -1526,27 +1526,27 @@
     }
     
     // ================================================
-    // 4. 绠€鍘嗚鎯呭拰缁堝鍔熻兘
+    // 4. 简历详情和终审功能
     // ================================================
     
-    // 鎵撳紑绠€鍘嗚鎯?
+    // 打开简历详情
     function openResumeDetail(resumeId) {
         currentResumeId = resumeId;
         const resume = allResumes.find(r => r.id == resumeId);
         
         if (!resume) {
-            alert('鎵句笉鍒版寚瀹氱殑绠€鍘?);
+            alert('找不到指定的简历');
             return;
         }
         
-        // 濉厖璇︽儏鍐呭
+        // 填充详情内容
         document.getElementById('resumeDetailContent').innerHTML = createResumeDetail(resume);
-        document.getElementById('modalTitle').textContent = `${resume.full_name} 鐨勭畝鍘嗚鎯?- 缁堝`;
+        document.getElementById('modalTitle').textContent = `${resume.full_name} 的简历详情 - 终审`;
         
-        // 閲嶇疆缁堝琛ㄥ崟
+        // 重置终审表单
         resetFinalReviewForm();
         
-        // 濡傛灉绠€鍘嗗凡缁堝锛岄殣钘忕粓瀹¤〃鍗?
+        // 如果简历已终审，隐藏终审表单
         const finalStatus = resume.final_status || 'pending_final';
         if (finalStatus !== 'pending_final') {
             document.getElementById('finalReviewForm').style.display = 'none';
@@ -1554,31 +1554,31 @@
             document.getElementById('finalReviewForm').style.display = 'block';
         }
         
-        // 鏄剧ず妯℃€佹
+        // 显示模态框
         document.getElementById('detailModal').classList.add('active');
     }
     
-    // 鍒涘缓绠€鍘嗚鎯匟TML
+    // 创建简历详情HTML
     function createResumeDetail(resume) {
-        const fullName = resume.full_name || '鏈～鍐?;
-        const age = resume.age || '鏈～鍐?;
-        const gender = resume.gender || '鏈～鍐?;
-        const location = resume.location || '鏈～鍐?;
-        const contact = resume.contact || '鏈～鍐?;
-        const meme = resume.meme || '鏃?;
-        const ability = resume.ability || '鏃?;
-        const department = resume.department || '鏈€夋嫨';
-        const submissionDate = resume.submission_date ? formatDate(resume.submission_date) : '鏈褰?;
-        const reviewer = resume.reviewer || '鏈垵瀹?;
-        const reviewDate = resume.review_date ? formatDate(resume.review_date) : '鏈垵瀹?;
-        const reviewReason = resume.review_reason || '鏈～鍐?;
+        const fullName = resume.full_name || '未填写';
+        const age = resume.age || '未填写';
+        const gender = resume.gender || '未填写';
+        const location = resume.location || '未填写';
+        const contact = resume.contact || '未填写';
+        const meme = resume.meme || '无';
+        const ability = resume.ability || '无';
+        const department = resume.department || '未选择';
+        const submissionDate = resume.submission_date ? formatDate(resume.submission_date) : '未记录';
+        const reviewer = resume.reviewer || '未初审';
+        const reviewDate = resume.review_date ? formatDate(resume.review_date) : '未初审';
+        const reviewReason = resume.review_reason || '未填写';
         const status = resume.status || 'approved';
         const finalStatus = resume.final_status || 'pending_final';
-        const finalReviewer = resume.final_reviewer || '鏈粓瀹?;
-        const finalReviewDate = resume.final_review_date ? formatDate(resume.final_review_date) : '鏈粓瀹?;
-        const finalReviewReason = resume.final_review_reason || '鏈～鍐?;
+        const finalReviewer = resume.final_reviewer || '未终审';
+        const finalReviewDate = resume.final_review_date ? formatDate(resume.final_review_date) : '未终审';
+        const finalReviewReason = resume.final_review_reason || '未填写';
         
-        // 鍒涘缓灞炴€ф爣绛?
+        // 创建属性标签
         let attributesHtml = '';
         if (resume.attributes && Array.isArray(resume.attributes)) {
             attributesHtml = resume.attributes.map(attr => 
@@ -1587,118 +1587,118 @@
         }
         
         return `
-            <!-- 鍩烘湰淇℃伅 -->
+            <!-- 基本信息 -->
             <div class="modal-section">
                 <h3 class="section-title">
-                    <i class="fas fa-user"></i> 鍩烘湰淇℃伅
+                    <i class="fas fa-user"></i> 基本信息
                 </h3>
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">濮撳悕</div>
+                        <div class="info-label">姓名</div>
                         <div class="info-value">${fullName}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">骞撮緞</div>
-                        <div class="info-value">${age} 宀?/div>
+                        <div class="info-label">年龄</div>
+                        <div class="info-value">${age} 岁</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">鎬у埆</div>
+                        <div class="info-label">性别</div>
                         <div class="info-value">${gender}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">灞呬綇鍦?/div>
+                        <div class="info-label">居住地</div>
                         <div class="info-value">${location}</div>
                     </div>
                     <div class="info-item full-width">
-                        <div class="info-label">鑱旂郴鏂瑰紡</div>
+                        <div class="info-label">联系方式</div>
                         <div class="info-value">${contact}</div>
                     </div>
                 </div>
             </div>
             
-            <!-- 鑳藉姏淇℃伅 -->
+            <!-- 能力信息 -->
             <div class="modal-section">
                 <h3 class="section-title">
-                    <i class="fas fa-magic"></i> 鑳藉姏淇℃伅
+                    <i class="fas fa-magic"></i> 能力信息
                 </h3>
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">妯″洜</div>
+                        <div class="info-label">模因</div>
                         <div class="info-value">${meme}</div>
                     </div>
                     <div class="info-item full-width">
-                        <div class="info-label">灞炴€?/div>
+                        <div class="info-label">属性</div>
                         <div class="info-value">
-                            ${attributesHtml || '鏃?}
+                            ${attributesHtml || '无'}
                         </div>
                     </div>
                     <div class="info-item full-width">
-                        <div class="info-label">妯″洜鑳藉姏鎻忚堪</div>
+                        <div class="info-label">模因能力描述</div>
                         <div class="info-value">${ability}</div>
                     </div>
                 </div>
             </div>
             
-            <!-- 鐢宠淇℃伅 -->
+            <!-- 申请信息 -->
             <div class="modal-section">
                 <h3 class="section-title">
-                    <i class="fas fa-briefcase"></i> 鐢宠淇℃伅
+                    <i class="fas fa-briefcase"></i> 申请信息
                 </h3>
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">鐢宠閮ㄩ棬</div>
+                        <div class="info-label">申请部门</div>
                         <div class="info-value">${department}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">鎻愪氦鏃堕棿</div>
+                        <div class="info-label">提交时间</div>
                         <div class="info-value">${submissionDate}</div>
                     </div>
                 </div>
             </div>
             
-            <!-- 鍒濆淇℃伅 -->
+            <!-- 初审信息 -->
             <div class="modal-section">
                 <h3 class="section-title">
-                    <i class="fas fa-clipboard-check"></i> 鍒濆淇℃伅
+                    <i class="fas fa-clipboard-check"></i> 初审信息
                 </h3>
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">鍒濆浜?/div>
+                        <div class="info-label">初审人</div>
                         <div class="info-value">${reviewer}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">鍒濆鏃堕棿</div>
+                        <div class="info-label">初审时间</div>
                         <div class="info-value">${reviewDate}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">鍒濆缁撴灉</div>
+                        <div class="info-label">初审结果</div>
                         <div class="info-value">${getStatusText(status)}</div>
                     </div>
                 </div>
             </div>
             
-            <!-- 缁堝淇℃伅锛堝鏋滃凡缁堝锛?-->
+            <!-- 终审信息（如果已终审） -->
             ${finalStatus !== 'pending_final' ? `
             <div class="modal-section">
                 <h3 class="section-title">
-                    <i class="fas fa-gavel"></i> 缁堝淇℃伅
+                    <i class="fas fa-gavel"></i> 终审信息
                 </h3>
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">缁堝浜?/div>
+                        <div class="info-label">终审人</div>
                         <div class="info-value">${finalReviewer}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">缁堝鏃堕棿</div>
+                        <div class="info-label">终审时间</div>
                         <div class="info-value">${finalReviewDate}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">缁堝缁撴灉</div>
+                        <div class="info-label">终审结果</div>
                         <div class="info-value">${getFinalStatusText(finalStatus)}</div>
                     </div>
                     ${finalStatus === 'final_rejected' ? `
                     <div class="info-item full-width">
-                        <div class="info-label">缁堝椹冲洖鍘熷洜</div>
+                        <div class="info-label">终审驳回原因</div>
                         <div class="info-value">${finalReviewReason}</div>
                     </div>
                     ` : ''}
@@ -1708,16 +1708,16 @@
         `;
     }
     
-    // 閫夋嫨缁堝閫夐」
+    // 选择终审选项
     function selectFinalReviewOption(option) {
         selectedFinalReviewOption = option;
         
-        // 绉婚櫎鎵€鏈夐€夋嫨
+        // 移除所有选择
         document.querySelectorAll('.review-option').forEach(el => {
             el.classList.remove('selected');
         });
         
-        // 娣诲姞閫夋嫨鐘舵€?
+        // 添加选择状态
         if (option === 'approve_final') {
             document.querySelector('.option-approve-final').classList.add('selected');
             document.getElementById('reasonContainer').classList.remove('active');
@@ -1726,55 +1726,55 @@
             document.getElementById('reasonContainer').classList.add('active');
         }
         
-        // 鍚敤鎻愪氦鎸夐挳
+        // 启用提交按钮
         document.getElementById('submitFinalReviewBtn').disabled = false;
     }
     
-    // 閲嶇疆缁堝琛ㄥ崟
+    // 重置终审表单
     function resetFinalReviewForm() {
         selectedFinalReviewOption = null;
         
-        // 绉婚櫎鎵€鏈夐€夋嫨
+        // 移除所有选择
         document.querySelectorAll('.review-option').forEach(el => {
             el.classList.remove('selected');
         });
         
-        // 闅愯棌椹冲洖鍘熷洜杈撳叆
+        // 隐藏驳回原因输入
         document.getElementById('reasonContainer').classList.remove('active');
         
-        // 娓呯┖椹冲洖鍘熷洜
+        // 清空驳回原因
         document.getElementById('rejectFinalReason').value = '';
         document.getElementById('charCount').textContent = '0';
         
-        // 绂佺敤鎻愪氦鎸夐挳
+        // 禁用提交按钮
         document.getElementById('submitFinalReviewBtn').disabled = true;
     }
     
-    // 鎻愪氦缁堝
+    // 提交终审
     async function submitFinalReview() {
         if (!selectedFinalReviewOption) {
-            alert('璇烽€夋嫨缁堝閫夐」');
+            alert('请选择终审选项');
             return;
         }
         
-        // 濡傛灉鏄┏鍥烇紝蹇呴』濉啓鍘熷洜
+        // 如果是驳回，必须填写原因
         if (selectedFinalReviewOption === 'reject_final') {
             const reason = document.getElementById('rejectFinalReason').value.trim();
             if (!reason) {
-                alert('璇峰～鍐欑粓瀹￠┏鍥炲師鍥?);
+                alert('请填写终审驳回原因');
                 return;
             }
             if (reason.length < 20) {
-                alert('缁堝椹冲洖鍘熷洜鑷冲皯闇€瑕?0涓瓧绗?);
+                alert('终审驳回原因至少需要20个字符');
                 return;
             }
         }
         
-        // 鏄剧ず鍔犺浇鐘舵€?
-        showLoading('姝ｅ湪鎻愪氦缁堝缁撴灉...');
+        // 显示加载状态
+        showLoading('正在提交终审结果...');
         
         try {
-            // 鍑嗗缁堝鏁版嵁
+            // 准备终审数据
             const finalReviewData = {
                 final_status: selectedFinalReviewOption === 'approve_final' ? 'final_approved' : 'final_rejected',
                 final_reviewer: currentUser,
@@ -1784,11 +1784,11 @@
                 updated_at: new Date().toISOString()
             };
             
-            // 鏇存柊鍒癝upabase
+            // 更新到Supabase
             const result = await updateResumeFinalReview(currentResumeId, finalReviewData);
             
             if (result.success) {
-                // 鏇存柊鏈湴鏁版嵁
+                // 更新本地数据
                 const resumeIndex = allResumes.findIndex(r => r.id == currentResumeId);
                 if (resumeIndex !== -1) {
                     allResumes[resumeIndex] = {
@@ -1797,53 +1797,53 @@
                     };
                 }
                 
-                // 鏇存柊缁熻鏁版嵁
+                // 更新统计数据
                 updateStats();
                 
-                // 绛涢€夊苟鏄剧ず绠€鍘?
+                // 筛选并显示简历
                 filterResumes();
                 
-                // 闅愯棌鍔犺浇鐘舵€?
+                // 隐藏加载状态
                 hideLoading();
                 
-                // 鏄剧ず鎴愬姛鎻愮ず
+                // 显示成功提示
                 showSuccessToast(
-                    '缁堝鎴愬姛锛?,
-                    `宸?{selectedFinalReviewOption === 'approve_final' ? '閫氳繃' : '椹冲洖'}璇ョ敵璇穈
+                    '终审成功！',
+                    `已${selectedFinalReviewOption === 'approve_final' ? '通过' : '驳回'}该申请`
                 );
                 
-                // 鍏抽棴妯℃€佹
+                // 关闭模态框
                 closeModal();
                 
-                // 3绉掑悗鍒锋柊鍒楄〃
+                // 3秒后刷新列表
                 setTimeout(() => {
                     loadResumes();
                 }, 3000);
                 
             } else {
-                throw new Error(result.message || '鎻愪氦缁堝澶辫触');
+                throw new Error(result.message || '提交终审失败');
             }
             
         } catch (error) {
-            console.error('鎻愪氦缁堝澶辫触:', error);
+            console.error('提交终审失败:', error);
             hideLoading();
-            alert(`鎻愪氦缁堝澶辫触: ${error.message}`);
+            alert(`提交终审失败: ${error.message}`);
         }
     }
     
-    // 鏇存柊绠€鍘嗙粓瀹＄姸鎬佸埌Supabase
+    // 更新简历终审状态到Supabase
     async function updateResumeFinalReview(resumeId, finalReviewData) {
         if (!supabaseClient) {
             return { 
                 success: false, 
-                message: '浜戠杩炴帴鏈厤缃? 
+                message: '云端连接未配置' 
             };
         }
         
         try {
-            console.log(`鏇存柊绠€鍘?${resumeId} 鐨勭粓瀹＄姸鎬?..`);
+            console.log(`更新简历 ${resumeId} 的终审状态...`);
             
-            // 鏋勫缓鏇存柊鏁版嵁锛堜粎浣跨敤 snake_case 瀛楁鍚嶏級
+            // 构建更新数据（仅使用 snake_case 字段名）
             let updateData = {
                 updated_at: new Date().toISOString()
             };
@@ -1853,9 +1853,9 @@
             if (finalReviewData.final_review_date) updateData.final_review_date = finalReviewData.final_review_date;
             if (finalReviewData.final_review_reason !== undefined) updateData.final_review_reason = finalReviewData.final_review_reason;
 
-            console.log('灏濊瘯鏇存柊鐨勬暟鎹紙鍒濆锛?', updateData);
+            console.log('尝试更新的数据（初始）:', updateData);
 
-            // 濡傛灉鏈嶅姟鍣ㄨ繑鍥炵己鍒楅敊璇紝瑙ｆ瀽鍒楀悕骞朵粠 updateData 涓Щ闄よ閿悗閲嶈瘯锛堟渶澶?5 娆★級
+            // 如果服务器返回缺列错误，解析列名并从 updateData 中移除该键后重试（最多 5 次）
             let attempt = 0;
             let lastError = null;
             while (attempt < 5) {
@@ -1868,86 +1868,86 @@
                         .select();
 
                     if (!error) {
-                        console.log('浜戠鏇存柊鎴愬姛:', data);
+                        console.log('云端更新成功:', data);
                         return {
                             success: true,
-                            message: '浜戠鏇存柊鎴愬姛',
+                            message: '云端更新成功',
                             data: data ? data[0] : null
                         };
                     }
 
-                    // 濡傛灉鏄垪涓嶅瓨鍦ㄦ垨鎵句笉鍒板垪鐨勯敊璇紝灏濊瘯浠?updateData 涓Щ闄よ瀛楁骞堕噸璇?
+                    // 如果是列不存在或找不到列的错误，尝试从 updateData 中移除该字段并重试
                     const errMsg = (error && (error.message || JSON.stringify(error))) || '';
-                    console.error(`Supabase 鏇存柊灏濊瘯 ${attempt} 杩斿洖閿欒:`, errMsg);
+                    console.error(`Supabase 更新尝试 ${attempt} 返回错误:`, errMsg);
 
-                    // 瑙ｆ瀽鍙兘鐨勫垪鍚嶏紙渚嬪: Could not find the 'finalReviewDate' column of 'resume_applications')
+                    // 解析可能的列名（例如: Could not find the 'finalReviewDate' column of 'resume_applications')
                     const match = errMsg.match(/(?:find the |column )'?([a-zA-Z0-9_\-]+)'? column/);
                     let missingCol = null;
                     if (match && match[1]) {
                         missingCol = match[1];
                     } else {
-                        // 鍙︿竴绉嶆秷鎭牸寮忥細 column "xxx" does not exist
+                        // 另一种消息格式： column "xxx" does not exist
                         const match2 = errMsg.match(/column\s+"?([a-zA-Z0-9_\-]+)"?\s+does not exist/);
                         if (match2 && match2[1]) missingCol = match2[1];
                     }
 
                     if (missingCol) {
-                        console.warn('妫€娴嬪埌缂哄け鍒?', missingCol, '锛屽皢浠庢洿鏂板璞′腑鍒犻櫎鍚庨噸璇?);
-                        // 灏濊瘯鍒犻櫎涓?missingCol 瀵瑰簲鐨?key锛堟敮鎸?camelCase 鍜?snake_case锛?
+                        console.warn('检测到缺失列:', missingCol, '，将从更新对象中删除后重试');
+                        // 尝试删除与 missingCol 对应的 key（支持 camelCase 和 snake_case）
                         const keysToTry = [missingCol, missingCol.toLowerCase(), missingCol.replace(/[A-Z]/g, m => '_' + m.toLowerCase())];
                         let removed = false;
                         for (const k of keysToTry) {
                             if (k && Object.prototype.hasOwnProperty.call(updateData, k)) {
                                 delete updateData[k];
                                 removed = true;
-                                console.log('宸插垹闄?updateData 涓殑閿?', k);
+                                console.log('已删除 updateData 中的键:', k);
                             }
                         }
 
-                        // 濡傛灉娌℃湁鍒犻櫎浠讳綍閿紝閭ｅ氨灏濊瘯鐩存帴绉婚櫎甯歌 final_* 瀛楁
+                        // 如果没有删除任何键，那就尝试直接移除常见 final_* 字段
                         if (!removed) {
                             ['final_status','final_reviewer','final_review_date','final_review_reason'].forEach(k => {
                                 if (Object.prototype.hasOwnProperty.call(updateData, k)) {
                                     delete updateData[k];
                                     removed = true;
-                                    console.log('fallback 鍒犻櫎閿?', k);
+                                    console.log('fallback 删除键:', k);
                                 }
                             });
                         }
 
-                        // 濡傛灉鍒犻櫎鍚?updateData 鍙墿涓?updated_at 涔熸病蹇呰缁х画寰堝娆★紝缁х画涓嬩竴杞噸璇?
+                        // 如果删除后 updateData 只剩下 updated_at 也没必要继续很多次，继续下一轮重试
                         lastError = error;
                         continue;
                     }
 
-                    // 闈炲垪缂哄け閿欒鎴栨棤娉曡В鏋愬垪鍚嶏紝淇濆瓨鏈€鍚庨敊璇苟閫€鍑洪噸璇曞惊鐜?
+                    // 非列缺失错误或无法解析列名，保存最后错误并退出重试循环
                     lastError = error;
                     break;
                 } catch (e) {
-                    console.error('灏濊瘯鏇存柊鏃舵姏鍑哄紓甯?', e);
+                    console.error('尝试更新时抛出异常:', e);
                     lastError = e;
                     break;
                 }
             }
 
-            // 濡傛灉寰幆缁撴潫浠嶆湭鎴愬姛锛岃繘鍏ヤ笅闈㈢殑閿欒澶勭悊閫昏緫
+            // 如果循环结束仍未成功，进入下面的错误处理逻辑
             if (lastError) {
                 throw lastError;
             }
             
             if (error) {
-                console.error('Supabase鏇存柊閿欒:', error);
+                console.error('Supabase更新错误:', error);
                 
-                // 濡傛灉鏄己鍒楅敊璇紝灏濊瘯浣跨敤鏈€绠€鍖栫殑鏇存柊
+                // 如果是缺列错误，尝试使用最简化的更新
                 if (error.message.includes('column')) {
-                    console.log('妫€娴嬪埌瀛楁鍚嶄笉鍖归厤锛屽皾璇曠畝鍖栨洿鏂?..');
+                    console.log('检测到字段名不匹配，尝试简化更新...');
                     
-                    // 鍙洿鏂版垜浠‘瀹氬瓨鍦ㄧ殑瀛楁
+                    // 只更新我们确定存在的字段
                     const simplifiedUpdate = {
                         updated_at: new Date().toISOString()
                     };
                     
-                    // 灏濊瘯鐩存帴浣跨敤瀛楁鍚嶏紙涓嶈繘琛屾槧灏勶級
+                    // 尝试直接使用字段名（不进行映射）
                     if (finalReviewData.final_status) {
                         simplifiedUpdate.final_status = finalReviewData.final_status;
                     }
@@ -1962,10 +1962,10 @@
                         throw simplifiedError;
                     }
                     
-                    console.log('绠€鍖栨洿鏂版垚鍔?', simplifiedData);
+                    console.log('简化更新成功:', simplifiedData);
                     return { 
                         success: true, 
-                        message: '浜戠鏇存柊鎴愬姛锛堢畝鍖栧瓧娈碉級', 
+                        message: '云端更新成功（简化字段）', 
                         data: simplifiedData ? simplifiedData[0] : null 
                     };
                 }
@@ -1973,30 +1973,30 @@
                 throw error;
             }
             
-            console.log('浜戠鏇存柊鎴愬姛:', data);
+            console.log('云端更新成功:', data);
             return { 
                 success: true, 
-                message: '浜戠鏇存柊鎴愬姛', 
+                message: '云端更新成功', 
                 data: data ? data[0] : null 
             };
             
         } catch (error) {
-            console.error('鏇存柊鍒颁簯绔け璐?', error);
+            console.error('更新到云端失败:', error);
             return { 
                 success: false, 
-                message: '浜戠鏇存柊澶辫触: ' + error.message,
+                message: '云端更新失败: ' + error.message,
                 error: error 
             };
         }
     }
     
-    // 蹇€熼€氳繃缁堝
+    // 快速通过终审
     async function approveFinalResume(resumeId) {
-        if (!confirm('纭畾瑕侀€氳繃缁堝杩欎唤鐢宠鍚楋紵閫氳繃鍚庡皢閫氱煡鐢宠浜鸿繘琛岄潰璇曘€?)) {
+        if (!confirm('确定要通过终审这份申请吗？通过后将通知申请人进行面试。')) {
             return;
         }
         
-        showLoading('姝ｅ湪閫氳繃缁堝...');
+        showLoading('正在通过终审...');
         
         try {
             const finalReviewData = {
@@ -2010,7 +2010,7 @@
             const result = await updateResumeFinalReview(resumeId, finalReviewData);
             
             if (result.success) {
-                // 鏇存柊鏈湴鏁版嵁
+                // 更新本地数据
                 const resumeIndex = allResumes.findIndex(r => r.id == resumeId);
                 if (resumeIndex !== -1) {
                     allResumes[resumeIndex] = {
@@ -2019,49 +2019,49 @@
                     };
                 }
                 
-                // 鏇存柊缁熻鏁版嵁
+                // 更新统计数据
                 updateStats();
                 
-                // 绛涢€夊苟鏄剧ず绠€鍘?
+                // 筛选并显示简历
                 filterResumes();
                 
                 hideLoading();
-                showSuccessToast('缁堝鎴愬姛锛?, '宸查€氳繃璇ョ敵璇风殑缁堝');
+                showSuccessToast('终审成功！', '已通过该申请的终审');
                 
-                // 3绉掑悗鍒锋柊鍒楄〃
+                // 3秒后刷新列表
                 setTimeout(() => {
                     loadResumes();
                 }, 3000);
                 
             } else {
-                throw new Error(result.message || '鎿嶄綔澶辫触');
+                throw new Error(result.message || '操作失败');
             }
             
         } catch (error) {
-            console.error('閫氳繃缁堝澶辫触:', error);
+            console.error('通过终审失败:', error);
             hideLoading();
-            alert(`鎿嶄綔澶辫触: ${error.message}`);
+            alert(`操作失败: ${error.message}`);
         }
     }
     
-    // 蹇€熼┏鍥炵粓瀹?
+    // 快速驳回终审
     async function rejectFinalResume(resumeId) {
-        const reason = prompt('璇疯緭鍏ョ粓瀹￠┏鍥炲師鍥狅紙鑷冲皯20涓瓧绗︼級锛?);
+        const reason = prompt('请输入终审驳回原因（至少20个字符）：');
         
         if (!reason) {
             return;
         }
         
         if (reason.length < 20) {
-            alert('缁堝椹冲洖鍘熷洜鑷冲皯闇€瑕?0涓瓧绗?);
+            alert('终审驳回原因至少需要20个字符');
             return;
         }
         
-        if (!confirm('纭畾瑕侀┏鍥炵粓瀹¤繖浠界敵璇峰悧锛熸鎿嶄綔涓嶅彲鎾ら攢銆?)) {
+        if (!confirm('确定要驳回终审这份申请吗？此操作不可撤销。')) {
             return;
         }
         
-        showLoading('姝ｅ湪椹冲洖缁堝...');
+        showLoading('正在驳回终审...');
         
         try {
             const finalReviewData = {
@@ -2075,7 +2075,7 @@
             const result = await updateResumeFinalReview(resumeId, finalReviewData);
             
             if (result.success) {
-                // 鏇存柊鏈湴鏁版嵁
+                // 更新本地数据
                 const resumeIndex = allResumes.findIndex(r => r.id == resumeId);
                 if (resumeIndex !== -1) {
                     allResumes[resumeIndex] = {
@@ -2084,37 +2084,37 @@
                     };
                 }
                 
-                // 鏇存柊缁熻鏁版嵁
+                // 更新统计数据
                 updateStats();
                 
-                // 绛涢€夊苟鏄剧ず绠€鍘?
+                // 筛选并显示简历
                 filterResumes();
                 
                 hideLoading();
-                showSuccessToast('缁堝鎴愬姛锛?, '宸查┏鍥炶鐢宠鐨勭粓瀹?);
+                showSuccessToast('终审成功！', '已驳回该申请的终审');
                 
-                // 3绉掑悗鍒锋柊鍒楄〃
+                // 3秒后刷新列表
                 setTimeout(() => {
                     loadResumes();
                 }, 3000);
                 
             } else {
-                throw new Error(result.message || '鎿嶄綔澶辫触');
+                throw new Error(result.message || '操作失败');
             }
             
         } catch (error) {
-            console.error('椹冲洖缁堝澶辫触:', error);
+            console.error('驳回终审失败:', error);
             hideLoading();
-            alert(`鎿嶄綔澶辫触: ${error.message}`);
+            alert(`操作失败: ${error.message}`);
         }
     }
     
     // ================================================
-    // 5. 杈呭姪鍑芥暟
+    // 5. 辅助函数
     // ================================================
     
-    // 鏄剧ず鍔犺浇鐘舵€?
-    function showLoading(message = '姝ｅ湪澶勭悊...') {
+    // 显示加载状态
+    function showLoading(message = '正在处理...') {
         const overlay = document.getElementById('loadingOverlay');
         const text = document.getElementById('loadingText');
         
@@ -2124,7 +2124,7 @@
         }
     }
     
-    // 闅愯棌鍔犺浇鐘舵€?
+    // 隐藏加载状态
     function hideLoading() {
         const overlay = document.getElementById('loadingOverlay');
         if (overlay) {
@@ -2132,7 +2132,7 @@
         }
     }
     
-    // 鏄剧ず鎴愬姛鎻愮ず
+    // 显示成功提示
     function showSuccessToast(title, message) {
         const toast = document.getElementById('successToast');
         const titleEl = document.getElementById('successTitle');
@@ -2143,27 +2143,27 @@
             messageEl.textContent = message;
             toast.style.display = 'flex';
             
-            // 5绉掑悗鑷姩闅愯棌
+            // 5秒后自动隐藏
             setTimeout(() => {
                 toast.style.display = 'none';
             }, 5000);
         }
     }
     
-    // 鍏抽棴妯℃€佹
+    // 关闭模态框
     function closeModal() {
         document.getElementById('detailModal').classList.remove('active');
     }
     
-    // 杩斿洖涓婁竴椤?
+    // 返回上一页
     function goBack() {
-        // 浼樺厛浣跨敤娴忚鍣ㄥ巻鍙?
+        // 优先使用浏览器历史
         if (window.history && window.history.length > 1) {
             window.history.back();
         } else {
-            // 濡傛灉娌℃湁鍘嗗彶璁板綍锛屼紭鍏堝垽鏂槸鍚︿负绠＄悊灞傝瀵熷憳鍐嶅喅瀹氳繑鍥炵洰鏍?
+            // 如果没有历史记录，优先判断是否为管理层观察员再决定返回目标
             try {
-                // 澶嶇敤椤甸潰宸叉湁鐨?detection 閫昏緫
+                // 复用页面已有的 detection 逻辑
                 let isMgmt = false;
                 if (localStorage.getItem('viewer_management') === '1') isMgmt = true;
                 if (localStorage.getItem('auth_viewer_level') === 'management') isMgmt = true;
@@ -2175,8 +2175,8 @@
                     if (userInfo) {
                         const lvl = (userInfo.viewer_level || userInfo.level || userInfo.role || '').toString().toLowerCase();
                         const dept = (userInfo.department || '').toString().toLowerCase();
-                        if (lvl === 'management' || lvl === '绠＄悊' || lvl === '绠＄悊灞?) isMgmt = true;
-                        if (dept.includes('绠＄悊') || dept.includes('management')) isMgmt = true;
+                        if (lvl === 'management' || lvl === '管理' || lvl === '管理层') isMgmt = true;
+                        if (dept.includes('管理') || dept.includes('management')) isMgmt = true;
                     }
                 }
 
@@ -2188,7 +2188,7 @@
         }
     }
     
-    // 鏍煎紡鍖栨棩鏈?
+    // 格式化日期
     function formatDate(dateString) {
         try {
             const date = new Date(dateString);
@@ -2204,40 +2204,40 @@
         }
     }
     
-    // 鑾峰彇鍒濆鐘舵€佹枃鏈?
+    // 获取初审状态文本
     function getStatusText(status) {
         switch(status) {
-            case 'pending': return '寰呭垵瀹?;
-            case 'approved': return '鍒濆閫氳繃';
-            case 'rejected': return '鍒濆椹冲洖';
-            default: return '鏈煡';
+            case 'pending': return '待初审';
+            case 'approved': return '初审通过';
+            case 'rejected': return '初审驳回';
+            default: return '未知';
         }
     }
     
-    // 鑾峰彇缁堝鐘舵€佹枃鏈?
+    // 获取终审状态文本
     function getFinalStatusText(finalStatus) {
         switch(finalStatus) {
-            case 'pending_final': return '寰呯粓瀹?;
-            case 'final_approved': return '缁堝閫氳繃';
-            case 'final_rejected': return '缁堝椹冲洖';
-            default: return '寰呯粓瀹?;
+            case 'pending_final': return '待终审';
+            case 'final_approved': return '终审通过';
+            case 'final_rejected': return '终审驳回';
+            default: return '待终审';
         }
     }
     
-    // 鑾峰彇灞炴€SS绫?
+    // 获取属性CSS类
     function getAttributeClass(attr) {
         const attrMap = {
-            '鐏?: 'fire',
-            '鍐?: 'ice',
-            '闆?: 'thunder',
-            '宀?: 'rock',
-            '椋?: 'wind',
-            '鍏?: 'light',
-            '鐢熷懡': 'life',
-            '閲嶅姏': 'gravity',
-            '铻嶅悎': 'fusion',
-            '鐗╃悊': 'physics',
-            '鏃?: 'none'
+            '火': 'fire',
+            '冰': 'ice',
+            '雷': 'thunder',
+            '岩': 'rock',
+            '风': 'wind',
+            '光': 'light',
+            '生命': 'life',
+            '重力': 'gravity',
+            '融合': 'fusion',
+            '物理': 'physics',
+            '无': 'none'
         };
         
         return attrMap[attr] || 'none';

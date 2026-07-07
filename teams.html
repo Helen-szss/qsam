@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>闃熶紞鍚嶅崟 - 绠＄悊灞€鎺у埗鍙?/title>
+    <title>队伍名单 - 管理局控制台</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 娣诲姞 Supabase 瀹㈡埛绔簱 -->
+    <!-- 添加 Supabase 客户端库 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
-        /* 鍏ㄥ眬鏍峰紡 - 纭繚鍏ㄥ睆 */
+        /* 全局样式 - 确保全屏 */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +21,7 @@
             overflow: auto;
         }
         
-        /* 鎺у埗鍙版牱寮?- 鍏ㄥ睆 */
+        /* 控制台样式 - 全屏 */
         .desktop {
             min-height: 100vh;
             width: 100%;
@@ -31,7 +31,7 @@
             overflow: visible;
         }
         
-        /* 椤堕儴鐘舵€佹爮 - 鍥哄畾 */
+        /* 顶部状态栏 - 固定 */
         .status-bar {
             position: sticky;
             top: 0;
@@ -53,7 +53,7 @@
             flex-wrap: nowrap;
         }
         
-        /* 杩斿洖鎸夐挳鏍峰紡 */
+        /* 返回按钮样式 */
         .back-btn {
             background: rgba(0, 150, 255, 0.2);
             border: 1px solid rgba(0, 150, 255, 0.5);
@@ -118,7 +118,7 @@
             letter-spacing: 1px;
         }
         
-        /* 涓昏鍐呭鍖哄煙 - 鍏ㄥ睆 */
+        /* 主要内容区域 - 全屏 */
         .main-content {
             width: 100%;
             min-height: calc(100vh - 80px);
@@ -126,14 +126,14 @@
             overflow: auto;
         }
         
-        /* 鍐呭瀹瑰櫒 */
+        /* 内容容器 */
         .content-wrapper {
             max-width: 1400px;
             margin: 0 auto;
             width: 100%;
         }
         
-        /* 椤甸潰鏍囬 */
+        /* 页面标题 */
         .page-header {
             margin-bottom: 30px;
             text-align: center;
@@ -158,7 +158,7 @@
             line-height: 1.5;
         }
         
-        /* 缁熻鍗＄墖缃戞牸 */
+        /* 统计卡片网格 */
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -204,7 +204,7 @@
             letter-spacing: 1px;
         }
         
-        /* 闃熶紞缃戞牸 */
+        /* 队伍网格 */
         .teams-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -285,7 +285,7 @@
             font-size: 0.95rem;
         }
         
-        /* 闃熶紞淇℃伅璇︽儏 */
+        /* 队伍信息详情 */
         .team-details {
             margin-top: 20px;
         }
@@ -309,7 +309,7 @@
             font-weight: 500;
         }
         
-        /* 鐘舵€佹爣绛?*/
+        /* 状态标签 */
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -330,7 +330,7 @@
             border: 1px solid rgba(255, 107, 107, 0.5);
         }
         
-        /* 闃熷憳鍒楄〃 */
+        /* 队员列表 */
         .members-list {
             margin-top: 25px;
             padding-top: 20px;
@@ -393,7 +393,7 @@
             color: #a3d5ff;
         }
         
-        /* 绌虹姸鎬?*/
+        /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -407,7 +407,7 @@
             color: rgba(0, 150, 255, 0.3);
         }
         
-        /* 闃熶紞璇︽儏妯℃€佹 */
+        /* 队伍详情模态框 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -487,7 +487,7 @@
             transform: rotate(90deg);
         }
         
-        /* 闃熶紞璇︽儏鍐呭 */
+        /* 队伍详情内容 */
         .team-detail-header {
             display: flex;
             gap: 30px;
@@ -525,7 +525,7 @@
             margin-bottom: 15px;
         }
         
-        /* 淇℃伅鍗＄墖 */
+        /* 信息卡片 */
         .info-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -568,7 +568,7 @@
             font-weight: 500;
         }
         
-        /* 鎴愬憳琛ㄦ牸 */
+        /* 成员表格 */
         .members-table-container {
             margin-top: 30px;
         }
@@ -598,7 +598,7 @@
             background: rgba(0, 60, 120, 0.2);
         }
         
-        /* 鎿嶄綔鎸夐挳 */
+        /* 操作按钮 */
         .action-btn {
             padding: 12px 25px;
             background: rgba(10, 36, 99, 0.7);
@@ -632,7 +632,7 @@
             box-shadow: 0 8px 20px rgba(0, 150, 255, 0.3);
         }
         
-        /* 閫€鍑烘寜閽?*/
+        /* 退出按钮 */
         .logout-btn {
             background: rgba(255, 107, 107, 0.2);
             border: 1px solid rgba(255, 107, 107, 0.5);
@@ -652,7 +652,7 @@
             transform: scale(1.05);
         }
         
-        /* 鍝嶅簲寮忚璁?*/
+        /* 响应式设计 */
         @media (max-width: 1200px) {
             .teams-grid {
                 grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -696,7 +696,7 @@
                 min-width: auto;
             }
             
-            /* 鍝嶅簲寮忎笅鐨勮繑鍥炴寜閽?*/
+            /* 响应式下的返回按钮 */
             .back-btn {
                 margin-right: 10px;
                 padding: 6px 12px;
@@ -704,7 +704,7 @@
             }
             
             .back-btn span {
-                display: none; /* 鍦ㄥ皬灞忓箷涓婇殣钘?杩斿洖"鏂囧瓧 */
+                display: none; /* 在小屏幕上隐藏"返回"文字 */
             }
             
             .back-btn i {
@@ -713,7 +713,7 @@
             }
         }
         
-        /* 鍔犺浇鍔ㄧ敾 */
+        /* 加载动画 */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -752,25 +752,25 @@
     </style>
 </head>
 <body>
-    <!-- 鍔犺浇鍔ㄧ敾 -->
+    <!-- 加载动画 -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText">姝ｅ湪鍔犺浇闃熶紞鏁版嵁...</div>
+        <div class="loading-text" id="loadingText">正在加载队伍数据...</div>
     </div>
     
-    <!-- 鎺у埗鍙扮晫闈?-->
+    <!-- 控制台界面 -->
     <div class="desktop" style="display: none;" id="mainContent">
-        <!-- 椤堕儴鐘舵€佹爮 -->
+        <!-- 顶部状态栏 -->
         <div class="status-bar">
             <div class="system-info">
-                <!-- 杩斿洖鎸夐挳 -->
-                <button class="back-btn" onclick="goBackToAdmin()" title="杩斿洖鎺у埗鍙?>
+                <!-- 返回按钮 -->
+                <button class="back-btn" onclick="goBackToAdmin()" title="返回控制台">
                     <i class="fas fa-chevron-left"></i>
-                    <span>杩斿洖鎺у埗鍙?/span>
+                    <span>返回控制台</span>
                 </button>
                 
-                <img src="qsamlogo.png" alt="绯荤粺鏍囧織" class="system-logo">
-                <div class="system-name">闃熶紞绠＄悊鎺у埗鍙?/div>
+                <img src="qsamlogo.png" alt="系统标志" class="system-logo">
+                <div class="system-name">队伍管理控制台</div>
             </div>
             
             <div class="user-info">
@@ -780,76 +780,76 @@
                 </div>
                 <div>
                     <div style="color: #ffd93d;">Ophelia</div>
-                    <div style="font-size: 0.8rem; color: #a3d5ff;">鏈€楂樻潈闄愮鐞嗗憳</div>
+                    <div style="font-size: 0.8rem; color: #a3d5ff;">最高权限管理员</div>
                 </div>
                 <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> 閫€鍑?
+                    <i class="fas fa-sign-out-alt"></i> 退出
                 </button>
             </div>
         </div>
         
-        <!-- 涓昏鍐呭鍖哄煙 -->
+        <!-- 主要内容区域 -->
         <div class="main-content">
             <div class="content-wrapper">
-                <!-- 椤甸潰鏍囬 -->
+                <!-- 页面标题 -->
                 <div class="page-header">
-                    <h1 class="page-title">鎴樻枟缃?- 闃熶紞鍚嶅崟</h1>
-                    <p class="page-subtitle">绠＄悊灞€鎴樻枟缃蹭笅灞炵殑鎵€鏈夎鍔ㄥ皬闃熴€傜偣鍑婚槦浼嶅崱鐗囨煡鐪嬭缁嗕俊鎭拰鎴愬憳鍒楄〃銆?/p>
+                    <h1 class="page-title">战斗署 - 队伍名单</h1>
+                    <p class="page-subtitle">管理局战斗署下属的所有行动小队。点击队伍卡片查看详细信息和成员列表。</p>
                 </div>
                 
-                <!-- 缁熻鍗＄墖 -->
+                <!-- 统计卡片 -->
                 <div class="stats-cards">
                     <div class="stat-card">
                         <div class="stat-icon" style="color: #4fc3ff;">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div class="stat-label">鎬婚槦浼嶆暟</div>
+                        <div class="stat-label">总队伍数</div>
                         <div class="stat-value" id="totalTeams">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon" style="color: #6bffb8;">
                             <i class="fas fa-user-check"></i>
                         </div>
-                        <div class="stat-label">鎬绘垚鍛樻暟</div>
+                        <div class="stat-label">总成员数</div>
                         <div class="stat-value" id="totalMembers">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon" style="color: #ffd93d;">
                             <i class="fas fa-user-shield"></i>
                         </div>
-                        <div class="stat-label">闃熼暱浜烘暟</div>
+                        <div class="stat-label">队长人数</div>
                         <div class="stat-value" id="totalLeaders">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon" style="color: #ff6b6b;">
                             <i class="fas fa-running"></i>
                         </div>
-                        <div class="stat-label">娲昏穬闃熶紞</div>
+                        <div class="stat-label">活跃队伍</div>
                         <div class="stat-value" id="activeTeams">0</div>
                     </div>
                 </div>
                 
-                <!-- 闃熶紞鍒楄〃 -->
+                <!-- 队伍列表 -->
                 <div class="teams-grid" id="teamsContainer">
-                    <!-- 闃熶紞鍗＄墖浼氶€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                    <!-- 队伍卡片会通过JavaScript动态生成 -->
                 </div>
                 
-                <!-- 浜戠鐘舵€?-->
+                <!-- 云端状态 -->
                 <div style="margin-top: 40px; text-align: center; color: #6b9ccc; font-size: 0.9rem;">
                     <i class="fas fa-cloud" id="cloudIcon"></i>
-                    <span id="cloudStatus">姝ｅ湪杩炴帴浜戠鏁版嵁搴?..</span>
+                    <span id="cloudStatus">正在连接云端数据库...</span>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- 闃熶紞璇︽儏妯℃€佹 -->
+    <!-- 队伍详情模态框 -->
     <div class="modal-overlay" id="teamModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">
                     <i class="fas fa-users" id="modalIcon"></i>
-                    <span id="modalTeamName">闃熶紞鍚嶇О</span>
+                    <span id="modalTeamName">队伍名称</span>
                 </h2>
                 <button class="close-btn" onclick="closeTeamModal()">
                     <i class="fas fa-times"></i>
@@ -857,14 +857,14 @@
             </div>
             
             <div id="teamDetailContent">
-                <!-- 闃熶紞璇︽儏鍐呭浼氶€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                <!-- 队伍详情内容会通过JavaScript动态生成 -->
             </div>
         </div>
     </div>
     
     <script>
         // ================================================
-        // 1. SUPABASE 閰嶇疆
+        // 1. SUPABASE 配置
         // ================================================
         const SUPABASE_URL = 'https://owfyycgomqclytnswobj.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV';
@@ -872,77 +872,77 @@
         let supabaseClient = null;
         let cloudEnabled = false;
         
-        // 瀹氫箟鎴樻枟缃插皬闃熶俊鎭紙鍩虹淇℃伅锛屾垚鍛樹粠鏁版嵁搴撹幏鍙栵級
+        // 定义战斗署小队信息（基础信息，成员从数据库获取）
         const TEAMS_INFO = {
-            '瑁傞殭搴斿缁?: {
-                name: '瑁傞殭搴斿缁?,
+            '裂隙应对组': {
+                name: '裂隙应对组',
                 code: 'CRT-01',
-                description: '涓撻棬澶勭悊绌洪棿寮傚父浜嬩欢鐨勫揩閫熷弽搴斿皬闃燂紝璐熻矗娓呭壙鍥犳椂绌鸿闅欒€屼骇鐢熺殑瑁傞殭鎬墿锛屽苟瀵规椂绌鸿闅欒繘琛屽皝閿併€?,
+                description: '专门处理空间异常事件的快速反应小队，负责清剿因时空裂隙而产生的裂隙怪物，并对时空裂隙进行封锁。',
                 color: '#4fc3ff',
                 icon: 'fas fa-door-open',
-                established: '缁堟湯C45',
+                established: '终末C45',
                 status: 'active',
-                leaderTitle: '搴斿缁勯暱',
-                motto: '瑁傞殭鍗崇幇锛屽嵆鍒诲搷搴?,
-                deployment: '澶勭悊绌洪棿寮傚父',
-                base: '鎬婚儴鍩哄湴 - 鍦颁笂宸ヤ綔鍖?,
-                equipment: '鐮旂┒澶勫畾鍒剁壒鎴樻鍣?
+                leaderTitle: '应对组长',
+                motto: '裂隙即现，即刻响应',
+                deployment: '处理空间异常',
+                base: '总部基地 - 地上工作区',
+                equipment: '研究处定制特战武器'
             },
-            '鍩庡競搴旀€ョ粍': {
-                name: '鍩庡競搴旀€ョ粍',
+            '城市应急组': {
+                name: '城市应急组',
                 code: 'CRT-02',
-                description: '璐熻矗鍩庡尯绐佸彂浜嬩欢锛屼富瑕佺殑浠诲姟鍦扮偣鏄櫎鏃堕摳鍘傚鐨勮但灏斿崱瑗夸簹鎵€鏈夊湴鍖恒€?,
+                description: '负责城区突发事件，主要的任务地点是除时铸厂外的赫尔卡西亚所有地区。',
                 color: '#6bffb8',
                 icon: 'fas fa-city',
-                established: '缁堟湯C43',
+                established: '终末C43',
                 status: 'active',
-                leaderTitle: '鍩庨槻缁勯暱',
-                motto: '鍩庡競瀹夊畞锛屾垜浠畧鎶?,
-                deployment: '鍩庡競搴旀€ュ搷搴?,
-                base: '404瀹夊叏灞?,
-                equipment: '鐮旂┒澶勫畾鍒剁壒鎴樻鍣?
+                leaderTitle: '城防组长',
+                motto: '城市安宁，我们守护',
+                deployment: '城市应急响应',
+                base: '404安全屋',
+                equipment: '研究处定制特战武器'
             },
-            '鐗规畩鏀跺缁?: {
-                name: '鐗规畩鏀跺缁?,
+            '特殊收容组': {
+                name: '特殊收容组',
                 code: 'CRT-03',
-                description: '璐熻矗鍥炴敹鎰忓澶辨帶鐨勬椂鐥曡€呭拰鍏徃鍒堕€犲嚭鏉ョ殑澶辨帶瀹為獙浣擄紝蹇呰鏃跺崗鍔╁簲瀵圭粍澶勭悊鏃剁┖瑁傞殭銆?,
+                description: '负责回收意外失控的时痕者和公司制造出来的失控实验体，必要时协助应对组处理时空裂隙。',
                 color: '#ffd93d',
                 icon: 'fas fa-shield-alt',
-                established: '缁堟湯C47',
+                established: '终末C47',
                 status: 'active',
-                leaderTitle: '鏀跺缁勯暱',
-                motto: '鏀跺锛屼繚鎶わ紝娓呭壙',
-                deployment: '寮傚父鐢熺墿澶勭悊',
-                base: '鎬婚儴鍩哄湴 - 鍦颁笂宸ヤ綔鍖?,
-                equipment: '鐮旂┒澶勫畾鍒剁壒鎴樻鍣?
+                leaderTitle: '收容组长',
+                motto: '收容，保护，清剿',
+                deployment: '异常生物处理',
+                base: '总部基地 - 地上工作区',
+                equipment: '研究处定制特战武器'
             },
-            '404鐗归仯闃?: {
-                name: '404鐗归仯闃?,
+            '404特遣队': {
+                name: '404特遣队',
                 code: 'CRT-04',
-                description: '绉樺瘑琛屽姩缁勶紝浣滄垬鍜屼换鍔¤褰曚笉鏀跺綍鍦ㄧ鐞嗗眬浣撶郴鍐咃紝骞惰礋璐ｇ粍寤虹鐞嗗眬淇℃伅缃戙€?,
+                description: '秘密行动组，作战和任务记录不收录在管理局体系内，并负责组建管理局信息网。',
                 color: '#ff6b6b',
                 icon: 'fas fa-skull-crossbones',
-                established: '缁堟湯C49',
+                established: '终末C49',
                 status: 'active',
-                leaderTitle: '鐗归仯闃熼暱',
-                motto: '鏃犵晱锛屾棤鎯э紝鏃犺釜',
-                deployment: '鏈哄瘑琛屽姩',
-                base: '鎬婚儴鍩哄湴 - 鍦颁笂宸ヤ綔鍖?,
-                equipment: '鐮旂┒澶勫畾鍒剁壒鎴樻鍣?
+                leaderTitle: '特遣队长',
+                motto: '无畏，无惧，无踪',
+                deployment: '机密行动',
+                base: '总部基地 - 地上工作区',
+                equipment: '研究处定制特战武器'
             },
-            '缁煎悎绠＄悊缁?: {
-                name: '缁煎悎绠＄悊缁?,
+            '综合管理组': {
+                name: '综合管理组',
                 code: 'CRT-05',
-                description: '鍚勫垎闃熷崗璋冪粺绛逛腑鏋紝姣忎綅鎴愬憳閮藉彲浣滀负浣滄垬鎸囨尌瀹樸€?,
+                description: '各分队协调统筹中枢，每位成员都可作为作战指挥官。',
                 color: '#9c27b0',
                 icon: 'fas fa-tasks',
-                established: '缁堟湯C43',
+                established: '终末C43',
                 status: 'active',
-                leaderTitle: '绠＄悊缁勯暱',
-                motto: '鍗忚皟鏈夊簭锛屼繚闅滄湁鍔?,
-                deployment: '浣滄垬缁熺閮ㄧ讲',
-                base: '鎬婚儴鍩哄湴 - 鍦颁笅鎸囨尌涓績',
-                equipment: '鐮旂┒澶勫畾鍒剁壒鎴樻鍣?
+                leaderTitle: '管理组长',
+                motto: '协调有序，保障有力',
+                deployment: '作战统筹部署',
+                base: '总部基地 - 地下指挥中心',
+                equipment: '研究处定制特战武器'
             }
         };
         
@@ -951,34 +951,34 @@
         let currentViewingTeam = null;
         
         // ================================================
-        // 2. 鍒濆鍖栧嚱鏁?
+        // 2. 初始化函数
         // ================================================
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('闃熶紞鍚嶅崟椤甸潰鍔犺浇瀹屾垚锛屽紑濮嬪垵濮嬪寲...');
+            console.log('队伍名单页面加载完成，开始初始化...');
             
-            // 1. 妫€鏌ョ櫥褰曠姸鎬?
+            // 1. 检查登录状态
             const role = localStorage.getItem('auth_role');
             if (role !== 'admin') {
-                alert('璇峰厛浠ョ鐞嗗憳韬唤鐧诲綍锛?);
+                alert('请先以管理员身份登录！');
                 window.location.href = 'index.html';
                 return;
             }
             
-            // 2. 绔嬪嵆鏇存柊鏃堕棿鏄剧ず
+            // 2. 立即更新时间显示
             updateTime();
             setInterval(updateTime, 1000);
             
-            // 3. 鍒濆鍖朣upabase
+            // 3. 初始化Supabase
             await initSupabase();
             
-            // 4. 鍔犺浇鏁版嵁
+            // 4. 加载数据
             await loadTeamsData();
             
-            // 5. 鏄剧ず涓荤晫闈?
+            // 5. 显示主界面
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             
-            // 6. 娣诲姞ESC閿繑鍥炴敮鎸?
+            // 6. 添加ESC键返回支持
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     if (document.getElementById('teamModal').classList.contains('active')) {
@@ -990,27 +990,27 @@
             });
         });
         
-        // 鍒濆鍖朣upabase
+        // 初始化Supabase
         async function initSupabase() {
             try {
-                console.log('鍒濆鍖朣upabase杩炴帴...');
+                console.log('初始化Supabase连接...');
                 
-                // 绛夊緟Supabase搴撳姞杞藉畬鎴?
+                // 等待Supabase库加载完成
                 if (typeof window.supabase === 'undefined') {
-                    console.error('Supabase搴撴湭鍔犺浇锛?);
-                    updateCloudStatus('error', 'Supabase搴撴湭鍔犺浇');
+                    console.error('Supabase库未加载！');
+                    updateCloudStatus('error', 'Supabase库未加载');
                     return false;
                 }
                 
-                // 妫€鏌ラ厤缃槸鍚﹀畬鏁?
+                // 检查配置是否完整
                 if (!SUPABASE_URL || SUPABASE_URL.includes('your-project-id') || 
                     !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes('your-anon-key')) {
-                    console.warn('Supabase閰嶇疆涓嶅畬鏁?);
-                    updateCloudStatus('disabled', 'Supabase閰嶇疆涓嶅畬鏁?);
+                    console.warn('Supabase配置不完整');
+                    updateCloudStatus('disabled', 'Supabase配置不完整');
                     return false;
                 }
                 
-                // 鍒涘缓Supabase瀹㈡埛绔?
+                // 创建Supabase客户端
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: {
                         persistSession: false,
@@ -1018,52 +1018,52 @@
                     }
                 });
                 
-                // 娴嬭瘯杩炴帴
+                // 测试连接
                 const connected = await testSupabaseConnection();
                 if (connected) {
                     cloudEnabled = true;
-                    console.log('鉁?Supabase杩炴帴鎴愬姛');
-                    updateCloudStatus('connected', '浜戠鏁版嵁搴撹繛鎺ユ垚鍔?);
+                    console.log('✅ Supabase连接成功');
+                    updateCloudStatus('connected', '云端数据库连接成功');
                     return true;
                 } else {
-                    updateCloudStatus('error', '浜戠杩炴帴澶辫触');
+                    updateCloudStatus('error', '云端连接失败');
                     return false;
                 }
                 
             } catch (e) {
-                console.error('Supabase鍒濆鍖栧け璐?', e);
-                updateCloudStatus('error', '鍒濆鍖栧け璐? ' + e.message);
+                console.error('Supabase初始化失败:', e);
+                updateCloudStatus('error', '初始化失败: ' + e.message);
                 return false;
             }
         }
         
-        // 娴嬭瘯Supabase杩炴帴
+        // 测试Supabase连接
         async function testSupabaseConnection() {
             if (!supabaseClient) return false;
             
             try {
-                updateLoadingText('姝ｅ湪娴嬭瘯浜戠杩炴帴...');
+                updateLoadingText('正在测试云端连接...');
                 
-                // 灏濊瘯鏌ヨusers琛?
+                // 尝试查询users表
                 const { data, error } = await supabaseClient
                     .from('users')
                     .select('id')
                     .limit(1);
                 
                 if (error) {
-                    console.error('鉂?Supabase杩炴帴娴嬭瘯澶辫触:', error);
+                    console.error('❌ Supabase连接测试失败:', error);
                     return false;
                 }
                 
-                console.log('鉁?Supabase杩炴帴娴嬭瘯鎴愬姛');
+                console.log('✅ Supabase连接测试成功');
                 return true;
             } catch (e) {
-                console.error('杩炴帴娴嬭瘯寮傚父:', e);
+                console.error('连接测试异常:', e);
                 return false;
             }
         }
         
-        // 鏇存柊鍔犺浇鏂囨湰
+        // 更新加载文本
         function updateLoadingText(text) {
             const loadingText = document.getElementById('loadingText');
             if (loadingText) {
@@ -1071,7 +1071,7 @@
             }
         }
         
-        // 鏇存柊浜戠鐘舵€佹樉绀?
+        // 更新云端状态显示
         function updateCloudStatus(status, message) {
             const cloudIcon = document.getElementById('cloudIcon');
             const cloudStatus = document.getElementById('cloudStatus');
@@ -1103,46 +1103,46 @@
         }
         
         // ================================================
-        // 3. 鏁版嵁鍔犺浇鍑芥暟
+        // 3. 数据加载函数
         // ================================================
         
-        // 鍔犺浇闃熶紞鏁版嵁
+        // 加载队伍数据
         async function loadTeamsData() {
             try {
-                updateLoadingText('姝ｅ湪浠庝簯绔姞杞芥垚鍛樻暟鎹?..');
+                updateLoadingText('正在从云端加载成员数据...');
                 
-                // 1. 浠庝簯绔垨鏈湴鍔犺浇鎵€鏈夋垚鍛?
+                // 1. 从云端或本地加载所有成员
                 const usersData = await loadUsersData();
                 
-                // 2. 绛涢€夋垬鏂楃讲鎴愬憳
+                // 2. 筛选战斗署成员
                 allCombatMembers = usersData.filter(user => 
-                    user.department === '鎴樻枟缃? && user.team && user.team !== ''
+                    user.department === '战斗署' && user.team && user.team !== ''
                 );
                 
-                console.log(`鎵惧埌 ${allCombatMembers.length} 鍚嶆垬鏂楃讲鎴愬憳`);
+                console.log(`找到 ${allCombatMembers.length} 名战斗署成员`);
                 
-                // 3. 鏋勫缓闃熶紞鏁版嵁
+                // 3. 构建队伍数据
                 teams = buildTeamsData(allCombatMembers);
                 
-                // 4. 鏇存柊缁熻鏁版嵁
+                // 4. 更新统计数据
                 updateStats();
                 
-                // 5. 娓叉煋闃熶紞鍒楄〃
+                // 5. 渲染队伍列表
                 renderTeams();
                 
             } catch (error) {
-                console.error('鍔犺浇闃熶紞鏁版嵁澶辫触:', error);
-                showErrorMessage('鏁版嵁鍔犺浇澶辫触: ' + error.message);
+                console.error('加载队伍数据失败:', error);
+                showErrorMessage('数据加载失败: ' + error.message);
             }
         }
         
-        // 鍔犺浇鐢ㄦ埛鏁版嵁锛堜簯绔紭鍏堬級
+        // 加载用户数据（云端优先）
         async function loadUsersData() {
             if (cloudEnabled && supabaseClient) {
                 try {
-                    updateLoadingText('姝ｅ湪浠庝簯绔暟鎹簱鑾峰彇鎴愬憳淇℃伅...');
+                    updateLoadingText('正在从云端数据库获取成员信息...');
                     
-                    // 浠庝簯绔幏鍙栨墍鏈夌敤鎴?
+                    // 从云端获取所有用户
                     const { data: users, error } = await supabaseClient
                         .from('users')
                         .select('*')
@@ -1150,16 +1150,16 @@
                     
                     if (error) throw error;
                     
-                    console.log(`浠庝簯绔幏鍙栦簡 ${users.length} 涓敤鎴穈);
+                    console.log(`从云端获取了 ${users.length} 个用户`);
                     
-                    // 杞崲涓虹粺涓€鏍煎紡
+                    // 转换为统一格式
                     return users.map(user => ({
                         id: user.id,
                         name: user.name,
                         username: user.username,
                         role: user.role,
                         status: user.status,
-                        department: user.department || '鏈垎閰?,
+                        department: user.department || '未分配',
                         team: user.team || '',
                         position: user.position || '',
                         joinDate: user.join_date,
@@ -1167,13 +1167,13 @@
                     }));
                     
                 } catch (error) {
-                    console.error('浠庝簯绔姞杞界敤鎴峰け璐ワ紝鍥為€€鍒版湰鍦版暟鎹?', error);
-                    // 鍥為€€鍒版湰鍦版暟鎹?
+                    console.error('从云端加载用户失败，回退到本地数据:', error);
+                    // 回退到本地数据
                 }
             }
             
-            // 浣跨敤鏈湴鏁版嵁
-            updateLoadingText('姝ｅ湪浠庢湰鍦版暟鎹幏鍙栨垚鍛樹俊鎭?..');
+            // 使用本地数据
+            updateLoadingText('正在从本地数据获取成员信息...');
             const stored = localStorage.getItem('qs_users_data');
             
             if (stored) {
@@ -1185,34 +1185,34 @@
                         username: username,
                         role: user.role,
                         status: user.status,
-                        department: user.department || '鏈垎閰?,
+                        department: user.department || '未分配',
                         team: user.team || '',
                         position: user.position || '',
                         joinDate: user.joinDate,
                         notes: user.notes
                     }));
                 } catch (e) {
-                    console.error('瑙ｆ瀽鏈湴鐢ㄦ埛鏁版嵁澶辫触:', e);
+                    console.error('解析本地用户数据失败:', e);
                 }
             }
             
-            // 杩斿洖绌烘暟缁?
+            // 返回空数组
             return [];
         }
         
-        // 鏋勫缓闃熶紞鏁版嵁
+        // 构建队伍数据
         function buildTeamsData(members) {
             const teamsData = [];
             
-            // 閬嶅巻鎵€鏈夐瀹氫箟鐨勯槦浼?
+            // 遍历所有预定义的队伍
             for (const [teamName, teamInfo] of Object.entries(TEAMS_INFO)) {
-                // 绛涢€夊睘浜庤闃熶紞鐨勬垚鍛?
+                // 筛选属于该队伍的成员
                 const teamMembers = members.filter(member => member.team === teamName);
                 
-                // 鏌ユ壘闃熼暱
-                const leader = teamMembers.find(member => member.position === '闃熼暱');
+                // 查找队长
+                const leader = teamMembers.find(member => member.position === '队长');
                 
-                // 鏋勫缓闃熶紞鏁版嵁瀵硅薄
+                // 构建队伍数据对象
                 teamsData.push({
                     ...teamInfo,
                     members: teamMembers,
@@ -1228,7 +1228,7 @@
             return teamsData;
         }
         
-        // 鏇存柊缁熻鏁版嵁
+        // 更新统计数据
         function updateStats() {
             const totalTeams = teams.length;
             const totalMembers = allCombatMembers.length;
@@ -1242,10 +1242,10 @@
         }
         
         // ================================================
-        // 4. 娓叉煋鍑芥暟
+        // 4. 渲染函数
         // ================================================
         
-        // 娓叉煋闃熶紞鍒楄〃
+        // 渲染队伍列表
         function renderTeams() {
             const container = document.getElementById('teamsContainer');
             
@@ -1255,10 +1255,10 @@
                         <div class="empty-icon">
                             <i class="fas fa-users-slash"></i>
                         </div>
-                        <h3>鏆傛棤闃熶紞鏁版嵁</h3>
-                        <p>鏈壘鍒版垬鏂楃讲鐨勯槦浼嶄俊鎭?/p>
+                        <h3>暂无队伍数据</h3>
+                        <p>未找到战斗署的队伍信息</p>
                         <button onclick="loadTeamsData()" class="action-btn" style="margin-top: 20px;">
-                            <i class="fas fa-redo"></i> 閲嶆柊鍔犺浇
+                            <i class="fas fa-redo"></i> 重新加载
                         </button>
                     </div>
                 `;
@@ -1276,7 +1276,7 @@
                             <div class="team-code">${team.code}</div>
                         </div>
                         <div class="status-badge ${team.status === 'active' ? 'status-active' : 'status-inactive'}">
-                            ${team.status === 'active' ? '娲昏穬' : '寰呭懡'}
+                            ${team.status === 'active' ? '活跃' : '待命'}
                         </div>
                     </div>
                     
@@ -1286,15 +1286,15 @@
                     
                     <div class="team-details">
                         <div class="detail-row">
-                            <span class="detail-label">闃熼暱</span>
-                            <span class="detail-value">${team.leader ? team.leader.name : '鏈寚瀹?}</span>
+                            <span class="detail-label">队长</span>
+                            <span class="detail-value">${team.leader ? team.leader.name : '未指定'}</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">鎴愬憳鏁伴噺</span>
-                            <span class="detail-value">${team.memberCount} 浜?/span>
+                            <span class="detail-label">成员数量</span>
+                            <span class="detail-value">${team.memberCount} 人</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">鎴愮珛鏃堕棿</span>
+                            <span class="detail-label">成立时间</span>
                             <span class="detail-value">${team.established}</span>
                         </div>
                     </div>
@@ -1302,7 +1302,7 @@
                     ${team.memberCount > 0 ? `
                         <div class="members-list">
                             <div class="members-title">
-                                <i class="fas fa-user-friends"></i> 杩戞湡娲昏穬鎴愬憳
+                                <i class="fas fa-user-friends"></i> 近期活跃成员
                             </div>
                             <div class="members-grid">
                                 ${team.members.slice(0, 3).map(member => `
@@ -1319,8 +1319,8 @@
                                         <div class="member-avatar" style="background: rgba(0, 150, 255, 0.3);">
                                             <i class="fas fa-ellipsis-h"></i>
                                         </div>
-                                        <div class="member-name">杩樻湁 ${team.memberCount - 3} 浜?/div>
-                                        <div class="member-position">鐐瑰嚮鏌ョ湅鍏ㄩ儴</div>
+                                        <div class="member-name">还有 ${team.memberCount - 3} 人</div>
+                                        <div class="member-position">点击查看全部</div>
                                     </div>
                                 ` : ''}
                             </div>
@@ -1328,10 +1328,10 @@
                     ` : `
                         <div class="members-list">
                             <div class="members-title">
-                                <i class="fas fa-user-slash"></i> 鏆傛棤鎴愬憳
+                                <i class="fas fa-user-slash"></i> 暂无成员
                             </div>
                             <p style="color: #6b9ccc; text-align: center; font-size: 0.9rem; margin-top: 10px;">
-                                璇ラ槦浼嶅綋鍓嶆病鏈夊垎閰嶆垚鍛?
+                                该队伍当前没有分配成员
                             </p>
                         </div>
                     `}
@@ -1339,27 +1339,27 @@
             `).join('');
         }
         
-        // 鏌ョ湅闃熶紞璇︽儏
+        // 查看队伍详情
         function viewTeamDetail(teamName) {
             currentViewingTeam = teams.find(team => team.name === teamName);
             
             if (!currentViewingTeam) return;
             
-            // 鏇存柊妯℃€佹鏍囬
+            // 更新模态框标题
             document.getElementById('modalTeamName').textContent = currentViewingTeam.name;
             document.getElementById('modalIcon').className = currentViewingTeam.icon;
             document.getElementById('modalIcon').style.color = currentViewingTeam.color;
             
-            // 鐢熸垚璇︽儏鍐呭
+            // 生成详情内容
             const detailContent = generateTeamDetailContent(currentViewingTeam);
             document.getElementById('teamDetailContent').innerHTML = detailContent;
             
-            // 鏄剧ず妯℃€佹
+            // 显示模态框
             document.getElementById('teamModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
         
-        // 鐢熸垚闃熶紞璇︽儏鍐呭
+        // 生成队伍详情内容
         function generateTeamDetailContent(team) {
             return `
                 <div class="team-detail-header">
@@ -1371,17 +1371,17 @@
                         <p>${team.description}</p>
                         <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
                             <div style="background: rgba(0, 150, 255, 0.1); padding: 8px 15px; border-radius: 8px;">
-                                <div style="color: #6b9ccc; font-size: 0.85rem;">鐘舵€?/div>
+                                <div style="color: #6b9ccc; font-size: 0.85rem;">状态</div>
                                 <div style="color: ${team.status === 'active' ? '#6bffb8' : '#ff6b6b'}; font-weight: bold;">
-                                    ${team.status === 'active' ? '娲昏穬涓? : '寰呭懡涓?}
+                                    ${team.status === 'active' ? '活跃中' : '待命中'}
                                 </div>
                             </div>
                             <div style="background: rgba(0, 150, 255, 0.1); padding: 8px 15px; border-radius: 8px;">
-                                <div style="color: #6b9ccc; font-size: 0.85rem;">鎴愬憳</div>
-                                <div style="color: #4fc3ff; font-weight: bold;">${team.memberCount} 浜?/div>
+                                <div style="color: #6b9ccc; font-size: 0.85rem;">成员</div>
+                                <div style="color: #4fc3ff; font-weight: bold;">${team.memberCount} 人</div>
                             </div>
                             <div style="background: rgba(0, 150, 255, 0.1); padding: 8px 15px; border-radius: 8px;">
-                                <div style="color: #6b9ccc; font-size: 0.85rem;">鎴愮珛鏃堕棿</div>
+                                <div style="color: #6b9ccc; font-size: 0.85rem;">成立时间</div>
                                 <div style="color: #ffd93d; font-weight: bold;">${team.established}</div>
                             </div>
                         </div>
@@ -1391,63 +1391,63 @@
                 <div class="info-cards">
                     <div class="info-card">
                         <div class="info-card-title">
-                            <i class="fas fa-info-circle"></i> 闃熶紞淇℃伅
+                            <i class="fas fa-info-circle"></i> 队伍信息
                         </div>
                         <div class="info-item">
-                            <span class="info-label">闃熶紞浠ｅ彿</span>
+                            <span class="info-label">队伍代号</span>
                             <span class="info-value">${team.code}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">闃熼暱</span>
-                            <span class="info-value">${team.leader ? team.leader.name : '鏈寚瀹?}</span>
+                            <span class="info-label">队长</span>
+                            <span class="info-value">${team.leader ? team.leader.name : '未指定'}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">闃熼暱鑱屼綅</span>
+                            <span class="info-label">队长职位</span>
                             <span class="info-value">${team.leaderTitle}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">闃熶紞鏍艰█</span>
+                            <span class="info-label">队伍格言</span>
                             <span class="info-value">${team.motto}</span>
                         </div>
                     </div>
                     
                     <div class="info-card">
                         <div class="info-card-title">
-                            <i class="fas fa-map-marker-alt"></i> 閮ㄧ讲淇℃伅
+                            <i class="fas fa-map-marker-alt"></i> 部署信息
                         </div>
                         <div class="info-item">
-                            <span class="info-label">閮ㄧ讲绫诲瀷</span>
+                            <span class="info-label">部署类型</span>
                             <span class="info-value">${team.deployment}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">椹诲湴鍩哄湴</span>
+                            <span class="info-label">驻地基地</span>
                             <span class="info-value">${team.base}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">鏍囧噯瑁呭</span>
+                            <span class="info-label">标准装备</span>
                             <span class="info-value">${team.equipment}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">鏁版嵁鏉ユ簮</span>
-                            <span class="info-value">${cloudEnabled ? '浜戠鏁版嵁搴? : '鏈湴瀛樺偍'}</span>
+                            <span class="info-label">数据来源</span>
+                            <span class="info-value">${cloudEnabled ? '云端数据库' : '本地存储'}</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="members-table-container">
                     <div class="info-card-title">
-                        <i class="fas fa-user-friends"></i> 鎴愬憳鍒楄〃 (${team.memberCount} 浜?
+                        <i class="fas fa-user-friends"></i> 成员列表 (${team.memberCount} 人)
                     </div>
                     
                     ${team.memberCount > 0 ? `
                         <table class="members-table">
                             <thead>
                                 <tr>
-                                    <th>濮撳悕</th>
-                                    <th>鑱屼綅</th>
-                                    <th>鐘舵€?/th>
-                                    <th>鐢ㄦ埛鍚?/th>
-                                    <th>鍔犲叆鏃堕棿</th>
+                                    <th>姓名</th>
+                                    <th>职位</th>
+                                    <th>状态</th>
+                                    <th>用户名</th>
+                                    <th>加入时间</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1459,13 +1459,13 @@
                                                     <i class="fas fa-user" style="font-size: 0.8rem; color: #4fc3ff;"></i>
                                                 </div>
                                                 ${member.name}
-                                                ${member.position === '闃熼暱' ? '<span class="status-badge status-active" style="margin-left: 8px; font-size: 0.7rem;">闃熼暱</span>' : ''}
+                                                ${member.position === '队长' ? '<span class="status-badge status-active" style="margin-left: 8px; font-size: 0.7rem;">队长</span>' : ''}
                                             </div>
                                         </td>
                                         <td>${member.position}</td>
                                         <td>
                                             <span class="status-badge ${member.status === 'active' ? 'status-active' : 'status-inactive'}" style="font-size: 0.7rem;">
-                                                ${member.status === 'active' ? '娲昏穬' : '鏈縺娲?}
+                                                ${member.status === 'active' ? '活跃' : '未激活'}
                                             </span>
                                         </td>
                                         <td>${member.username}</td>
@@ -1477,51 +1477,51 @@
                     ` : `
                         <div style="text-align: center; padding: 40px 20px; color: #6b9ccc;">
                             <i class="fas fa-user-slash" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                            <p>璇ラ槦浼嶅綋鍓嶆病鏈夊垎閰嶆垚鍛?/p>
-                            <p style="font-size: 0.9rem; margin-top: 10px;">鍙互鍦ㄦ垚鍛樼鐞嗛〉闈负鎴愬憳鍒嗛厤闃熶紞</p>
+                            <p>该队伍当前没有分配成员</p>
+                            <p style="font-size: 0.9rem; margin-top: 10px;">可以在成员管理页面为成员分配队伍</p>
                         </div>
                     `}
                 </div>
             `;
         }
         
-        // 鏌ョ湅鎴愬憳璇︽儏锛堜粠闃熶紞椤甸潰杩涘叆鏃惰褰曟潵婧愬苟鍦ㄥ悓涓€鏍囩椤垫墦寮€锛?
+        // 查看成员详情（从队伍页面进入时记录来源并在同一标签页打开）
         function viewMemberDetail(username) {
-            // 淇濆瓨鎴愬憳淇℃伅鍒版湰鍦板瓨鍌?
+            // 保存成员信息到本地存储
             localStorage.setItem('viewing_member_username', username);
-            // 璁板綍鏉ユ簮椤甸潰锛屼緵璇︽儏椤佃繑鍥炰娇鐢?
+            // 记录来源页面，供详情页返回使用
             try { sessionStorage.setItem('previousPage', 'teams.html'); } catch (e) { /* ignore */ }
-            // 鍦ㄥ綋鍓嶆爣绛鹃〉璺宠浆鍒拌鎯呴〉锛堜繚璇佽繑鍥炶兘鍥炲埌闃熶紞鍒楄〃锛?
+            // 在当前标签页跳转到详情页（保证返回能回到队伍列表）
             window.location.href = 'member-detail.html';
         }
         
-        // 鍏抽棴闃熶紞璇︽儏妯℃€佹
+        // 关闭队伍详情模态框
         function closeTeamModal() {
             document.getElementById('teamModal').classList.remove('active');
             document.body.style.overflow = 'auto';
         }
         
         // ================================================
-        // 5. 杈呭姪鍑芥暟
+        // 5. 辅助函数
         // ================================================
         
-        // 杩斿洖 admin 椤甸潰
+        // 返回 admin 页面
         function goBackToAdmin() {
-            if (confirm('纭畾瑕佽繑鍥炴帶鍒跺彴鍚楋紵')) {
-                // 鏄剧ず鍔犺浇鐘舵€?
+            if (confirm('确定要返回控制台吗？')) {
+                // 显示加载状态
                 const backBtn = document.querySelector('.back-btn');
                 const originalHTML = backBtn.innerHTML;
-                backBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 杩斿洖涓?..`;
+                backBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 返回中...`;
                 backBtn.disabled = true;
                 
-                // 妯℃嫙寤惰繜鍚庤烦杞?
+                // 模拟延迟后跳转
                 setTimeout(() => {
                     window.location.href = 'admin.html';
                 }, 500);
             }
         }
         
-        // 鏇存柊鏃堕棿鏄剧ず
+        // 更新时间显示
         function updateTime() {
             try {
                 const now = new Date();
@@ -1534,11 +1534,11 @@
                     timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
                 }
             } catch (e) {
-                console.error('鏇存柊鏃堕棿澶辫触:', e);
+                console.error('更新时间失败:', e);
             }
         }
         
-        // 鏄剧ず閿欒娑堟伅
+        // 显示错误消息
         function showErrorMessage(message) {
             const container = document.getElementById('teamsContainer');
             if (container) {
@@ -1547,30 +1547,30 @@
                         <div class="empty-icon">
                             <i class="fas fa-exclamation-triangle"></i>
                         </div>
-                        <h3>鏁版嵁鍔犺浇澶辫触</h3>
+                        <h3>数据加载失败</h3>
                         <p>${message}</p>
                         <button onclick="loadTeamsData()" class="action-btn primary" style="margin-top: 20px;">
-                            <i class="fas fa-redo"></i> 閲嶆柊鍔犺浇
+                            <i class="fas fa-redo"></i> 重新加载
                         </button>
                     </div>
                 `;
             }
         }
         
-        // 鍒锋柊鏁版嵁
+        // 刷新数据
         function refreshData() {
             document.getElementById('loadingOverlay').style.display = 'flex';
             document.getElementById('mainContent').style.display = 'none';
             loadTeamsData().then(() => {
                 document.getElementById('loadingOverlay').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
-                alert('鏁版嵁宸插埛鏂帮紒');
+                alert('数据已刷新！');
             });
         }
         
-        // 閫€鍑虹櫥褰?
+        // 退出登录
         function logout() {
-            if (confirm('纭畾瑕侀€€鍑虹櫥褰曞悧锛?)) {
+            if (confirm('确定要退出登录吗？')) {
                 localStorage.removeItem('auth_user');
                 localStorage.removeItem('auth_role');
                 localStorage.removeItem('auth_time');
@@ -1578,16 +1578,16 @@
             }
         }
         
-        // 娣诲姞鍒锋柊鎸夐挳浜嬩欢鐩戝惉
+        // 添加刷新按钮事件监听
         document.addEventListener('DOMContentLoaded', function() {
-            // 娣诲姞閿洏蹇嵎閿?
+            // 添加键盘快捷键
             document.addEventListener('keydown', function(e) {
-                // Ctrl+R 鍒锋柊
+                // Ctrl+R 刷新
                 if (e.ctrlKey && e.key === 'r') {
                     e.preventDefault();
                     refreshData();
                 }
-                // F5 鍒锋柊
+                // F5 刷新
                 if (e.key === 'F5') {
                     e.preventDefault();
                     refreshData();
