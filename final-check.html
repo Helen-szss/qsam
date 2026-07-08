@@ -1360,6 +1360,29 @@
             };
         }
     }
+
+    function buildPendingMemberSetup(resume) {
+        const rawName = (resume.full_name || '新成员').toString().trim();
+        const safeName = rawName.replace(/\s+/g, '');
+        const resumeIdText = String(resume.id || Date.now()).replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
+        const usernameSeed = `${safeName}_${resumeIdText.slice(-4) || Date.now().toString().slice(-4)}`;
+        const username = usernameSeed.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '').slice(0, 20) || `member_${Date.now().toString().slice(-6)}`;
+        const password = `QSAM${resumeIdText.slice(-6) || Date.now().toString().slice(-6)}!`;
+
+        return {
+            name: rawName,
+            username: username,
+            password: password,
+            role: 'user',
+            department: resume.department || '未分配',
+            team: '',
+            position: '',
+            status: 'active',
+            notes: `来源：终审通过；简历ID：${resume.id || '未知'}`,
+            sourceResumeId: resume.id || null,
+            sourcePage: 'final-check.html'
+        };
+    }
     
     // 更新统计数据
     function updateStats() {
@@ -1567,6 +1590,7 @@
         const contact = resume.contact || '未填写';
         const meme = resume.meme || '无';
         const ability = resume.ability || '无';
+        const other = resume.other || resume.other_info || resume.additional_info || '未填写';
         const department = resume.department || '未选择';
         const submissionDate = resume.submission_date ? formatDate(resume.submission_date) : '未记录';
         const reviewer = resume.reviewer || '未初审';
@@ -1635,6 +1659,10 @@
                     <div class="info-item full-width">
                         <div class="info-label">模因能力描述</div>
                         <div class="info-value">${ability}</div>
+                    </div>
+                    <div class="info-item full-width">
+                        <div class="info-label">其他说明</div>
+                        <div class="info-value">${other}</div>
                     </div>
                 </div>
             </div>
@@ -1814,8 +1842,22 @@
                 
                 // 关闭模态框
                 closeModal();
-                
-                // 3秒后刷新列表
+
+                // 终审通过后直接接入成员管理界面并预填成员信息
+                if (selectedFinalReviewOption === 'approve_final') {
+                    const approvedResume = resumeIndex !== -1
+                        ? allResumes[resumeIndex]
+                        : (allResumes.find(r => r.id == currentResumeId) || { id: currentResumeId });
+                    const pendingMemberSetup = buildPendingMemberSetup(approvedResume);
+                    sessionStorage.setItem('pending_member_setup', JSON.stringify(pendingMemberSetup));
+
+                    setTimeout(() => {
+                        window.location.href = 'members.html';
+                    }, 1200);
+                    return;
+                }
+
+                // 驳回时保留原逻辑：刷新列表
                 setTimeout(() => {
                     loadResumes();
                 }, 3000);
@@ -2018,6 +2060,12 @@
                         ...finalReviewData
                     };
                 }
+
+                const approvedResume = resumeIndex !== -1 ? allResumes[resumeIndex] : null;
+                if (approvedResume) {
+                    const pendingMemberSetup = buildPendingMemberSetup(approvedResume);
+                    sessionStorage.setItem('pending_member_setup', JSON.stringify(pendingMemberSetup));
+                }
                 
                 // 更新统计数据
                 updateStats();
@@ -2026,12 +2074,13 @@
                 filterResumes();
                 
                 hideLoading();
-                showSuccessToast('终审成功！', '已通过该申请的终审');
-                
-                // 3秒后刷新列表
+                showSuccessToast('终审成功！', '已通过该申请的终审，正在跳转到成员管理界面...');
+                closeModal();
+
+                // 直接接入成员管理界面，继续设置成员信息
                 setTimeout(() => {
-                    loadResumes();
-                }, 3000);
+                    window.location.href = 'members.html';
+                }, 1200);
                 
             } else {
                 throw new Error(result.message || '操作失败');

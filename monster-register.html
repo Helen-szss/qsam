@@ -800,6 +800,38 @@
         // 怪物数据（从本地存储加载）
         let monsters = [];
         const STORAGE_KEY = 'rift_monsters_data';
+        let monsterSupabaseClient = null;
+
+        // 兼容 SDK 对象 / 已初始化 client / 全局 client
+        function getSupabaseClient() {
+            try {
+                if (monsterSupabaseClient && typeof monsterSupabaseClient.from === 'function') return monsterSupabaseClient;
+
+                if (typeof window !== 'undefined') {
+                    if (window.supabaseClient && typeof window.supabaseClient.from === 'function') {
+                        monsterSupabaseClient = window.supabaseClient;
+                        return monsterSupabaseClient;
+                    }
+
+                    if (window.supabase && typeof window.supabase.from === 'function') {
+                        monsterSupabaseClient = window.supabase;
+                        return monsterSupabaseClient;
+                    }
+
+                    if (window.supabase && typeof window.supabase.createClient === 'function') {
+                        monsterSupabaseClient = window.supabase.createClient(
+                            'https://owfyycgomqclytnswobj.supabase.co',
+                            'sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV'
+                        );
+                        try { window.supabaseClient = monsterSupabaseClient; } catch (e) {}
+                        return monsterSupabaseClient;
+                    }
+                }
+            } catch (e) {
+                console.warn('获取 Supabase client 失败:', e);
+            }
+            return null;
+        }
         
         // 属性配置
         const attributes = [
@@ -841,7 +873,7 @@
             renderStatsPanel();
 
             // 尝试从云端加载（若可用），云端数据优先
-            if (typeof window !== 'undefined' && window.supabase) {
+            if (getSupabaseClient()) {
                 loadMonstersFromSupabase().catch(err => console.warn('云端加载怪物失败：', err));
             } else {
                 console.warn('Supabase 未初始化，跳过云端加载怪物');
@@ -913,7 +945,7 @@
         // 从 Supabase 加载怪物数据（优先云端）
         async function loadMonstersFromSupabase() {
             try {
-                const client = (typeof window !== 'undefined' && window.supabase) ? window.supabase : null;
+                const client = getSupabaseClient();
                 if (!client) {
                     console.warn('Supabase 未初始化，跳过云端加载怪物');
                     return false;
@@ -962,7 +994,7 @@
         // 将单个怪物写入 Supabase（插入或更新）
         async function saveMonsterToSupabase(monster) {
             try {
-                const client = (typeof window !== 'undefined' && window.supabase) ? window.supabase : null;
+                const client = getSupabaseClient();
                 if (!client) {
                     console.warn('saveMonsterToSupabase: Supabase 客户端未初始化');
                     return false;
@@ -1344,12 +1376,12 @@
                 // 显示成功消息
                 showNotification(id ? '怪物资料已更新' : '新怪物已登记', 'success');
                 // 同步到 Supabase（后台执行，不阻塞界面）
-                if (typeof window !== 'undefined' && window.supabase) {
+                if (getSupabaseClient()) {
                     // find the saved monster object (latest by id)
                     const saved = monsters.find(m => m.id === (monster.id || id));
                         if (saved) {
                             // If supabase client is not available, inform the user
-                            if (!(typeof window !== 'undefined' && window.supabase)) {
+                            if (!getSupabaseClient()) {
                                 console.warn('尝试同步到云端，但 Supabase 未初始化');
                                 showNotification('未连接到云端，已仅保存到本地', 'warning');
                             } else {

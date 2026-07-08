@@ -1212,6 +1212,37 @@
             const random = Math.random().toString(36).substring(2, 6);
             return `ADMIN-TASK-${timestamp}-${random}`.toUpperCase();
         }
+
+        // 将本地缺失于云端的任务补同步到 Supabase（用于项目切换新库时迁移历史任务）
+        async function syncMissingLocalTasksToCloud(localOnlyTasks) {
+            if (!supabaseClient || !Array.isArray(localOnlyTasks) || localOnlyTasks.length === 0) {
+                return { synced: 0, failed: 0 };
+            }
+
+            let synced = 0;
+            let failed = 0;
+
+            for (const task of localOnlyTasks) {
+                try {
+                    const payload = Object.assign({}, task);
+                    const { error } = await supabaseClient
+                        .from('tasks')
+                        .insert([payload]);
+
+                    if (error) {
+                        failed++;
+                        console.warn('补同步任务到云端失败:', task && task.id, error);
+                    } else {
+                        synced++;
+                    }
+                } catch (e) {
+                    failed++;
+                    console.warn('补同步任务到云端异常:', task && task.id, e);
+                }
+            }
+
+            return { synced, failed };
+        }
         
         // 加载任务列表（优先云端，失败回退到本地）
         async function loadTasks() {
@@ -1254,7 +1285,13 @@
 
                         // 将本地中云端没有的新任务追加（例如：本地刚创建、云端未同步的任务）
                         const cloudIds = new Set(cloudTasks.map(t => t.id));
-                        localAll.forEach(lt => { if (lt && lt.id && !cloudIds.has(lt.id)) merged.push(lt); });
+                        const localOnlyTasks = [];
+                        localAll.forEach(lt => {
+                            if (lt && lt.id && !cloudIds.has(lt.id)) {
+                                merged.push(lt);
+                                localOnlyTasks.push(lt);
+                            }
+                        });
 
                         allTasks = merged;
                         loadedFromCloud = true;
@@ -1263,6 +1300,17 @@
                         // 更新本地备份：按来源区分保存
                         localStorage.setItem('guest_tasks', JSON.stringify(allTasks.filter(t => t.created_by !== '管理员')));
                         localStorage.setItem('admin_tasks', JSON.stringify(allTasks.filter(t => t.created_by === '管理员')));
+
+                        // 自动把本地独有任务补同步到云端，便于旧库/本地数据迁移到新库
+                        if (localOnlyTasks.length > 0) {
+                            const syncResult = await syncMissingLocalTasksToCloud(localOnlyTasks);
+                            if (syncResult.synced > 0) {
+                                console.log(`已补同步 ${syncResult.synced} 个本地任务到云端`);
+                            }
+                            if (syncResult.failed > 0) {
+                                console.warn(`有 ${syncResult.failed} 个本地任务补同步失败`);
+                            }
+                        }
                     } else {
                         console.warn('云端加载任务失败：', error);
                     }
@@ -2296,6 +2344,9 @@
             showLoading('正在发布任务...');
             
             try {
+                let cloudSaved = false;
+                let cloudErrorMessage = '';
+
                 // 保存到本地存储
                 const adminTasks = JSON.parse(localStorage.getItem('admin_tasks') || '[]');
                 adminTasks.push(taskData);
@@ -2314,8 +2365,9 @@
 
                         if (error) {
                             console.warn('云端发布任务失败：', error);
-                            showError('云端发布任务失败：' + (error.message || JSON.stringify(error)));
+                            cloudErrorMessage = error.message || JSON.stringify(error);
                         } else if (insertedData && insertedData.length > 0) {
+                            cloudSaved = true;
                             // 如果云端返回了记录（包含生成的id），使用云端id覆盖本地记录的id
                             const returned = insertedData[0];
                             if (returned.id && returned.id !== taskData.id) {
@@ -2335,8 +2387,10 @@
                         }
                     } catch (err) {
                         console.error('云端发布任务异常：', err);
-                        showError('云端发布任务异常：' + (err.message || err));
+                        cloudErrorMessage = err.message || String(err);
                     }
+                } else {
+                    cloudErrorMessage = 'Supabase 客户端未初始化';
                 }
                 
                 // 添加到当前任务列表
@@ -2347,8 +2401,12 @@
                 
                 // 更新显示
                 renderTaskTable(allTasks);
-                
-                showSuccess(`任务 "${taskName}" 已成功发布`);
+
+                if (cloudSaved) {
+                    showSuccess(`任务 "${taskName}" 已成功发布并同步到云端`);
+                } else {
+                    showError(`任务 "${taskName}" 已保存到本地，但未同步到云端：${cloudErrorMessage || '未知错误'}`);
+                }
                 
             } catch (error) {
                 console.error('发布任务失败:', error);
@@ -2363,10 +2421,17 @@
             if (!confirm('确定要返回吗？未保存的更改可能会丢失。')) return;
 
             try {
-                if (getUserIsManagement()) {
-                    window.location.href = 'viewer.html';
-                } else {
+                const role = (localStorage.getItem('auth_role') || '').toLowerCase();
+
+                // 优先按登录身份返回：管理员始终回管理员控制台。
+                if (role === 'admin') {
                     window.location.href = 'admin.html';
+                } else if (getUserIsManagement()) {
+                    window.location.href = 'viewer.html';
+                } else if (role === 'member') {
+                    window.location.href = 'member.html';
+                } else {
+                    window.location.href = 'index.html';
                 }
             } catch (e) {
                 // 兜底到管理员控制台

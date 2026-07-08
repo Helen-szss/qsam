@@ -404,15 +404,34 @@
                 // 从Supabase加载实验体数据
                 const { data: subjects, error } = await supabaseClient
                     .from('subjects')
-                    .select(`
-                        *,
-                        subject_details (*)
-                    `)
+                    .select('*')
                     .order('created_at', { ascending: false });
                 
                 if (error) throw error;
-                
-                allSubjects = subjects || [];
+
+                const baseSubjects = subjects || [];
+                const ids = baseSubjects.map(s => s.id).filter(Boolean);
+                let detailsMap = {};
+
+                if (ids.length > 0) {
+                    const { data: detailsRows, error: detailsError } = await supabaseClient
+                        .from('subject_details')
+                        .select('*')
+                        .in('subject_id', ids);
+
+                    if (detailsError) {
+                        console.warn('加载 subject_details 失败，继续显示主表数据:', detailsError);
+                    } else {
+                        (detailsRows || []).forEach(row => {
+                            detailsMap[row.subject_id] = row;
+                        });
+                    }
+                }
+
+                allSubjects = baseSubjects.map(s => ({
+                    ...s,
+                    subject_details: detailsMap[s.id] ? [detailsMap[s.id]] : []
+                }));
                 filteredSubjects = [...allSubjects];
                 
                 // 更新统计数据
@@ -646,16 +665,24 @@
                 // 从Supabase加载实验体详情
                 const { data: subject, error } = await supabaseClient
                     .from('subjects')
-                    .select(`
-                        *,
-                        subject_details (*)
-                    `)
+                    .select('*')
                     .eq('id', subjectId)
-                    .single();
+                    .maybeSingle();
                 
                 if (error) throw error;
+                if (!subject) throw new Error('未找到该实验体');
+
+                const { data: detailsRow, error: detailsError } = await supabaseClient
+                    .from('subject_details')
+                    .select('*')
+                    .eq('subject_id', subjectId)
+                    .maybeSingle();
+
+                if (detailsError) {
+                    console.warn('读取实验体详情失败:', detailsError);
+                }
                 
-                const details = subject.subject_details?.[0] || {};
+                const details = detailsRow || {};
                 const dangerLevel = details.danger_level || 'safe';
                 const dangerInfo = dangerMap[dangerLevel] || dangerMap.safe;
                 

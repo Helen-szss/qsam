@@ -1111,6 +1111,7 @@
         let deletingMemberId = null;
         let filteredMembers = [];
         let currentCloudSync = false;
+        let pendingMemberNotes = '';
 
         // ================================================
         // 3. 页面加载时初始化（修复版）
@@ -1171,8 +1172,11 @@
             
             // 4. 加载成员数据
             await loadMembers();
+
+            // 5. 如果刚从终审页面跳转过来，自动打开新增成员弹窗并预填
+            consumePendingMemberSetup();
             
-            // 5. 添加ESC键返回支持
+            // 6. 添加ESC键返回支持
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     goBackToAdmin();
@@ -1296,8 +1300,12 @@
                 const { data: existingUser, error: checkError } = await supabaseClient
                     .from('users')
                     .select('username')
-                    .eq('username', userData.username)
-                    .single();
+                    .ilike('username', userData.username)
+                    .maybeSingle();
+
+                if (checkError) {
+                    throw checkError;
+                }
                 
                 if (existingUser) {
                     return { success: false, message: '用户名已存在于云端' };
@@ -1412,14 +1420,17 @@
                     .from('users')
                     .select('username');
                 
-                const cloudUsernames = cloudUsers ? cloudUsers.map(u => u.username) : [];
+                const cloudUsernameSet = new Set(
+                    (cloudUsers || []).map(u => (u.username || '').toString().trim().toLowerCase())
+                );
                 
                 // 找出需要添加的用户
                 const usersToAdd = [];
                 let successCount = 0;
                 
                 for (const username of usernames) {
-                    if (!cloudUsernames.includes(username)) {
+                    const normalizedUsername = (username || '').toString().trim().toLowerCase();
+                    if (!cloudUsernameSet.has(normalizedUsername)) {
                         const user = localUsers[username];
                         const result = await addUserToSupabase({
                             username: username,
@@ -1789,13 +1800,14 @@
         // ================================================
         
         // 显示添加成员弹窗
-        function showAddModal() {
+        function showAddModal(prefill = null) {
             editingMemberId = null;
             document.getElementById('modalTitle').textContent = '添加新成员';
             document.getElementById('submitBtn').textContent = '添加成员';
             
             const form = document.getElementById('memberForm');
             form.reset();
+            pendingMemberNotes = '';
             
             // 重置部门相关字段显示
             document.getElementById('department').value = '未分配';
@@ -1803,10 +1815,58 @@
             document.getElementById('positionGroup').style.display = 'none';
             document.getElementById('team').value = '';
             document.getElementById('position').value = '';
+
+            if (prefill) {
+                applyMemberPrefill(prefill);
+            }
             
             form.onsubmit = handleAddMember;
             
             document.getElementById('memberModal').style.display = 'flex';
+        }
+
+        function applyMemberPrefill(prefill) {
+            const nameInput = document.getElementById('name');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const roleSelect = document.getElementById('role');
+            const departmentSelect = document.getElementById('department');
+            const statusSelect = document.getElementById('status');
+
+            if (nameInput) nameInput.value = prefill.name || '';
+            if (usernameInput) usernameInput.value = prefill.username || '';
+            if (passwordInput) passwordInput.value = prefill.password || '';
+            if (confirmPasswordInput) confirmPasswordInput.value = prefill.password || '';
+            if (roleSelect) roleSelect.value = prefill.role || 'user';
+            if (departmentSelect) departmentSelect.value = prefill.department || '未分配';
+            if (statusSelect) statusSelect.value = prefill.status || 'active';
+
+            toggleTeamFields();
+
+            if (prefill.department === '战斗署') {
+                const teamSelect = document.getElementById('team');
+                const positionSelect = document.getElementById('position');
+                if (teamSelect) teamSelect.value = prefill.team || '';
+                if (positionSelect) positionSelect.value = prefill.position || '';
+            }
+
+            pendingMemberNotes = prefill.notes || '';
+        }
+
+        function consumePendingMemberSetup() {
+            const pendingKey = 'pending_member_setup';
+            const raw = sessionStorage.getItem(pendingKey);
+            if (!raw) return;
+
+            sessionStorage.removeItem(pendingKey);
+
+            try {
+                const pendingSetup = JSON.parse(raw);
+                showAddModal(pendingSetup);
+            } catch (e) {
+                console.warn('解析终审转入的成员预填数据失败:', e);
+            }
         }
         
         // 编辑成员
@@ -1946,6 +2006,7 @@
                 }
                 
                 alert(successMsg);
+                pendingMemberNotes = '';
                 
             } catch (error) {
                 console.error('添加成员失败:', error);
@@ -2270,7 +2331,8 @@
                     team: m.team,
                     position: m.position,
                     status: m.status,
-                    joinDate: m.joinDate
+                    joinDate: m.joinDate,
+                    notes: m.notes || ''
                 }))
             };
             

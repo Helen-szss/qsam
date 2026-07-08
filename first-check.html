@@ -1403,6 +1403,7 @@
         const contact = resume.contact || '未填写';
         const meme = resume.meme || '无';
         const ability = resume.ability || '无';
+        const other = resume.other || resume.other_info || resume.additional_info || '未填写';
         const department = resume.department || '未选择';
         const submissionDate = resume.submission_date ? formatDate(resume.submission_date) : '未记录';
         const reviewer = resume.reviewer || '未审核';
@@ -1467,6 +1468,10 @@
                     <div class="info-item full-width">
                         <div class="info-label">模因能力描述</div>
                         <div class="info-value">${ability}</div>
+                    </div>
+                    <div class="info-item full-width">
+                        <div class="info-label">其他说明</div>
+                        <div class="info-value">${other}</div>
                     </div>
                 </div>
             </div>

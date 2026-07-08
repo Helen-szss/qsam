@@ -265,7 +265,7 @@ async function loadLoginUsers() {
     console.log('创建默认用户数据');
     
     const defaultUsers = {
-        'ophelia': { 
+        'Ophelia': { 
             password: 'qsam137', 
             role: 'admin', 
             name: 'Ophelia',
@@ -286,7 +286,7 @@ async function loadLoginUsers() {
     localStorage.setItem('login_users', JSON.stringify(defaultUsers));
     
     const defaultQsUsers = {
-        'ophelia': { 
+        'Ophelia': { 
             id: 1,
             name: 'Ophelia', 
             password: 'qsam137', 
@@ -342,13 +342,16 @@ async function syncLocalToSupabase() {
             .from('users')
             .select('username');
         
-        const cloudUsernames = cloudUsers ? cloudUsers.map(u => u.username) : [];
+        const cloudUsernameSet = new Set(
+            (cloudUsers || []).map(u => (u.username || '').toString().trim().toLowerCase())
+        );
         
         // 找出需要添加的用户
         const usersToAdd = [];
         
         for (const username of usernames) {
-            if (!cloudUsernames.includes(username)) {
+            const normalizedUsername = (username || '').toString().trim().toLowerCase();
+            if (!cloudUsernameSet.has(normalizedUsername)) {
                 const user = localUsers[username];
                 usersToAdd.push({
                     username: username,
@@ -705,6 +708,7 @@ function addDebugButtons() {
             <button onclick="debugShowUsers()" style="margin: 5px; padding: 5px;">显示用户</button>
             <button onclick="debugClearData()" style="margin: 5px; padding: 5px;">清除数据</button>
             <button onclick="debugSyncData()" style="margin: 5px; padding: 5px;">同步数据</button>
+            <button onclick="debugSyncAllData()" style="margin: 5px; padding: 5px;">同步全部</button>
             <button onclick="debugTestSupabase()" style="margin: 5px; padding: 5px;">测试Supabase</button>
         `;
         
@@ -745,6 +749,31 @@ function debugSyncData() {
     });
 }
 
+// 调试函数：同步全部本地业务数据到Supabase
+function debugSyncAllData() {
+    if (!window.supabaseHelpers || typeof window.supabaseHelpers.syncAllLocalDataToSupabase !== 'function') {
+        alert('同步工具未就绪，请刷新页面后重试');
+        return;
+    }
+
+    console.log('开始同步全部本地业务数据到云端...');
+    window.supabaseHelpers.syncAllLocalDataToSupabase().then(report => {
+        console.log('全量同步结果:', report);
+        const lines = [
+            `users: +${report.users.synced} / fail ${report.users.failed} / skip ${report.users.skipped}`,
+            `member_details: +${report.memberDetails.synced} / fail ${report.memberDetails.failed} / skip ${report.memberDetails.skipped}`,
+            `tasks: +${report.tasks.synced} / fail ${report.tasks.failed} / skip ${report.tasks.skipped}`,
+            `resume_applications: +${report.resumes.synced} / fail ${report.resumes.failed} / skip ${report.resumes.skipped}`,
+            `rift_monsters: +${report.monsters.synced} / fail ${report.monsters.failed} / skip ${report.monsters.skipped}`,
+            `subjects: +${report.subjects.synced} / fail ${report.subjects.failed} / skip ${report.subjects.skipped}`
+        ];
+        alert('全量同步完成:\n' + lines.join('\n'));
+    }).catch(err => {
+        console.error('全量同步异常:', err);
+        alert('全量同步失败: ' + (err.message || err));
+    });
+}
+
 // 新增：测试Supabase连接
 function debugTestSupabase() {
     if (!supabaseClient) {
@@ -769,6 +798,288 @@ function debugTestSupabase() {
 
 // 提供给members.html使用的用户管理函数
 window.supabaseHelpers = {
+    // 一键同步所有本地业务数据到Supabase
+    async syncAllLocalDataToSupabase() {
+        const client = supabaseClient || (typeof supabase !== 'undefined' ? supabase : null);
+        const report = {
+            users: { synced: 0, failed: 0, skipped: 0 },
+            memberDetails: { synced: 0, failed: 0, skipped: 0 },
+            tasks: { synced: 0, failed: 0, skipped: 0 },
+            resumes: { synced: 0, failed: 0, skipped: 0 },
+            monsters: { synced: 0, failed: 0, skipped: 0 },
+            subjects: { synced: 0, failed: 0, skipped: 0 }
+        };
+
+        if (!client) {
+            throw new Error('Supabase客户端未初始化');
+        }
+
+        // 1) 用户 users（来源: qs_users_data）
+        try {
+            const localUsersRaw = JSON.parse(localStorage.getItem('qs_users_data') || '{}');
+            const localUserEntries = Object.entries(localUsersRaw || {});
+
+            const { data: cloudUsers } = await client.from('users').select('username');
+            const cloudUserSet = new Set((cloudUsers || []).map(u => (u.username || '').toString().trim().toLowerCase()));
+
+            for (const [username, user] of localUserEntries) {
+                const normalized = (username || '').toString().trim().toLowerCase();
+                if (!normalized || cloudUserSet.has(normalized)) {
+                    report.users.skipped++;
+                    continue;
+                }
+
+                const { error } = await client.from('users').insert([{
+                    username,
+                    name: user.name || username,
+                    password: user.password || '',
+                    role: user.role || 'user',
+                    status: user.status || 'active',
+                    department: user.department || '未分配',
+                    team: user.team || '',
+                    position: user.position || '',
+                    join_date: user.joinDate || new Date().toISOString().split('T')[0],
+                    notes: user.notes || '本地同步'
+                }]);
+
+                if (error) {
+                    report.users.failed++;
+                    console.warn('同步用户失败:', username, error);
+                } else {
+                    report.users.synced++;
+                    cloudUserSet.add(normalized);
+                }
+            }
+        } catch (e) {
+            console.warn('users同步异常:', e);
+        }
+
+        // 2) 成员详情 member_details（来源: qs_member_details_cloud）
+        try {
+            const detailsMap = JSON.parse(localStorage.getItem('qs_member_details_cloud') || '{}');
+            const entries = Object.entries(detailsMap || {});
+
+            const { data: cloudRows } = await client.from('member_details').select('username');
+            const cloudSet = new Set((cloudRows || []).map(r => (r.username || '').toString().trim().toLowerCase()));
+
+            for (const [usernameKey, detail] of entries) {
+                const username = (detail.username || usernameKey || '').toString().trim();
+                const normalized = username.toLowerCase();
+                if (!username) {
+                    report.memberDetails.skipped++;
+                    continue;
+                }
+
+                const payload = {
+                    username,
+                    name: detail.name || username,
+                    photo_url: detail.photo_url || detail.photo || null,
+                    height: detail.height || '',
+                    gender: detail.gender || '',
+                    age: detail.age || null,
+                    attributes: Array.isArray(detail.attributes) ? detail.attributes : (detail.attributes ? [detail.attributes] : []),
+                    meme: detail.meme || '',
+                    meme_name: detail.meme_name || detail.memeName || '',
+                    ability: detail.ability || '',
+                    weapon: detail.weapon || '',
+                    department: detail.department || '未分配',
+                    team: detail.team || '',
+                    position: detail.position || '',
+                    other: detail.other || ''
+                };
+
+                let error = null;
+                if (cloudSet.has(normalized)) {
+                    const res = await client.from('member_details').update({
+                        ...payload,
+                        updated_at: new Date().toISOString()
+                    }).eq('username', username);
+                    error = res.error;
+                } else {
+                    const res = await client.from('member_details').insert([payload]);
+                    error = res.error;
+                }
+
+                if (error) {
+                    report.memberDetails.failed++;
+                    console.warn('同步成员详情失败:', username, error);
+                } else {
+                    report.memberDetails.synced++;
+                    cloudSet.add(normalized);
+                }
+            }
+        } catch (e) {
+            console.warn('member_details同步异常:', e);
+        }
+
+        // 3) 任务 tasks（来源: guest_tasks/admin_tasks/research_tasks）
+        try {
+            const guestTasks = JSON.parse(localStorage.getItem('guest_tasks') || '[]');
+            const adminTasks = JSON.parse(localStorage.getItem('admin_tasks') || '[]');
+            const researchTasks = JSON.parse(localStorage.getItem('research_tasks') || '[]');
+            const merged = [...guestTasks, ...adminTasks, ...researchTasks].filter(Boolean);
+
+            const localMap = new Map();
+            merged.forEach(t => {
+                if (t && t.id) localMap.set(t.id, t);
+            });
+
+            const localTasks = Array.from(localMap.values());
+            const { data: cloudTasks } = await client.from('tasks').select('id');
+            const cloudIdSet = new Set((cloudTasks || []).map(t => t.id));
+
+            for (const task of localTasks) {
+                if (!task.id || cloudIdSet.has(task.id)) {
+                    report.tasks.skipped++;
+                    continue;
+                }
+
+                const payload = {
+                    id: task.id,
+                    name: task.name || task.task_name || '',
+                    type: task.type || '其他',
+                    time_limit: task.time_limit || task.timeLimit || null,
+                    description: task.description || '',
+                    difficulty: task.difficulty || '低',
+                    status: task.status || '未接取',
+                    created_by: task.created_by || '系统同步',
+                    assigned_team: task.assigned_team || '未分配',
+                    assigned_member: task.assigned_member || '未分配',
+                    created_at: task.created_at || new Date().toISOString(),
+                    updated_at: task.updated_at || new Date().toISOString()
+                };
+
+                const { error } = await client.from('tasks').insert([payload]);
+                if (error) {
+                    report.tasks.failed++;
+                    console.warn('同步任务失败:', task.id, error);
+                } else {
+                    report.tasks.synced++;
+                    cloudIdSet.add(task.id);
+                }
+            }
+        } catch (e) {
+            console.warn('tasks同步异常:', e);
+        }
+
+        // 4) 简历 resume_applications（来源: qs_resume_applications_local）
+        try {
+            const resumes = JSON.parse(localStorage.getItem('qs_resume_applications_local') || '[]');
+
+            for (const resume of resumes) {
+                if (!resume || (!resume.fullName && !resume.full_name)) {
+                    report.resumes.skipped++;
+                    continue;
+                }
+
+                const fullName = resume.full_name || resume.fullName || '';
+                const contact = resume.contact || '';
+                const submissionDate = resume.submission_date || resume.submissionDate || resume.created_at || new Date().toISOString();
+
+                // 简单去重：同名+联系方式+提交时间视为同一条
+                const { data: existing, error: checkError } = await client
+                    .from('resume_applications')
+                    .select('id')
+                    .eq('full_name', fullName)
+                    .eq('contact', contact)
+                    .eq('submission_date', submissionDate)
+                    .limit(1);
+
+                if (checkError) {
+                    report.resumes.failed++;
+                    console.warn('检查简历重复失败:', checkError);
+                    continue;
+                }
+
+                if (existing && existing.length > 0) {
+                    report.resumes.skipped++;
+                    continue;
+                }
+
+                const payload = {
+                    full_name: fullName,
+                    age: resume.age || null,
+                    gender: resume.gender || '',
+                    location: resume.location || '',
+                    contact: contact,
+                    meme: resume.meme || '',
+                    attributes: Array.isArray(resume.attributes) ? resume.attributes : (resume.attributes ? [resume.attributes] : []),
+                    ability: resume.ability || '无',
+                    other: resume.other || '',
+                    department: resume.department || '',
+                    submission_date: submissionDate,
+                    status: resume.status || 'pending',
+                    applicant_type: resume.applicant_type || resume.applicantType || 'guest',
+                    created_at: resume.created_at || new Date().toISOString(),
+                    updated_at: resume.updated_at || new Date().toISOString()
+                };
+
+                const { error } = await client.from('resume_applications').insert([payload]);
+                if (error) {
+                    report.resumes.failed++;
+                    console.warn('同步简历失败:', payload.full_name, error);
+                } else {
+                    report.resumes.synced++;
+                }
+            }
+        } catch (e) {
+            console.warn('resume_applications同步异常:', e);
+        }
+
+        // 5) 裂隙怪物 rift_monsters（来源: rift_monsters_data / rift_monsters_cache）
+        try {
+            const dataA = JSON.parse(localStorage.getItem('rift_monsters_data') || '[]');
+            const dataB = JSON.parse(localStorage.getItem('rift_monsters_cache') || '[]');
+            const combined = [...dataA, ...dataB].filter(Boolean);
+
+            const localMap = new Map();
+            combined.forEach(m => {
+                const key = (m && (m.id || m.local_id)) ? (m.id || m.local_id) : null;
+                if (key) localMap.set(key, m);
+            });
+
+            const monsters = Array.from(localMap.values());
+            for (const monster of monsters) {
+                const localId = monster.id || monster.local_id;
+                if (!localId) {
+                    report.monsters.skipped++;
+                    continue;
+                }
+
+                const payload = {
+                    local_id: localId,
+                    name: monster.name || '',
+                    region: monster.region || '',
+                    frequency: monster.frequency || '',
+                    level: monster.level || '',
+                    weaknesses: Array.isArray(monster.weaknesses) ? monster.weaknesses : [],
+                    resistances: Array.isArray(monster.resistances) ? monster.resistances : [],
+                    notes: monster.notes || '',
+                    created_at: monster.createdAt || monster.created_at || new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+
+                const { error } = await client
+                    .from('rift_monsters')
+                    .upsert(payload, { onConflict: 'local_id' });
+
+                if (error) {
+                    report.monsters.failed++;
+                    console.warn('同步裂隙怪物失败:', localId, error);
+                } else {
+                    report.monsters.synced++;
+                }
+            }
+        } catch (e) {
+            console.warn('rift_monsters同步异常:', e);
+        }
+
+        // 6) 实验体：当前项目未发现稳定的本地缓存源，标记为跳过
+        report.subjects.skipped++;
+
+        return report;
+    },
+
     // 添加用户到Supabase
     async addUserToSupabase(userData) {
         if (!supabaseClient) {
@@ -1004,4 +1315,12 @@ window.supabaseHelpers = {
             hasValidConfig: !SUPABASE_URL.includes('https://owfyycgomqclytnswobj.supabase.co') && !SUPABASE_ANON_KEY.includes('sb_publishable_65fjjNxcUjAFpFJ3AEW9Tg_ctW41ZsV')
         };
     }
+};
+
+// 暴露简短的全量同步入口，便于在控制台直接调用
+window.syncAllLocalDataToSupabase = async function() {
+    if (!window.supabaseHelpers || typeof window.supabaseHelpers.syncAllLocalDataToSupabase !== 'function') {
+        throw new Error('同步工具未就绪');
+    }
+    return await window.supabaseHelpers.syncAllLocalDataToSupabase();
 };
